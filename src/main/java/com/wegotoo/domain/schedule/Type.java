@@ -11,4 +11,13 @@ public enum Type {
     private final String key;
     private final String label;
 
+    public static Type fromKey(String key) {
+        for (Type type : Type.values()) {
+            if (type.key.equals(key)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("No enum constant with key " + key);
+    }
+
 }

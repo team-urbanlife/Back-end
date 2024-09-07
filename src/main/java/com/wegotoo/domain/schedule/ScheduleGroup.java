@@ -36,4 +36,11 @@ public class ScheduleGroup {
         this.schedule = schedule;
     }
 
+    public static ScheduleGroup create(User user, Schedule schedule) {
+        return ScheduleGroup.builder()
+                .user(user)
+                .schedule(schedule)
+                .build();
+    }
+
 }
