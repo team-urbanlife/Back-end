@@ -14,7 +14,7 @@ public class DetailPlanRepositoryImpl implements DetailPlanRepositoryCustom {
 
     @Override
     public Long dayIncludedPlanCount(Long scheduleDetailsId, LocalDate date) {
-        Long count = queryFactory.select(detailedPlan.count())
+        Long count = queryFactory.select(detailedPlan.sequence.max())
                 .from(detailedPlan)
                 .join(detailedPlan.scheduleDetails, scheduleDetails)
                 .where(scheduleDetails.id.eq(scheduleDetailsId)

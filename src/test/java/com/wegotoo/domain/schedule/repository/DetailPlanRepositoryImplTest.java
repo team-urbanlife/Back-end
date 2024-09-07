@@ -91,7 +91,7 @@ class DetailPlanRepositoryImplTest {
                         .scheduleDetails(scheduleDetails)
                         .latitude(11.1)
                         .longitude(11.1)
-                        .order((long) i)
+                        .sequence((long) i)
                         .build())
                 .toList();
 

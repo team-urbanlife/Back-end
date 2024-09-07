@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.wegotoo.application.schedule.request.DetailedPlanCreateServiceRequest;
 import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.Schedule;
+import com.wegotoo.domain.schedule.ScheduleDetails;
 import com.wegotoo.domain.schedule.ScheduleGroup;
 import com.wegotoo.domain.schedule.Type;
 import com.wegotoo.domain.schedule.repository.DetailPlanRepository;
@@ -18,6 +19,7 @@ import com.wegotoo.exception.BusinessException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,8 +47,8 @@ class DetailedPlanServiceTest {
     @Autowired
     DetailedPlanService detailedPlanService;
 
-    final LocalDate start = LocalDate.of(2024, 9, 1);
-    final LocalDate end = LocalDate.of(2024, 9, 5);
+    final LocalDate START_DATE = LocalDate.of(2024, 9, 1);
+    final LocalDate END_DATE = LocalDate.of(2024, 9, 5);
 
     @AfterEach
     void tearDown() {
@@ -59,26 +61,30 @@ class DetailedPlanServiceTest {
 
     @Test
     @DisplayName("유저가 세부 계획을 작성한다.")
-    void createDetailPlan() throws Exception {
+    void writeDetailedPlan() throws Exception {
         // given
         User user = getUser("user@gmail.com", "user");
         userRepository.save(user);
 
-        Schedule schedule = getSchedule(start, end);
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
         scheduleRepository.save(schedule);
 
         ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
-
         scheduleGroupRepository.save(scheduleGroup);
 
-        DetailedPlanCreateServiceRequest request = getCreateDetailPlanServiceRequest();
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        DetailedPlanCreateServiceRequest request = getWriteDetailedPlanServiceRequest();
         // when
-        detailedPlanService.createDetailPlan(schedule.getId(), user.getId(), request);
+        detailedPlanService.writeDetailedPlan(schedule.getId(), user.getId(), request);
 
         // then
         List<DetailedPlan> response = detailPlanRepository.findAll();
         assertThat(response.get(0))
-                .extracting("id", "type", "name", "latitude", "longitude", "memo", "order")
+                .extracting("id", "type", "name", "latitude", "longitude", "memo", "sequence")
                 .contains(1L, Type.LOCATION, "제주공항", 11.1, 11.1, null, 1L);
     }
 
@@ -91,22 +97,56 @@ class DetailedPlanServiceTest {
         userRepository.save(userA);
         userRepository.save(userB);
 
-        Schedule schedule = getSchedule(start, end);
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
         scheduleRepository.save(schedule);
 
         ScheduleGroup scheduleGroup = getScheduleGroup(schedule, userA);
         scheduleGroupRepository.save(scheduleGroup);
 
-        DetailedPlanCreateServiceRequest request = getCreateDetailPlanServiceRequest();
+        DetailedPlanCreateServiceRequest request = getWriteDetailedPlanServiceRequest();
         // when // then
-        assertThatThrownBy(() -> detailedPlanService.createDetailPlan(schedule.getId(), userB.getId(), request))
+        assertThatThrownBy(() -> detailedPlanService.writeDetailedPlan(schedule.getId(), userB.getId(), request))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("권한이 없는 사용자입니다.");
     }
 
-    private DetailedPlanCreateServiceRequest getCreateDetailPlanServiceRequest() {
+    @Test
+    @DisplayName("유저가 세부 계획을 작성한다.")
+    void writeDetailedPlan2() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        DetailedPlanCreateServiceRequest request = getWriteDetailedPlanServiceRequest();
+        // when
+        detailedPlanService.writeDetailedPlan(schedule.getId(), user.getId(), request);
+
+        // then
+        List<DetailedPlan> response = detailPlanRepository.findAll();
+        assertThat(response.get(0))
+                .extracting("id", "type", "name", "latitude", "longitude", "memo", "sequence")
+                .contains(1L, Type.LOCATION, "제주공항", 11.1, 11.1, null, 1L);
+    }
+
+    private List<LocalDate> getDatesBetween(LocalDate startDate, LocalDate endDate) {
+        return Stream.iterate(startDate, date -> !date.isAfter(endDate), date -> date.plusDays(1))
+                .toList();
+    }
+
+    private DetailedPlanCreateServiceRequest getWriteDetailedPlanServiceRequest() {
         return DetailedPlanCreateServiceRequest.builder()
-                .date(start)
+                .date(START_DATE)
                 .type(Type.LOCATION)
                 .name("제주공항")
                 .latitude(11.1)

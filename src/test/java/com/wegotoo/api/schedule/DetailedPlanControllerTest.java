@@ -48,7 +48,7 @@ class DetailedPlanControllerTest {
         Long scheduleId = 1L;
 
         // when // then
-        mockMvc.perform(post("/v1/schedules/{scheduleId}/detailplans", scheduleId)
+        mockMvc.perform(post("/v1/schedule-details/{scheduleId}/detailed-plans", scheduleId)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(APPLICATION_JSON)
                 )
@@ -73,7 +73,7 @@ class DetailedPlanControllerTest {
         Long scheduleId = 1L;
 
         // when // then
-        mockMvc.perform(post("/v1/schedules/{scheduleId}/detailplans", scheduleId)
+        mockMvc.perform(post("/v1/schedule-details/{scheduleId}/detailed-plans", scheduleId)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(APPLICATION_JSON)
                 )
@@ -97,7 +97,7 @@ class DetailedPlanControllerTest {
         Long scheduleId = 1L;
 
         // when // then
-        mockMvc.perform(post("/v1/schedules/{scheduleId}/detailplans", scheduleId)
+        mockMvc.perform(post("/v1/schedule-details/{scheduleId}/detailed-plans", scheduleId)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(APPLICATION_JSON)
                 )
@@ -121,7 +121,7 @@ class DetailedPlanControllerTest {
         Long scheduleId = 1L;
 
         // when // then
-        mockMvc.perform(post("/v1/schedules/{scheduleId}/detailplans", scheduleId)
+        mockMvc.perform(post("/v1/schedule-details/{scheduleId}/detailed-plans", scheduleId)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(APPLICATION_JSON)
                 )
@@ -145,7 +145,7 @@ class DetailedPlanControllerTest {
         Long scheduleId = 1L;
 
         // when // then
-        mockMvc.perform(post("/v1/schedules/{scheduleId}/detailplans", scheduleId)
+        mockMvc.perform(post("/v1/schedule-details/{scheduleId}/detailed-plans", scheduleId)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(APPLICATION_JSON)
                 )

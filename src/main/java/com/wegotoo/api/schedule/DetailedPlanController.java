@@ -16,9 +16,9 @@ public class DetailedPlanController {
 
     private final DetailedPlanService detailedPlanService;
 
-    @PostMapping("/v1/schedules/{scheduleId}/detailplans")
-    public ApiResponse<Void> createDetailPlan(@PathVariable("scheduleId") Long scheduleId, @RequestBody @Valid DetailedPlanCreateRequest request) {
-        detailedPlanService.createDetailPlan(scheduleId, 0L, request.toService());
+    @PostMapping("/v1/schedule-details/{scheduleId}/detailed-plans")
+    public ApiResponse<Void> writeDetailedPlan(@PathVariable("scheduleId") Long scheduleId, @RequestBody @Valid DetailedPlanCreateRequest request) {
+        detailedPlanService.writeDetailedPlan(scheduleId, 0L, request.toService());
         return ApiResponse.ok();
     }
 }

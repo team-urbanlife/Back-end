@@ -5,6 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import com.wegotoo.application.schedule.request.ScheduleCreateServiceRequest;
 import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleGroup;
+import com.wegotoo.domain.schedule.repository.ScheduleDetailsRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleGroupRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleRepository;
 import com.wegotoo.domain.user.Role;
@@ -31,11 +32,18 @@ class ScheduleServiceTest {
     UserRepository userRepository;
 
     @Autowired
+    ScheduleDetailsRepository scheduleDetailsRepository;
+
+    @Autowired
     ScheduleService scheduleService;
+
+    final LocalDate START_DATE = LocalDate.of(2024, 9, 1);
+    final LocalDate END_DATE = LocalDate.of(2024, 9, 5);
 
     @AfterEach
     void tearDown() {
         scheduleGroupRepository.deleteAllInBatch();
+        scheduleDetailsRepository.deleteAllInBatch();
         scheduleRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
     }
@@ -51,13 +59,10 @@ class ScheduleServiceTest {
                 .build();
         userRepository.save(user);
 
-        final LocalDate startDay = LocalDate.of(2024, 9, 1);
-        final LocalDate endDay = LocalDate.of(2024, 9, 5);
-
         ScheduleCreateServiceRequest request = ScheduleCreateServiceRequest.builder()
                 .city("제주도")
-                .startDate(startDay)
-                .endDate(endDay)
+                .startDate(START_DATE)
+                .endDate(END_DATE)
                 .build();
         // when
         scheduleService.createSchedule(user.getId(), request);
@@ -68,7 +73,7 @@ class ScheduleServiceTest {
 
         assertThat(schedules.get(0))
                 .extracting("id", "title", "startDate", "endDate", "city", "totalTravelDays")
-                .contains(schedules.get(0).getId(), "제주도 여행", startDay, endDay, "제주도", 5L);
+                .contains(schedules.get(0).getId(), "제주도 여행", START_DATE, END_DATE, "제주도", 5L);
 
         assertThat(scheduleGroups.size()).isEqualTo(1);
 

@@ -29,7 +29,7 @@ public class DetailedPlanService {
     private final ScheduleGroupRepository scheduleGroupRepository;
 
     @Transactional
-    public void createDetailPlan(Long scheduleId, Long userId, DetailedPlanCreateServiceRequest request) {
+    public void writeDetailedPlan(Long scheduleId, Long userId, DetailedPlanCreateServiceRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
         Schedule schedule = scheduleRepository.findById(scheduleId)
@@ -38,13 +38,12 @@ public class DetailedPlanService {
         scheduleGroupRepository.findByUserIdAndScheduleId(user.getId(), schedule.getId())
                 .orElseThrow(() -> new BusinessException(UNAUTHORIZED_REQUEST));
 
-        ScheduleDetails scheduleDetails = ScheduleDetails.create(request.getDate(), schedule);
-        scheduleDetailsRepository.save(scheduleDetails);
+        ScheduleDetails scheduleDetails = scheduleDetailsRepository.findByDateAndSchedule(request.getDate(), schedule);
 
-        Long order = detailPlanRepository.dayIncludedPlanCount(scheduleDetails.getId(), request.getDate());
+        Long sequence = detailPlanRepository.dayIncludedPlanCount(scheduleDetails.getId(), request.getDate());
 
         DetailedPlan detailedPlan = DetailedPlan.create(request.getType(), request.getName(),
-                request.getMemo(), request.getLatitude(), request.getLongitude(), order, scheduleDetails);
+                request.getMemo(), request.getLatitude(), request.getLongitude(), sequence, scheduleDetails);
 
         detailPlanRepository.save(detailedPlan);
     }

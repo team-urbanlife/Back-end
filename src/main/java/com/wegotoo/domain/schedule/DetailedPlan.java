@@ -41,26 +41,26 @@ public class DetailedPlan {
     @Column(name = "detailed_plan_memo")
     private String memo;
 
-    @Column(name = "detailed_plan_order",  nullable = false)
-    private Long order;
+    @Column(name = "detailed_plan_sequence",  nullable = false)
+    private Long sequence;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_details_id")
     private ScheduleDetails scheduleDetails;
 
     @Builder
-    private DetailedPlan(Type type, String name, Double latitude, Double longitude, String memo, Long order,
+    private DetailedPlan(Type type, String name, Double latitude, Double longitude, String memo, Long sequence,
                          ScheduleDetails scheduleDetails) {
         this.type = type;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.memo = memo;
-        this.order = order;
+        this.sequence = sequence;
         this.scheduleDetails = scheduleDetails;
     }
 
-    public static DetailedPlan create(Type type, String name, String memo, Double latitude, Double longitude, Long order,
+    public static DetailedPlan create(Type type, String name, String memo, Double latitude, Double longitude, Long sequence,
                                       ScheduleDetails scheduleDetails) {
         return DetailedPlan.builder()
                 .type(type)
@@ -68,7 +68,7 @@ public class DetailedPlan {
                 .memo(memo)
                 .latitude(latitude)
                 .longitude(longitude)
-                .order(order + 1)
+                .sequence(sequence + 1)
                 .scheduleDetails(scheduleDetails)
                 .build();
     }
