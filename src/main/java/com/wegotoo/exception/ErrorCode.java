@@ -11,7 +11,8 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
     SCHEDULE_NOT_FOUND(404, "일정을 찾을 수 없습니다."),
     UNAUTHORIZED_REQUEST(400, "권한이 없는 사용자입니다."),
-    INVALID_PARAMS_VALUE(400, "유효하지 않은 파라미터 입니다.");
+    INVALID_PARAMS_VALUE(400, "유효하지 않은 파라미터 입니다."),
+    SCHEDULE_DETAIL_NOT_FOUND(404, "세부 일정을 찾을 수 없습니다.");
 
     private final int code;
     private final String message;

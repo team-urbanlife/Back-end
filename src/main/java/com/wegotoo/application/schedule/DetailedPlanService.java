@@ -29,16 +29,16 @@ public class DetailedPlanService {
     private final ScheduleGroupRepository scheduleGroupRepository;
 
     @Transactional
-    public void writeDetailedPlan(Long scheduleId, Long userId, DetailedPlanCreateServiceRequest request) {
+    public void writeDetailedPlan(Long scheduleDetailsId, Long userId, DetailedPlanCreateServiceRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new BusinessException(SCHEDULE_NOT_FOUND));
+        ScheduleDetails scheduleDetails = scheduleDetailsRepository.findById(scheduleDetailsId)
+                .orElseThrow(() -> new BusinessException(SCHEDULE_DETAIL_NOT_FOUND));
+
+        Schedule schedule = scheduleDetails.getSchedule();
 
         scheduleGroupRepository.findByUserIdAndScheduleId(user.getId(), schedule.getId())
                 .orElseThrow(() -> new BusinessException(UNAUTHORIZED_REQUEST));
-
-        ScheduleDetails scheduleDetails = scheduleDetailsRepository.findByDateAndSchedule(request.getDate(), schedule);
 
         Long sequence = detailPlanRepository.dayIncludedPlanCount(scheduleDetails.getId(), request.getDate());
 

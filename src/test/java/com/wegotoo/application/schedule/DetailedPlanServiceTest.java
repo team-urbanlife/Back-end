@@ -103,9 +103,14 @@ class DetailedPlanServiceTest {
         ScheduleGroup scheduleGroup = getScheduleGroup(schedule, userA);
         scheduleGroupRepository.save(scheduleGroup);
 
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
         DetailedPlanCreateServiceRequest request = getWriteDetailedPlanServiceRequest();
         // when // then
-        assertThatThrownBy(() -> detailedPlanService.writeDetailedPlan(schedule.getId(), userB.getId(), request))
+        assertThatThrownBy(() -> detailedPlanService.writeDetailedPlan(scheduleDetailsList.get(0).getId(), userB.getId(), request))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("권한이 없는 사용자입니다.");
     }
@@ -130,7 +135,7 @@ class DetailedPlanServiceTest {
 
         DetailedPlanCreateServiceRequest request = getWriteDetailedPlanServiceRequest();
         // when
-        detailedPlanService.writeDetailedPlan(schedule.getId(), user.getId(), request);
+        detailedPlanService.writeDetailedPlan(scheduleDetailsList.get(0).getId(), user.getId(), request);
 
         // then
         List<DetailedPlan> response = detailPlanRepository.findAll();
