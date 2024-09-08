@@ -81,7 +81,7 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_DEV_HOST }}
-          username: ${{ secrets.EC2_DEV_USERNAME }}
+          username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.KEY }}
           port: 22
           source: "./docker-compose.dev.yml"
@@ -92,7 +92,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_DEV_HOST }}
-          username: ${{ secrets.EC2_DEV_USERNAME }}
+          username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.KEY }}
           port: 22
           script: |
