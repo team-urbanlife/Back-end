@@ -37,3 +37,7 @@ out/
 .vscode/
 
 .DS_Store
+
+### YAML FILE ###
+application-dev.yml
+application-prod.yml
