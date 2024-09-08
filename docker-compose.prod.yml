@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  springboot:
+    container_name: spring-prod-app
+    image: wegotoo/prod:latest
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_PROFILES_ACTIVE: prod-env
+      TZ: "Asia/Seoul"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
