@@ -25,10 +25,6 @@ public class DetailedPlan {
     @Column(name = "detailed_plan_id")
     private Long Id;
 
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "detailed_plan_type",  nullable = false)
-    private Type type;
-
     @Column(name = "detailed_plan_name")
     private String name;
 
@@ -46,9 +42,8 @@ public class DetailedPlan {
     private ScheduleDetails scheduleDetails;
 
     @Builder
-    private DetailedPlan(Type type, String name, Double latitude, Double longitude, Long sequence,
+    private DetailedPlan(String name, Double latitude, Double longitude, Long sequence,
                          ScheduleDetails scheduleDetails) {
-        this.type = type;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -56,15 +51,24 @@ public class DetailedPlan {
         this.scheduleDetails = scheduleDetails;
     }
 
-    public static DetailedPlan create(Type type, String name, Double latitude, Double longitude, Long sequence,
+    public static DetailedPlan create(String name, Double latitude, Double longitude, Long sequence,
                                       ScheduleDetails scheduleDetails) {
         return DetailedPlan.builder()
-                .type(type)
                 .name(name)
                 .latitude(latitude)
                 .longitude(longitude)
                 .sequence(sequence + 1)
                 .scheduleDetails(scheduleDetails)
                 .build();
+    }
+
+    public void edit(String name, Double latitude, Double longitude) {
+        this.name = name != null ? name : this.name;
+        this.latitude = latitude != null ? latitude : this.latitude;
+        this.longitude = longitude != null ? longitude : this.longitude;
+    }
+
+    public void movePlan(Long sequence) {
+        this.sequence = sequence;
     }
 }

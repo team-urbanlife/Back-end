@@ -15,9 +15,7 @@ public class DetailedPlanCreateRequest {
     @NotNull(message = "여행 일자는 필수입니다.")
     private LocalDate date;
 
-    @NotNull(message = "타입은 필수입니다.")
-    private String type;
-
+    @NotNull(message = "장소는 필수입니다.")
     private String name;
 
     @NotNull(message = "위도는 필수입니다.")
@@ -27,10 +25,9 @@ public class DetailedPlanCreateRequest {
     private Double longitude;
 
     @Builder
-    private DetailedPlanCreateRequest(LocalDate date, String type, String name, Double latitude,
+    private DetailedPlanCreateRequest(LocalDate date, String name, Double latitude,
                                       Double longitude) {
         this.date = date;
-        this.type = type;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -39,7 +36,6 @@ public class DetailedPlanCreateRequest {
     public DetailedPlanCreateServiceRequest toService() {
         return DetailedPlanCreateServiceRequest.builder()
                 .date(date)
-                .type(Type.fromKey(type))
                 .name(name)
                 .latitude(latitude)
                 .longitude(longitude)
