@@ -1,21 +1,11 @@
 spring:
-  config:
-    activate:
-      on-profile: local
-  h2:
-    console:
-      enabled: true
-
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/wegotoo
-    username: sa
-    driver-class-name: org.h2.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-    defer-datasource-initialization: true
+  profiles:
+    active:
+      - local-env
+    group:
+      local-env:
+        - local
+      dev-env:
+        - dev
+      prod-env:
+        - prod
