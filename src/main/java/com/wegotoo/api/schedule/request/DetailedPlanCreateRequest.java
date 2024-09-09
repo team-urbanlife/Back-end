@@ -20,8 +20,6 @@ public class DetailedPlanCreateRequest {
 
     private String name;
 
-    private String memo;
-
     @NotNull(message = "위도는 필수입니다.")
     private Double latitude;
 
@@ -29,12 +27,11 @@ public class DetailedPlanCreateRequest {
     private Double longitude;
 
     @Builder
-    private DetailedPlanCreateRequest(LocalDate date, String type, String name, String memo, Double latitude,
+    private DetailedPlanCreateRequest(LocalDate date, String type, String name, Double latitude,
                                       Double longitude) {
         this.date = date;
         this.type = type;
         this.name = name;
-        this.memo = memo;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -44,7 +41,6 @@ public class DetailedPlanCreateRequest {
                 .date(date)
                 .type(Type.fromKey(type))
                 .name(name)
-                .memo(memo)
                 .latitude(latitude)
                 .longitude(longitude)
                 .build();

@@ -38,9 +38,6 @@ public class DetailedPlan {
     @Column(name = "detailed_plan_longitude",  nullable = false)
     private Double longitude;
 
-    @Column(name = "detailed_plan_memo")
-    private String memo;
-
     @Column(name = "detailed_plan_sequence",  nullable = false)
     private Long sequence;
 
@@ -49,23 +46,21 @@ public class DetailedPlan {
     private ScheduleDetails scheduleDetails;
 
     @Builder
-    private DetailedPlan(Type type, String name, Double latitude, Double longitude, String memo, Long sequence,
+    private DetailedPlan(Type type, String name, Double latitude, Double longitude, Long sequence,
                          ScheduleDetails scheduleDetails) {
         this.type = type;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.memo = memo;
         this.sequence = sequence;
         this.scheduleDetails = scheduleDetails;
     }
 
-    public static DetailedPlan create(Type type, String name, String memo, Double latitude, Double longitude, Long sequence,
+    public static DetailedPlan create(Type type, String name, Double latitude, Double longitude, Long sequence,
                                       ScheduleDetails scheduleDetails) {
         return DetailedPlan.builder()
                 .type(type)
                 .name(name)
-                .memo(memo)
                 .latitude(latitude)
                 .longitude(longitude)
                 .sequence(sequence + 1)
