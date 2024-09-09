@@ -1,6 +1,7 @@
 package com.wegotoo.api.schedule;
 
 import static org.springframework.http.MediaType.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -8,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegotoo.api.schedule.request.ScheduleCreateRequest;
+import com.wegotoo.api.schedule.request.ScheduleEditRequest;
 import com.wegotoo.application.schedule.ScheduleService;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
@@ -106,6 +108,77 @@ class ScheduleControllerTest {
 
         // when // then
         mockMvc.perform(post("/v1/schedules")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("여행 종료 일은 필수입니다."));
+    }
+
+    @Test
+    @DisplayName("사용자가 일정 수정 API를 호출한다.")
+    void editSchedule() throws Exception {
+        // given
+        ScheduleEditRequest request = ScheduleEditRequest.builder()
+                .title("제주도 여행")
+                .city("제주도")
+                .startDate(START_DATE)
+                .endDate(END_DATE)
+                .build();
+
+        Long scheduleId = 1L;
+
+        // when // then
+        mockMvc.perform(patch("/v1/schedules/{scheduleId}", scheduleId)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("OK"));
+    }
+
+    @Test
+    @DisplayName("사용자가 수정할 때 여행 시작 일을 작성하지 않으면 예외가 발생한다.")
+    void validateEditStartDate() throws Exception {
+        // given
+        ScheduleEditRequest request = ScheduleEditRequest.builder()
+                .title("제주도 여행")
+                .city("제주도")
+                .endDate(END_DATE)
+                .build();
+
+        Long scheduleId = 1L;
+
+        // when // then
+        mockMvc.perform(patch("/v1/schedules/{scheduleId}", scheduleId)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("여행 시작 일은 필수입니다."));
+    }
+
+    @Test
+    @DisplayName("사용자 수정할 때 여행 종료 일을 작성하지 않으면 예외가 발생한다.")
+    void validateEditEndDate() throws Exception {
+        // given
+        ScheduleEditRequest request = ScheduleEditRequest.builder()
+                .title("제주도 여행")
+                .city("제주도")
+                .startDate(START_DATE)
+                .build();
+
+        Long scheduleId = 1L;
+
+        // when // then
+        mockMvc.perform(patch("/v1/schedules/{scheduleId}", scheduleId)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(APPLICATION_JSON)
                 )
