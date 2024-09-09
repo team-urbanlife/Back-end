@@ -87,7 +87,6 @@ class DetailPlanRepositoryImplTest {
                 .mapToObj(i -> DetailedPlan.builder()
                         .type(Type.LOCATION)
                         .name("제주도 " + i)
-                        .memo(null)
                         .scheduleDetails(scheduleDetails)
                         .latitude(11.1)
                         .longitude(11.1)

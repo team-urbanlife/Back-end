@@ -1,15 +1,16 @@
 package com.wegotoo.application.schedule;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
-import com.wegotoo.application.schedule.request.DetailedPlanCreateServiceRequest;
+import com.wegotoo.application.schedule.request.MemoWriteServiceRequest;
 import com.wegotoo.domain.schedule.DetailedPlan;
+import com.wegotoo.domain.schedule.Memo;
 import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleDetails;
 import com.wegotoo.domain.schedule.ScheduleGroup;
 import com.wegotoo.domain.schedule.Type;
 import com.wegotoo.domain.schedule.repository.DetailPlanRepository;
+import com.wegotoo.domain.schedule.repository.MemoRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleDetailsRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleGroupRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleRepository;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Stream;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DetailedPlanServiceTest {
+class MemoServiceTest {
 
     @Autowired
     ScheduleRepository scheduleRepository;
@@ -42,10 +44,13 @@ class DetailedPlanServiceTest {
     DetailPlanRepository detailPlanRepository;
 
     @Autowired
+    MemoRepository memoRepository;
+
+    @Autowired
     UserRepository userRepository;
 
     @Autowired
-    DetailedPlanService detailedPlanService;
+    MemoService memoService;
 
     final LocalDate START_DATE = LocalDate.of(2024, 9, 1);
     final LocalDate END_DATE = LocalDate.of(2024, 9, 5);
@@ -53,6 +58,7 @@ class DetailedPlanServiceTest {
     @AfterEach
     void tearDown() {
         scheduleGroupRepository.deleteAllInBatch();
+        memoRepository.deleteAllInBatch();
         detailPlanRepository.deleteAllInBatch();;
         scheduleDetailsRepository.deleteAllInBatch();
         scheduleRepository.deleteAllInBatch();
@@ -60,8 +66,8 @@ class DetailedPlanServiceTest {
     }
 
     @Test
-    @DisplayName("유저가 세부 계획을 작성한다.")
-    void writeDetailedPlan() throws Exception {
+    @DisplayName("사용자가 세부 계획에서 메모를 작성한다.")
+    void writeMemo() throws Exception {
         // given
         User user = getUser("user@gmail.com", "user");
         userRepository.save(user);
@@ -77,24 +83,58 @@ class DetailedPlanServiceTest {
                 .toList();
         scheduleDetailsRepository.saveAll(scheduleDetailsList);
 
-        DetailedPlanCreateServiceRequest request = getWriteDetailedPlanServiceRequest();
+        DetailedPlan detailedPlan = getDetailedPlan(scheduleDetailsList.get(0));
+        detailPlanRepository.save(detailedPlan);
+
+        MemoWriteServiceRequest request = MemoWriteServiceRequest.builder()
+                .content("여행에 대한 메모")
+                .build();
         // when
-        detailedPlanService.writeDetailedPlan(schedule.getId(), user.getId(), request);
+        memoService.writeMemo(user.getId(), detailedPlan.getId(), request);
 
         // then
-        List<DetailedPlan> response = detailPlanRepository.findAll();
-        assertThat(response.get(0))
-                .extracting("id", "type", "name", "latitude", "longitude", "sequence")
-                .contains(1L, Type.LOCATION, "제주공항", 11.1, 11.1, 1L);
+        List<Memo> memos = memoRepository.findAll();
+        assertThat(memos.get(0))
+                .extracting("id", "content")
+                .contains(memos.get(0).getId(), "여행에 대한 메모");
     }
 
     @Test
-    @DisplayName("다른 유저가 생성한 일정에 세부 계획을 생성하면 예외가 발생한다.")
-    void validateUserOwnsSchedule() throws Exception {
+    @DisplayName("세부 계획이 없을 때는 메모를 작성하면 예외가 발생한다.")
+    void validateDetailedPlan() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        MemoWriteServiceRequest request = MemoWriteServiceRequest.builder()
+                .content("여행에 대한 메모")
+                .build();
+
+        // when // then
+        assertThatThrownBy(() -> memoService.writeMemo(user.getId(), 100L, request))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("세부 계획을 찾을 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("일정 관리 그룹에 포함되어 있지 않은 유저가 세부 계획에 메모를 남기면 예외가 발샏한다.")
+    void validateWriteMemo() throws Exception {
         // given
         User userA = getUser("userA@gmail.com", "userA");
-        User userB = getUser("userB@gmail.com", "userB");
         userRepository.save(userA);
+
+        User userB = getUser("userB@gmail.com", "userB");
         userRepository.save(userB);
 
         Schedule schedule = getSchedule(START_DATE, END_DATE);
@@ -108,26 +148,32 @@ class DetailedPlanServiceTest {
                 .toList();
         scheduleDetailsRepository.saveAll(scheduleDetailsList);
 
-        DetailedPlanCreateServiceRequest request = getWriteDetailedPlanServiceRequest();
+        DetailedPlan detailedPlan = getDetailedPlan(scheduleDetailsList.get(0));
+        detailPlanRepository.save(detailedPlan);
+
+        MemoWriteServiceRequest request = MemoWriteServiceRequest.builder()
+                .content("여행에 대한 메모")
+                .build();
         // when // then
-        assertThatThrownBy(() -> detailedPlanService.writeDetailedPlan(scheduleDetailsList.get(0).getId(), userB.getId(), request))
+        assertThatThrownBy(() -> memoService.writeMemo(userB.getId(), detailedPlan.getId(), request))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("권한이 없는 사용자입니다.");
+    }
+
+    private DetailedPlan getDetailedPlan(ScheduleDetails scheduleDetails) {
+        return DetailedPlan.builder()
+                .scheduleDetails(scheduleDetails)
+                .type(Type.LOCATION)
+                .name("제주공항")
+                .latitude(11.1)
+                .longitude(11.1)
+                .sequence(1L)
+                .build();
     }
 
     private List<LocalDate> getDatesBetween(LocalDate startDate, LocalDate endDate) {
         return Stream.iterate(startDate, date -> !date.isAfter(endDate), date -> date.plusDays(1))
                 .toList();
-    }
-
-    private DetailedPlanCreateServiceRequest getWriteDetailedPlanServiceRequest() {
-        return DetailedPlanCreateServiceRequest.builder()
-                .date(START_DATE)
-                .type(Type.LOCATION)
-                .name("제주공항")
-                .latitude(11.1)
-                .longitude(11.1)
-                .build();
     }
 
     private static ScheduleGroup getScheduleGroup(Schedule schedule, User user) {
@@ -153,4 +199,5 @@ class DetailedPlanServiceTest {
                 .name(name)
                 .build();
     }
+
 }
