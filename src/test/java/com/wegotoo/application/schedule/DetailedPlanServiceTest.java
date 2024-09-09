@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.wegotoo.application.schedule.request.DetailedPlanCreateServiceRequest;
+import com.wegotoo.application.schedule.request.DetailedPlanEditServiceRequest;
 import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleDetails;
@@ -19,6 +20,8 @@ import com.wegotoo.exception.BusinessException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -84,8 +87,8 @@ class DetailedPlanServiceTest {
         // then
         List<DetailedPlan> response = detailPlanRepository.findAll();
         assertThat(response.get(0))
-                .extracting("id", "type", "name", "latitude", "longitude", "sequence")
-                .contains(1L, Type.LOCATION, "제주공항", 11.1, 11.1, 1L);
+                .extracting("id", "name", "latitude", "longitude", "sequence")
+                .contains(1L, "제주공항", 11.1, 11.1, 1L);
     }
 
     @Test
@@ -115,6 +118,227 @@ class DetailedPlanServiceTest {
                 .hasMessage("권한이 없는 사용자입니다.");
     }
 
+    @Test
+    @DisplayName("사용자가 세부 계획을 수정한다.")
+    void editDetailedPlan() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        DetailedPlan detailedPlan = getDetailedPlan(scheduleDetailsList.get(0));
+        detailPlanRepository.save(detailedPlan);
+
+        DetailedPlanEditServiceRequest request = DetailedPlanEditServiceRequest.builder()
+                .name("제주 공항 입구")
+                .latitude(11.11)
+                .longitude(11.11)
+                .build();
+        // when
+        detailedPlanService.editDetailedPlan(detailedPlan.getId(), user.getId(), request);
+
+        // then
+        List<DetailedPlan> response = detailPlanRepository.findAll();
+        assertThat(response.get(0))
+                .extracting("id", "name", "latitude", "longitude", "sequence")
+                .contains(response.get(0).getId(), "제주 공항 입구", 11.11, 11.11, 1L);
+    }
+
+    @Test
+    @DisplayName("사용자가 세부 계획을 수정할 때 장소 이름을 입력하지 않으면, 이전에 저장된 장소 이름이 유지됩니다.")
+    void updateDetailPlanKeepPreviousLocationIfEmpty() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        DetailedPlan detailedPlan = getDetailedPlan(scheduleDetailsList.get(0));
+        detailPlanRepository.save(detailedPlan);
+
+        DetailedPlanEditServiceRequest request = DetailedPlanEditServiceRequest.builder()
+                .latitude(11.11)
+                .longitude(11.11)
+                .build();
+        // when
+        detailedPlanService.editDetailedPlan(detailedPlan.getId(), user.getId(), request);
+
+        // then
+        List<DetailedPlan> response = detailPlanRepository.findAll();
+        assertThat(response.get(0))
+                .extracting("id", "name", "latitude", "longitude", "sequence")
+                .contains(response.get(0).getId(), "제주공항", 11.11, 11.11, 1L);
+    }
+
+    @Test
+    @DisplayName("사용자가 세부 계획을 수정할 때 위도을 입력받지 못한다면, 이전에 저장된 위도이 유지됩니다.")
+    void updateDetailPlanKeepPreviousLatitudeIfEmpty() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        DetailedPlan detailedPlan = getDetailedPlan(scheduleDetailsList.get(0));
+        detailPlanRepository.save(detailedPlan);
+
+        DetailedPlanEditServiceRequest request = DetailedPlanEditServiceRequest.builder()
+                .name("제주 공항 입구")
+                .longitude(11.11)
+                .build();
+        // when
+        detailedPlanService.editDetailedPlan(detailedPlan.getId(), user.getId(), request);
+
+        // then
+        List<DetailedPlan> response = detailPlanRepository.findAll();
+        assertThat(response.get(0))
+                .extracting("id", "name", "latitude", "longitude", "sequence")
+                .contains(response.get(0).getId(), "제주 공항 입구", 11.1, 11.11, 1L);
+    }
+
+    @Test
+    @DisplayName("사용자가 세부 계획을 수정할 때 경도을 입력받지 못한다면, 이전에 저장된 경도이 유지됩니다.")
+    void updateDetailPlanKeepPreviousLongitudeIfEmpty() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        DetailedPlan detailedPlan = getDetailedPlan(scheduleDetailsList.get(0));
+        detailPlanRepository.save(detailedPlan);
+
+        DetailedPlanEditServiceRequest request = DetailedPlanEditServiceRequest.builder()
+                .name("제주 공항 입구")
+                .latitude(11.11)
+                .build();
+        // when
+        detailedPlanService.editDetailedPlan(detailedPlan.getId(), user.getId(), request);
+
+        // then
+        List<DetailedPlan> response = detailPlanRepository.findAll();
+        assertThat(response.get(0))
+                .extracting("id", "name", "latitude", "longitude", "sequence")
+                .contains(response.get(0).getId(), "제주 공항 입구", 11.11, 11.1, 1L);
+    }
+
+    @Test
+    @DisplayName("사용자가 세부 계획의 순서를 변경할 수 있다. (UP)")
+    void moveUpDetailPlan() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        List<DetailedPlan> detailedPlans = getDetailedPlanList(3, scheduleDetailsList.get(0));
+        detailPlanRepository.saveAll(detailedPlans);
+
+        // when
+        detailedPlanService.movePlan(detailedPlans.get(0).getId(), user.getId(),  true);
+
+        // then
+        DetailedPlan response = detailPlanRepository.findById(detailedPlans.get(0).getId()).get();
+        assertThat(response.getSequence()).isEqualTo(2L);
+    }
+
+    @Test
+    @DisplayName("사용자가 세부 계획의 순서를 변경할 수 있다. (DOWN)")
+    void moveDownDetailPlan() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        List<DetailedPlan> detailedPlans = getDetailedPlanList(3, scheduleDetailsList.get(0));
+        detailPlanRepository.saveAll(detailedPlans);
+
+        // when
+        detailedPlanService.movePlan(detailedPlans.get(1).getId(), user.getId(),  false);
+
+        // then
+        DetailedPlan response = detailPlanRepository.findById(detailedPlans.get(1).getId()).get();
+        assertThat(response.getSequence()).isEqualTo(1L);
+    }
+
+    private static List<DetailedPlan> getDetailedPlanList(int number, ScheduleDetails scheduleDetails) {
+        List<DetailedPlan> detailedPlans = LongStream.range(1, number + 1)
+                .mapToObj(i -> DetailedPlan.builder()
+                        .name("제주 공항" + i)
+                        .latitude(11.1)
+                        .longitude(11.1)
+                        .scheduleDetails(scheduleDetails)
+                        .sequence(i)
+                        .build()).toList();
+        return detailedPlans;
+    }
+
+    private DetailedPlan getDetailedPlan(ScheduleDetails scheduleDetails) {
+        return DetailedPlan.builder()
+                .name("제주공항")
+                .latitude(11.1)
+                .longitude(11.1)
+                .sequence(1L)
+                .scheduleDetails(scheduleDetails)
+                .build();
+    }
+
     private List<LocalDate> getDatesBetween(LocalDate startDate, LocalDate endDate) {
         return Stream.iterate(startDate, date -> !date.isAfter(endDate), date -> date.plusDays(1))
                 .toList();
@@ -123,7 +347,6 @@ class DetailedPlanServiceTest {
     private DetailedPlanCreateServiceRequest getWriteDetailedPlanServiceRequest() {
         return DetailedPlanCreateServiceRequest.builder()
                 .date(START_DATE)
-                .type(Type.LOCATION)
                 .name("제주공항")
                 .latitude(11.1)
                 .longitude(11.1)

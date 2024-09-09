@@ -1,6 +1,7 @@
 package com.wegotoo.api.schedule;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -9,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegotoo.api.schedule.request.DetailedPlanCreateRequest;
 import com.wegotoo.application.schedule.DetailedPlanService;
+import com.wegotoo.application.schedule.request.DetailedPlanEditRequest;
+import com.wegotoo.application.schedule.request.MovePlanRequest;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +42,6 @@ class DetailedPlanControllerTest {
         // given
         DetailedPlanCreateRequest request = DetailedPlanCreateRequest.builder()
                 .date(DATE)
-                .type("TYPE_LOCATION")
                 .name("제주공항")
                 .latitude(11.1)
                 .longitude(11.1)
@@ -64,7 +66,6 @@ class DetailedPlanControllerTest {
     void validateDetailedPlanDate() throws Exception {
         // given
         DetailedPlanCreateRequest request = DetailedPlanCreateRequest.builder()
-                .type("TYPE_LOCATION")
                 .name("제주공항")
                 .latitude(11.1)
                 .longitude(11.1)
@@ -84,12 +85,11 @@ class DetailedPlanControllerTest {
     }
 
     @Test
-    @DisplayName("세부일정의 세부계획을 작성할 때 타입을 입력하지 않으면 예외가 발생한다.")
-    void validateDetailedPlanType() throws Exception {
+    @DisplayName("세부일정의 세부계획을 작성할 때 장소를 입력하지 않으면 예외가 발생한다.")
+    void validateDetailedPlanLocal() throws Exception {
         // given
         DetailedPlanCreateRequest request = DetailedPlanCreateRequest.builder()
                 .date(DATE)
-                .name("제주공항")
                 .latitude(11.1)
                 .longitude(11.1)
                 .build();
@@ -104,7 +104,7 @@ class DetailedPlanControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.message").value("타입은 필수입니다."));
+                .andExpect(jsonPath("$.message").value("장소는 필수입니다."));
     }
 
     @Test
@@ -113,7 +113,6 @@ class DetailedPlanControllerTest {
         // given
         DetailedPlanCreateRequest request = DetailedPlanCreateRequest.builder()
                 .date(DATE)
-                .type("TYPE_LOCATION")
                 .name("제주공항")
                 .longitude(11.1)
                 .build();
@@ -137,7 +136,6 @@ class DetailedPlanControllerTest {
         // given
         DetailedPlanCreateRequest request = DetailedPlanCreateRequest.builder()
                 .date(DATE)
-                .type("TYPE_LOCATION")
                 .name("제주공항")
                 .latitude(11.1)
                 .build();
@@ -153,6 +151,118 @@ class DetailedPlanControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.message").value("경도는 필수입니다."));
+    }
+
+    @Test
+    @DisplayName("세부계획의 내용을 수정하는 API를 호출한다.")
+    void editDetailedPlan() throws Exception {
+        // given
+        DetailedPlanEditRequest request = DetailedPlanEditRequest.builder()
+                .name("제주공항")
+                .latitude(11.1)
+                .longitude(11.1)
+                .build();
+
+        Long detailedPlanId = 1L;
+
+        // when // then
+        mockMvc.perform(patch("/v1/detailed-plans/{detailedPlanId}", detailedPlanId)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("OK"));
+    }
+
+    @Test
+    @DisplayName("세부계획의 내용을 수정할 때 지역 이름을 넣지 않으면 예외가 발생한다.")
+    void validateEditDetailedPlanLocal() throws Exception {
+        // given
+        DetailedPlanEditRequest request = DetailedPlanEditRequest.builder()
+                .latitude(11.1)
+                .longitude(11.1)
+                .build();
+
+        Long detailedPlanId = 1L;
+
+        // when // then
+        mockMvc.perform(patch("/v1/detailed-plans/{detailedPlanId}", detailedPlanId)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("지역은 필수입니다."));
+    }
+
+    @Test
+    @DisplayName("세부계획의 내용을 수정할 때 지역 위도를 넣지 않으면 예외가 발생한다.")
+    void validateEditDetailedPlanLatitude() throws Exception {
+        // given
+        DetailedPlanEditRequest request = DetailedPlanEditRequest.builder()
+                .name("제주공항")
+                .longitude(11.1)
+                .build();
+
+        Long detailedPlanId = 1L;
+
+        // when // then
+        mockMvc.perform(patch("/v1/detailed-plans/{detailedPlanId}", detailedPlanId)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("위도는 필수입니다."));
+    }
+
+    @Test
+    @DisplayName("세부계획의 내용을 수정할 때 지역 경도를 넣지 않으면 예외가 발생한다.")
+    void validateEditDetailedPlanLongitude() throws Exception {
+        // given
+        DetailedPlanEditRequest request = DetailedPlanEditRequest.builder()
+                .name("제주공항")
+                .latitude(11.1)
+                .build();
+
+        Long detailedPlanId = 1L;
+
+        // when // then
+        mockMvc.perform(patch("/v1/detailed-plans/{detailedPlanId}", detailedPlanId)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("경도는 필수입니다."));
+    }
+
+    @Test
+    @DisplayName("세부계획의 순서를 변경하는 API를 호출한다.")
+    void movePlan() throws Exception {
+        // given
+        MovePlanRequest request = MovePlanRequest.builder()
+                .isMoveUp(true)
+                .build();
+
+        Long detailedPlanId = 1L;
+
+        // when // then
+        mockMvc.perform(patch("/v1/detailed-plans/{detailedPlanId}/move", detailedPlanId)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("OK"));
     }
 
 }
