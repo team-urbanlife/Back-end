@@ -55,4 +55,11 @@ public class Schedule {
                 .build();
     }
 
+    public void edit(String title, String city, LocalDate startDate, LocalDate endDate, long totalTravelDays) {
+        this.title = title != null ? title : this.title;
+        this.city = city != null ? city : this.city;
+        this.startDate = startDate != null ? startDate : this.startDate;
+        this.endDate = endDate != null ? endDate : this.endDate;
+        this.totalTravelDays = totalTravelDays;
+    }
 }

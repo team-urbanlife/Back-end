@@ -2,9 +2,14 @@ package com.wegotoo.application.schedule;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.wegotoo.application.schedule.request.DetailedPlanCreateServiceRequest;
 import com.wegotoo.application.schedule.request.ScheduleCreateServiceRequest;
+import com.wegotoo.application.schedule.request.ScheduleEditServiceRequest;
+import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.Schedule;
+import com.wegotoo.domain.schedule.ScheduleDetails;
 import com.wegotoo.domain.schedule.ScheduleGroup;
+import com.wegotoo.domain.schedule.repository.DetailPlanRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleDetailsRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleGroupRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleRepository;
@@ -12,7 +17,9 @@ import com.wegotoo.domain.user.Role;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +42,9 @@ class ScheduleServiceTest {
     ScheduleDetailsRepository scheduleDetailsRepository;
 
     @Autowired
+    DetailPlanRepository detailPlanRepository;
+
+    @Autowired
     ScheduleService scheduleService;
 
     final LocalDate START_DATE = LocalDate.of(2024, 9, 1);
@@ -43,6 +53,7 @@ class ScheduleServiceTest {
     @AfterEach
     void tearDown() {
         scheduleGroupRepository.deleteAllInBatch();
+        detailPlanRepository.deleteAllInBatch();
         scheduleDetailsRepository.deleteAllInBatch();
         scheduleRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
@@ -77,6 +88,108 @@ class ScheduleServiceTest {
 
         assertThat(scheduleGroups.size()).isEqualTo(1);
 
+    }
+
+    @Test
+    @DisplayName("사용자가 여행 일정을 수정한다.")
+    void editSchedule() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        ScheduleEditServiceRequest request = ScheduleEditServiceRequest.builder()
+                .startDate(LocalDate.of(2024, 8, 1))
+                .endDate(LocalDate.of(2024, 8, 3))
+                .build();
+        // when
+        scheduleService.editSchedule(user.getId(), schedule.getId(), request);
+
+        // then
+        List<ScheduleDetails> response = scheduleDetailsRepository.findAll();
+        assertThat(response.size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("세부 일정이 변경되면 세부 계획은 없어진다.")
+    void shouldDeletePlansWhenScheduleDetailsChange() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        DetailedPlan detailedPlan = getDetailedPlan(scheduleDetailsList.get(0));
+        detailPlanRepository.save(detailedPlan);
+
+        ScheduleEditServiceRequest request = ScheduleEditServiceRequest.builder()
+                .startDate(LocalDate.of(2024, 8, 1))
+                .endDate(LocalDate.of(2024, 8, 3))
+                .build();
+        // when
+        scheduleService.editSchedule(user.getId(), schedule.getId(), request);
+
+        // then
+        List<DetailedPlan> response = detailPlanRepository.findAll();
+        assertThat(response.size()).isEqualTo(0);
+    }
+
+    private DetailedPlan getDetailedPlan(ScheduleDetails scheduleDetails) {
+        return DetailedPlan.builder()
+                .name("제주공항")
+                .latitude(11.1)
+                .longitude(11.1)
+                .sequence(1L)
+                .scheduleDetails(scheduleDetails)
+                .build();
+    }
+
+    private List<LocalDate> getDatesBetween(LocalDate startDate, LocalDate endDate) {
+        return Stream.iterate(startDate, date -> !date.isAfter(endDate), date -> date.plusDays(1))
+                .toList();
+    }
+
+    private static ScheduleGroup getScheduleGroup(Schedule schedule, User user) {
+        return ScheduleGroup.builder()
+                .schedule(schedule)
+                .user(user)
+                .build();
+    }
+
+    private static Schedule getSchedule(LocalDate start, LocalDate end) {
+        return Schedule.builder()
+                .title("제주도 여행")
+                .city("제주도")
+                .startDate(start)
+                .endDate(end)
+                .totalTravelDays(ChronoUnit.DAYS.between(start, end) + 1)
+                .build();
+    }
+
+    private User getUser(String email, String name) {
+        return User.builder()
+                .email(email)
+                .name(name)
+                .build();
     }
 
 }

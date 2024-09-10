@@ -85,7 +85,6 @@ class DetailPlanRepositoryImplTest {
 
         List<DetailedPlan> plans = IntStream.range(1, 4)
                 .mapToObj(i -> DetailedPlan.builder()
-                        .type(Type.LOCATION)
                         .name("제주도 " + i)
                         .scheduleDetails(scheduleDetails)
                         .latitude(11.1)

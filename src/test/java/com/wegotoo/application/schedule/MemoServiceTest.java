@@ -163,7 +163,6 @@ class MemoServiceTest {
     private DetailedPlan getDetailedPlan(ScheduleDetails scheduleDetails) {
         return DetailedPlan.builder()
                 .scheduleDetails(scheduleDetails)
-                .type(Type.LOCATION)
                 .name("제주공항")
                 .latitude(11.1)
                 .longitude(11.1)
