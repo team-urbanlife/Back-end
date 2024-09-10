@@ -53,4 +53,17 @@ public class User {
         this.refreshToken = refreshToken;
     }
 
+    public User updateNameAndProfileImage(String name, String profileImage) {
+        this.name = name;
+        this.profileImage = profileImage;
+
+        return this;
+    }
+
+    public User updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+
+        return this;
+    }
+
 }
