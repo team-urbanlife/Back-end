@@ -61,20 +61,13 @@ public class ScheduleService {
 
         validateUserHasAccessToSchedule(user.getId(), schedule.getId());
 
-        editScheduleDetails(schedule, request.getStartDate(), request.getEndDate());
-
-        schedule.edit(request.getTitle(), request.getCity(), request.getStartDate(), request.getEndDate(),
-                request.totalTravelDays());
-    }
-
-    private void editScheduleDetails(Schedule schedule, LocalDate newStartDate, LocalDate newEndDate) {
         List<ScheduleDetails> existingDetails = scheduleDetailsRepository.findBySchedule(schedule);
 
         List<LocalDate> existingDates = existingDetails.stream()
                 .map(ScheduleDetails::getDate)
                 .toList();
 
-        List<LocalDate> newDates = getDatesBetween(newStartDate, newEndDate);
+        List<LocalDate> newDates = getDatesBetween(request.getStartDate(), request.getEndDate());
 
         List<LocalDate> datesToAdd = newDates.stream()
                 .filter(date -> isDateContain(date, existingDates))
@@ -94,6 +87,9 @@ public class ScheduleService {
                 .toList();
 
         scheduleDetailsRepository.saveAll(detailsToAdd);
+
+        schedule.edit(request.getTitle(), request.getCity(), request.getStartDate(), request.getEndDate(),
+                request.totalTravelDays());
     }
 
     private static boolean isDateContain(LocalDate date, List<LocalDate> existingDates) {
