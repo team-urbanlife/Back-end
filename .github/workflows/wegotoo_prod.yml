@@ -40,6 +40,22 @@ jobs:
           DEV_SECRET_DIR_FILE_NAME: application-prod.yml
         run: echo $DEV_SECRET | base64 --decode >> $DEV_SECRET_DIR/$DEV_SECRET_DIR_FILE_NAME
 
+      # application-jwt.yml
+      - name: Copy jwt Secret
+        env:
+          DEV_SECRET: ${{ secrets.APPLICATION_JWT_YML }}
+          DEV_SECRET_DIR: src/main/resources
+          DEV_SECRET_DIR_FILE_NAME: application-jwt.yml
+        run: echo $DEV_SECRET | base64 --decode >> $DEV_SECRET_DIR/$DEV_SECRET_DIR_FILE_NAME
+
+      # application-oauth.yml
+      - name: Copy oauth Secret
+        env:
+          DEV_SECRET: ${{ secrets.APPLICATION_OAUTH_YML }}
+          DEV_SECRET_DIR: src/main/resources
+          DEV_SECRET_DIR_FILE_NAME: application-oauth.yml
+        run: echo $DEV_SECRET | base64 --decode >> $DEV_SECRET_DIR/$DEV_SECRET_DIR_FILE_NAME
+
       # ./gradlew 권한 설정
       - name: ./gradlew 권한 설정
         run: chmod +x ./gradlew
