@@ -7,6 +7,7 @@ import com.wegotoo.application.schedule.request.DetailedPlanEditRequest;
 import com.wegotoo.application.schedule.request.MovePlanRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,12 @@ public class DetailedPlanController {
     public ApiResponse<Void> movePlan(@PathVariable("detailedPlanId") Long detailedPlanId,
                                       @RequestBody MovePlanRequest request) {
         detailedPlanService.movePlan(detailedPlanId, 0L, request.isMoveUp());
+        return ApiResponse.ok();
+    }
+
+    @DeleteMapping("/v1/detailed-plans/{detailedPlanId}")
+    public ApiResponse<Void> deleteDetailedPlan(@PathVariable("detailedPlanId") Long detailedPlanId) {
+        detailedPlanService.deleteDetailedPlan(detailedPlanId, 0L);
         return ApiResponse.ok();
     }
 

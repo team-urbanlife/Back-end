@@ -8,6 +8,7 @@ import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleDetails;
 import com.wegotoo.domain.schedule.repository.DetailPlanRepository;
+import com.wegotoo.domain.schedule.repository.MemoRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleDetailsRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleGroupRepository;
 import com.wegotoo.domain.user.User;
@@ -26,6 +27,7 @@ public class DetailedPlanService {
     private final DetailPlanRepository detailPlanRepository;
     private final UserRepository userRepository;
     private final ScheduleGroupRepository scheduleGroupRepository;
+    private final MemoRepository memoRepository;
 
     @Transactional
     public void writeDetailedPlan(Long scheduleDetailsId, Long userId, DetailedPlanCreateServiceRequest request) {
@@ -80,6 +82,20 @@ public class DetailedPlanService {
         swapPlan.movePlan(tempSequence);
     }
 
+    @Transactional
+    public void deleteDetailedPlan(Long detailedPlanId, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        DetailedPlan detailedPlan = detailPlanRepository.findById(detailedPlanId)
+                .orElseThrow(() -> new BusinessException(DETAILED_PLAN_NOT_FOUND));
+
+        validateUserHasAccessToSchedule(user.getId(), detailedPlan.getId());
+
+        memoRepository.deleteByDetailedPlan(detailedPlan);
+        detailPlanRepository.delete(detailedPlan);
+    }
+
     private DetailedPlan isMoveUp(DetailedPlan detailedPlan, boolean isMoveUp) {
         if (isMoveUp) {
             return detailPlanRepository.findTopBySequenceGreaterThanOrderBySequenceAsc(
@@ -92,10 +108,7 @@ public class DetailedPlanService {
     }
 
     private void validateUserHasAccessToSchedule(Long userId, Long scheduleId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
-
-        scheduleGroupRepository.findByUserIdAndScheduleId(user.getId(), scheduleId)
+        scheduleGroupRepository.findByUserIdAndScheduleId(userId, scheduleId)
                 .orElseThrow(() -> new BusinessException(UNAUTHORIZED_REQUEST));
     }
 }
