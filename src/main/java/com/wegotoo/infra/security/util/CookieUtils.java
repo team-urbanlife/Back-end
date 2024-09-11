@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
+import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 
 public class CookieUtils {
@@ -20,35 +21,39 @@ public class CookieUtils {
     }
 
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .path("/")
+                .maxAge(maxAge)
+                .secure(true)
+                .sameSite("None")
+                .build();
 
-        cookie.setPath("/");
-        cookie.setMaxAge(maxAge);
-        cookie.setSecure(true);
-
-        response.addCookie(cookie);
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
     public static void addToken(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie(TOKEN_NAME, token);
+        ResponseCookie cookie = ResponseCookie.from(TOKEN_NAME, token)
+                .path("/")
+                .maxAge(TOKEN_MAX_AGE)
+                .secure(true)
+                .sameSite("None")
+                .build();
 
-        cookie.setPath("/");
-        cookie.setMaxAge(TOKEN_MAX_AGE);
-        cookie.setSecure(true);
-
-        response.addCookie(cookie);
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
         Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals(name))
                 .forEach(cookie -> {
-                    cookie.setValue("");
-                    cookie.setPath("/");
-                    cookie.setSecure(true);
-                    cookie.setMaxAge(0);
+                    ResponseCookie responseCookie = ResponseCookie.from(cookie.getName(), cookie.getValue())
+                            .value("")
+                            .path("/")
+                            .secure(true)
+                            .maxAge(0)
+                            .build();
 
-                    response.addCookie(cookie);
+                    response.addHeader("Set-Cookie", responseCookie.toString());
                 });
     }
 

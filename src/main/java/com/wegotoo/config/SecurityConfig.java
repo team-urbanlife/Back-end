@@ -1,6 +1,7 @@
 package com.wegotoo.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import com.wegotoo.infra.security.oauth.CustomOAuth2UserService;
 import com.wegotoo.infra.security.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
@@ -31,6 +32,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(withDefaults())
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
+                .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer.sessionCreationPolicy(
+                        STATELESS))
                 .authorizeHttpRequests(request ->
                         request
                                 .requestMatchers("/h2-console/**").permitAll()
