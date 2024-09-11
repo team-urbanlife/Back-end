@@ -9,6 +9,7 @@ import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleDetails;
 import com.wegotoo.domain.schedule.ScheduleGroup;
 import com.wegotoo.domain.schedule.repository.DetailPlanRepository;
+import com.wegotoo.domain.schedule.repository.MemoRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleDetailsRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleGroupRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleRepository;
@@ -32,6 +33,7 @@ public class ScheduleService {
     private final ScheduleGroupRepository scheduleGroupRepository;
     private final ScheduleDetailsRepository scheduleDetailsRepository;
     private final DetailPlanRepository detailPlanRepository;
+    private final MemoRepository memoRepository;
 
     @Transactional
     public void createSchedule(Long userId, ScheduleCreateServiceRequest request) {
@@ -92,15 +94,41 @@ public class ScheduleService {
                 request.totalTravelDays());
     }
 
+    @Transactional
+    public void deleteSchedule(Long userId, Long scheduleId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new BusinessException(SCHEDULE_NOT_FOUND));
+
+        ScheduleGroup scheduleGroup = scheduleGroupRepository.findByUserIdAndScheduleId(user.getId(), scheduleId)
+                .orElseThrow(() -> new BusinessException(UNAUTHORIZED_REQUEST));
+
+        List<ScheduleDetails> scheduleDetails = scheduleDetailsRepository.findBySchedule(schedule);
+
+        List<DetailedPlan> detailedPlans = detailPlanRepository.findByScheduleDetails(scheduleDetails);
+
+        if (hasDetailedPlans(detailedPlans)) {
+            detailedPlans.forEach(memoRepository::deleteByDetailedPlan);
+            detailPlanRepository.deleteAll(detailedPlans);
+        }
+
+        scheduleDetailsRepository.deleteAll(scheduleDetails);
+        scheduleGroupRepository.delete(scheduleGroup);
+        scheduleRepository.delete(schedule);
+    }
+
+    private static boolean hasDetailedPlans(List<DetailedPlan> detailedPlan) {
+        return !detailedPlan.isEmpty();
+    }
+
     private static boolean isDateContain(LocalDate date, List<LocalDate> existingDates) {
         return !existingDates.contains(date);
     }
 
     private void validateUserHasAccessToSchedule(Long userId, Long scheduleId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
-
-        scheduleGroupRepository.findByUserIdAndScheduleId(user.getId(), scheduleId)
+        scheduleGroupRepository.findByUserIdAndScheduleId(userId, scheduleId)
                 .orElseThrow(() -> new BusinessException(UNAUTHORIZED_REQUEST));
     }
 

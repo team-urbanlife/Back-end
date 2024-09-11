@@ -6,6 +6,7 @@ import com.wegotoo.application.schedule.ScheduleService;
 import com.wegotoo.api.schedule.request.ScheduleEditRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,12 @@ public class ScheduleController {
     @PatchMapping("/v1/schedules/{scheduleId}")
     public ApiResponse<Void> editSchedule(@PathVariable("scheduleId") Long scheduleId, @RequestBody @Valid ScheduleEditRequest request) {
         scheduleService.editSchedule(0L, scheduleId, request.toService());
+        return ApiResponse.ok();
+    }
+
+    @DeleteMapping("/v1/schedules/{scheduleId}")
+    public ApiResponse<Void> deleteSchedule(@PathVariable("scheduleId") Long scheduleId) {
+        scheduleService.deleteSchedule(0L, scheduleId);
         return ApiResponse.ok();
     }
 
