@@ -10,10 +10,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegotoo.api.schedule.request.DetailedPlanCreateRequest;
+import com.wegotoo.api.schedule.request.DetailedPlanMoveRequest;
 import com.wegotoo.application.schedule.DetailedPlanService;
 import com.wegotoo.application.schedule.request.DetailedPlanEditRequest;
-import com.wegotoo.application.schedule.request.MovePlanRequest;
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -248,15 +249,17 @@ class DetailedPlanControllerTest {
     @DisplayName("세부계획의 순서를 변경하는 API를 호출한다.")
     void movePlan() throws Exception {
         // given
-        MovePlanRequest request = MovePlanRequest.builder()
-                .isMoveUp(true)
-                .build();
+        DetailedPlanMoveRequest request1 = getMoveRequest(1L, 2L);
+        DetailedPlanMoveRequest request2 = getMoveRequest(2L, 1L);
+        DetailedPlanMoveRequest request3 = getMoveRequest(3L, 3L);
 
-        Long detailedPlanId = 1L;
+        List<DetailedPlanMoveRequest> requests = List.of(request1, request2, request3);
+
+        Long ScheduleDetailsId = 1L;
 
         // when // then
-        mockMvc.perform(patch("/v1/detailed-plans/{detailedPlanId}/move", detailedPlanId)
-                        .content(objectMapper.writeValueAsString(request))
+        mockMvc.perform(patch("/v1/detailed-plans/{ScheduleDetailsId}/move", ScheduleDetailsId)
+                        .content(objectMapper.writeValueAsString(requests))
                         .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())
@@ -281,6 +284,14 @@ class DetailedPlanControllerTest {
                 .andExpect(jsonPath("$.code").value("200"))
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.message").value("OK"));
+    }
+
+    private static DetailedPlanMoveRequest getMoveRequest(long detailedPlanId,
+                                                          long sequence) {
+        return DetailedPlanMoveRequest.builder()
+                .detailedPlanId(detailedPlanId)
+                .sequence(sequence)
+                .build();
     }
 
 }

@@ -2,10 +2,11 @@ package com.wegotoo.api.schedule;
 
 import com.wegotoo.api.ApiResponse;
 import com.wegotoo.api.schedule.request.DetailedPlanCreateRequest;
+import com.wegotoo.api.schedule.request.DetailedPlanMoveRequest;
 import com.wegotoo.application.schedule.DetailedPlanService;
 import com.wegotoo.application.schedule.request.DetailedPlanEditRequest;
-import com.wegotoo.application.schedule.request.MovePlanRequest;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -34,10 +35,10 @@ public class DetailedPlanController {
         return ApiResponse.ok();
     }
 
-    @PatchMapping("/v1/detailed-plans/{detailedPlanId}/move")
-    public ApiResponse<Void> movePlan(@PathVariable("detailedPlanId") Long detailedPlanId,
-                                      @RequestBody MovePlanRequest request) {
-        detailedPlanService.movePlan(detailedPlanId, 0L, request.isMoveUp());
+    @PatchMapping("/v1/detailed-plans/{scheduleDetailsId}/move")
+    public ApiResponse<Void> movePlan(@PathVariable("scheduleDetailsId") Long scheduleDetailsId,
+                                      @RequestBody List<DetailedPlanMoveRequest> requests) {
+        detailedPlanService.movePlan(scheduleDetailsId, 0L, requests);
         return ApiResponse.ok();
     }
 
