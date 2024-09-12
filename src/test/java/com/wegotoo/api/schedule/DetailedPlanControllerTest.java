@@ -1,6 +1,7 @@
 package com.wegotoo.api.schedule;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -256,6 +257,23 @@ class DetailedPlanControllerTest {
         // when // then
         mockMvc.perform(patch("/v1/detailed-plans/{detailedPlanId}/move", detailedPlanId)
                         .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("OK"));
+    }
+
+    @Test
+    @DisplayName("세부계획을 삭제하는 API를 호출한다.")
+    void deleteDetailedPlan() throws Exception {
+        // given
+        Long detailedPlanId = 1L;
+
+        // when // then
+        mockMvc.perform(delete("/v1/detailed-plans/{detailedPlanId}", detailedPlanId)
                         .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())

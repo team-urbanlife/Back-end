@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ScheduleGroupRepository extends JpaRepository<ScheduleGroup, Long> {
 
-    Optional<Object> findByUserIdAndScheduleId(Long userId, Long scheduleId);
+    Optional<ScheduleGroup> findByUserIdAndScheduleId(Long userId, Long scheduleId);
 
 }

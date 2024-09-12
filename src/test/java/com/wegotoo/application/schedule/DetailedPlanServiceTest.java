@@ -6,11 +6,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.wegotoo.application.schedule.request.DetailedPlanCreateServiceRequest;
 import com.wegotoo.application.schedule.request.DetailedPlanEditServiceRequest;
 import com.wegotoo.domain.schedule.DetailedPlan;
+import com.wegotoo.domain.schedule.Memo;
 import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleDetails;
 import com.wegotoo.domain.schedule.ScheduleGroup;
 import com.wegotoo.domain.schedule.Type;
 import com.wegotoo.domain.schedule.repository.DetailPlanRepository;
+import com.wegotoo.domain.schedule.repository.MemoRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleDetailsRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleGroupRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleRepository;
@@ -46,6 +48,9 @@ class DetailedPlanServiceTest {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    MemoRepository memoRepository;
 
     @Autowired
     DetailedPlanService detailedPlanService;
@@ -315,6 +320,43 @@ class DetailedPlanServiceTest {
         // then
         DetailedPlan response = detailPlanRepository.findById(detailedPlans.get(1).getId()).get();
         assertThat(response.getSequence()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("사용자가 세부 계획을 삭제할 수 있다.")
+    void deleteDetailedPlan() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        DetailedPlan detailedPlan = getDetailedPlan(scheduleDetailsList.get(0));
+        detailPlanRepository.save(detailedPlan);
+
+        Memo memo = Memo.builder()
+                .content("메모 작성")
+                .detailedPlan(detailedPlan)
+                .build();
+        memoRepository.save(memo);
+        // when
+        detailedPlanService.deleteDetailedPlan(detailedPlan.getId(), user.getId());
+
+        // then
+        List<DetailedPlan> detailedPlans = detailPlanRepository.findAll();
+        List<Memo> memos = memoRepository.findAll();
+
+        assertThat(detailedPlans.size()).isEqualTo(0);
+        assertThat(memos.size()).isEqualTo(0);
     }
 
     private static List<DetailedPlan> getDetailedPlanList(int number, ScheduleDetails scheduleDetails) {

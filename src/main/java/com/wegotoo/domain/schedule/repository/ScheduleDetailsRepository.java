@@ -19,4 +19,6 @@ public interface ScheduleDetailsRepository extends JpaRepository<ScheduleDetails
 
     @Query("SELECT sd FROM ScheduleDetails sd JOIN FETCH sd.schedule WHERE sd.schedule = :schedule")
     List<ScheduleDetails> findBySchedule(@Param("schedule") Schedule schedule);
+
+    void deleteAllBySchedule(Schedule schedule);
 }
