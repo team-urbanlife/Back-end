@@ -41,3 +41,5 @@ out/
 ### YAML FILE ###
 application-dev.yml
 application-prod.yml
+application-oauth.yml
+application-jwt.yml

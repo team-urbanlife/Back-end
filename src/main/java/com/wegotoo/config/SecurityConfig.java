@@ -1,7 +1,13 @@
 package com.wegotoo.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import com.wegotoo.infra.security.oauth.CustomOAuth2UserService;
+import com.wegotoo.infra.security.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.wegotoo.infra.security.oauth.handler.OAuth2FailureHandler;
+import com.wegotoo.infra.security.oauth.handler.OAuth2SuccessHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,7 +16,13 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final CustomOAuth2UserService oAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final HttpCookieOAuth2AuthorizationRequestRepository authorizationRequestRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -20,10 +32,24 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(withDefaults())
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
+                .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer.sessionCreationPolicy(
+                        STATELESS))
                 .authorizeHttpRequests(request ->
                         request
                                 .requestMatchers("/h2-console/**").permitAll()
-                                .anyRequest().authenticated());
+                                .requestMatchers("/oauth2/**").permitAll()
+                                .anyRequest().authenticated())
+                .oauth2Login(oauth2LoginConfigurer ->
+                        oauth2LoginConfigurer
+                                .authorizationEndpoint(authorizationEndpointConfig ->
+                                        authorizationEndpointConfig.baseUri("/oauth2/authorization")
+                                                .authorizationRequestRepository(authorizationRequestRepository))
+                                .redirectionEndpoint(redirectionEndpointConfig ->
+                                        redirectionEndpointConfig.baseUri("/login/oauth2/code/*"))
+                                .userInfoEndpoint(userInfoEndpointConfig ->
+                                        userInfoEndpointConfig.userService(oAuth2UserService))
+                                .successHandler(oAuth2SuccessHandler)
+                                .failureHandler(oAuth2FailureHandler));
 
         return http.build();
     }
