@@ -3,6 +3,7 @@ package com.wegotoo.application.schedule;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.wegotoo.api.schedule.request.DetailedPlanMoveRequest;
 import com.wegotoo.application.schedule.request.DetailedPlanCreateServiceRequest;
 import com.wegotoo.application.schedule.request.DetailedPlanEditServiceRequest;
 import com.wegotoo.domain.schedule.DetailedPlan;
@@ -10,7 +11,6 @@ import com.wegotoo.domain.schedule.Memo;
 import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleDetails;
 import com.wegotoo.domain.schedule.ScheduleGroup;
-import com.wegotoo.domain.schedule.Type;
 import com.wegotoo.domain.schedule.repository.DetailPlanRepository;
 import com.wegotoo.domain.schedule.repository.MemoRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleDetailsRepository;
@@ -22,7 +22,6 @@ import com.wegotoo.exception.BusinessException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
@@ -265,7 +264,7 @@ class DetailedPlanServiceTest {
     }
 
     @Test
-    @DisplayName("사용자가 세부 계획의 순서를 변경할 수 있다. (UP)")
+    @DisplayName("사용자가 세부 계획의 순서를 변경할 수 있다.")
     void moveUpDetailPlan() throws Exception {
         // given
         User user = getUser("user@gmail.com", "user");
@@ -285,41 +284,18 @@ class DetailedPlanServiceTest {
         List<DetailedPlan> detailedPlans = getDetailedPlanList(3, scheduleDetailsList.get(0));
         detailPlanRepository.saveAll(detailedPlans);
 
+        DetailedPlanMoveRequest request1 = getMoveRequest(detailedPlans.get(0).getId(), 2L);
+        DetailedPlanMoveRequest request2 = getMoveRequest(detailedPlans.get(1).getId(), 1L);
+        DetailedPlanMoveRequest request3 = getMoveRequest(detailedPlans.get(2).getId(), 3L);
+
+        List<DetailedPlanMoveRequest> requests = List.of(request1, request2, request3);
+
         // when
-        detailedPlanService.movePlan(detailedPlans.get(0).getId(), user.getId(),  true);
+        detailedPlanService.movePlan(scheduleDetailsList.get(0).getId(), user.getId(),  requests);
 
         // then
         DetailedPlan response = detailPlanRepository.findById(detailedPlans.get(0).getId()).get();
         assertThat(response.getSequence()).isEqualTo(2L);
-    }
-
-    @Test
-    @DisplayName("사용자가 세부 계획의 순서를 변경할 수 있다. (DOWN)")
-    void moveDownDetailPlan() throws Exception {
-        // given
-        User user = getUser("user@gmail.com", "user");
-        userRepository.save(user);
-
-        Schedule schedule = getSchedule(START_DATE, END_DATE);
-        scheduleRepository.save(schedule);
-
-        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
-        scheduleGroupRepository.save(scheduleGroup);
-
-        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
-                .stream().map(date -> ScheduleDetails.create(date, schedule))
-                .toList();
-        scheduleDetailsRepository.saveAll(scheduleDetailsList);
-
-        List<DetailedPlan> detailedPlans = getDetailedPlanList(3, scheduleDetailsList.get(0));
-        detailPlanRepository.saveAll(detailedPlans);
-
-        // when
-        detailedPlanService.movePlan(detailedPlans.get(1).getId(), user.getId(),  false);
-
-        // then
-        DetailedPlan response = detailPlanRepository.findById(detailedPlans.get(1).getId()).get();
-        assertThat(response.getSequence()).isEqualTo(1L);
     }
 
     @Test
@@ -357,6 +333,14 @@ class DetailedPlanServiceTest {
 
         assertThat(detailedPlans.size()).isEqualTo(0);
         assertThat(memos.size()).isEqualTo(0);
+    }
+
+    private static DetailedPlanMoveRequest getMoveRequest(long detailedPlanId,
+                                                          long sequence) {
+        return DetailedPlanMoveRequest.builder()
+                .detailedPlanId(detailedPlanId)
+                .sequence(sequence)
+                .build();
     }
 
     private static List<DetailedPlan> getDetailedPlanList(int number, ScheduleDetails scheduleDetails) {

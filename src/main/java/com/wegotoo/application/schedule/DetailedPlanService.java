@@ -2,6 +2,7 @@ package com.wegotoo.application.schedule;
 
 import static com.wegotoo.exception.ErrorCode.*;
 
+import com.wegotoo.api.schedule.request.DetailedPlanMoveRequest;
 import com.wegotoo.application.schedule.request.DetailedPlanCreateServiceRequest;
 import com.wegotoo.application.schedule.request.DetailedPlanEditServiceRequest;
 import com.wegotoo.domain.schedule.DetailedPlan;
@@ -14,6 +15,7 @@ import com.wegotoo.domain.schedule.repository.ScheduleGroupRepository;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import com.wegotoo.exception.BusinessException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,22 +66,20 @@ public class DetailedPlanService {
     }
 
     @Transactional
-    public void movePlan(Long detailedPlanId, Long userId, boolean isMoveUp) {
+    public void movePlan(Long scheduleDetailsId, Long userId, List<DetailedPlanMoveRequest> requests) {
         User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
-        DetailedPlan detailedPlan = detailPlanRepository.findById(detailedPlanId)
-                .orElseThrow(() -> new BusinessException(DETAILED_PLAN_NOT_FOUND));
+        ScheduleDetails scheduleDetails = scheduleDetailsRepository.findById(scheduleDetailsId)
+                .orElseThrow(() -> new BusinessException(SCHEDULE_DETAIL_NOT_FOUND));
 
-        ScheduleDetails scheduleDetails = detailedPlan.getScheduleDetails();
         Schedule schedule = scheduleDetails.getSchedule();
-
         validateUserHasAccessToSchedule(user.getId(), schedule.getId());
 
-        DetailedPlan swapPlan = isMoveUp(detailedPlan, isMoveUp);
-
-        Long tempSequence = detailedPlan.getSequence();
-        detailedPlan.movePlan(swapPlan.getSequence());
-        swapPlan.movePlan(tempSequence);
+        requests.forEach(planMove -> {
+            DetailedPlan detailedPlan = detailPlanRepository.findById(planMove.getDetailedPlanId())
+                    .orElseThrow(() -> new BusinessException(DETAILED_PLAN_NOT_FOUND));
+            detailedPlan.movePlan(planMove.getSequence());
+        });
     }
 
     @Transactional
