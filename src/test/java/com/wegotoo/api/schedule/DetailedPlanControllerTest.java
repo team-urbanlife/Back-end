@@ -258,7 +258,7 @@ class DetailedPlanControllerTest {
         Long ScheduleDetailsId = 1L;
 
         // when // then
-        mockMvc.perform(patch("/v1/detailed-plans/{ScheduleDetailsId}/move", ScheduleDetailsId)
+        mockMvc.perform(patch("scheduleDetails/{scheduleDetailsId}/detailed-plans/move", ScheduleDetailsId)
                         .content(objectMapper.writeValueAsString(requests))
                         .contentType(APPLICATION_JSON)
                 )

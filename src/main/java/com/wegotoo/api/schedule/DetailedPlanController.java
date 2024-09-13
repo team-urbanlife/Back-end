@@ -35,7 +35,7 @@ public class DetailedPlanController {
         return ApiResponse.ok();
     }
 
-    @PatchMapping("/v1/detailed-plans/{scheduleDetailsId}/move")
+    @PatchMapping("scheduleDetails/{scheduleDetailsId}/detailed-plans/move")
     public ApiResponse<Void> movePlan(@PathVariable("scheduleDetailsId") Long scheduleDetailsId,
                                       @RequestBody List<DetailedPlanMoveRequest> requests) {
         detailedPlanService.movePlan(scheduleDetailsId, 0L, requests);
