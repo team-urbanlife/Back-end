@@ -12,6 +12,7 @@ import com.wegotoo.domain.schedule.repository.DetailPlanRepository;
 import com.wegotoo.domain.schedule.repository.MemoRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleDetailsRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleGroupRepository;
+import com.wegotoo.domain.schedule.repository.ScheduleRepository;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import com.wegotoo.exception.BusinessException;
@@ -30,6 +31,7 @@ public class DetailedPlanService {
     private final UserRepository userRepository;
     private final ScheduleGroupRepository scheduleGroupRepository;
     private final MemoRepository memoRepository;
+    private final ScheduleRepository scheduleRepository;
 
     @Transactional
     public void writeDetailedPlan(Long scheduleDetailsId, Long userId, DetailedPlanCreateServiceRequest request) {
