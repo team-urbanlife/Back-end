@@ -255,10 +255,10 @@ class DetailedPlanControllerTest {
 
         List<DetailedPlanMoveRequest> requests = List.of(request1, request2, request3);
 
-        Long ScheduleDetailsId = 1L;
+        Long scheduleDetailsId = 1L;
 
         // when // then
-        mockMvc.perform(patch("scheduleDetails/{scheduleDetailsId}/detailed-plans/move", ScheduleDetailsId)
+        mockMvc.perform(patch("/v1/scheduleDetails/{scheduleDetailsId}/detailed-plans/move", scheduleDetailsId)
                         .content(objectMapper.writeValueAsString(requests))
                         .contentType(APPLICATION_JSON)
                 )
