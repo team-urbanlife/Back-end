@@ -1,4 +1,4 @@
-package com.wegotoo.domain.schedule.repository;
+package com.wegotoo.domain.schedule.repository.querydsl;
 
 import static com.wegotoo.domain.schedule.QDetailedPlan.detailedPlan;
 import static com.wegotoo.domain.schedule.QScheduleDetails.scheduleDetails;

@@ -2,8 +2,11 @@ package com.wegotoo.application.schedule;
 
 import static com.wegotoo.exception.ErrorCode.*;
 
+import com.wegotoo.application.OffsetLimit;
+import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.schedule.request.ScheduleCreateServiceRequest;
 import com.wegotoo.application.schedule.request.ScheduleEditServiceRequest;
+import com.wegotoo.application.schedule.response.ScheduleFindAllResponse;
 import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleDetails;
@@ -13,6 +16,7 @@ import com.wegotoo.domain.schedule.repository.MemoRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleDetailsRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleGroupRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleRepository;
+import com.wegotoo.domain.schedule.repository.response.ScheduleQueryEntity;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import com.wegotoo.exception.BusinessException;
@@ -51,6 +55,15 @@ public class ScheduleService {
                 .stream().map(date -> ScheduleDetails.create(date, schedule))
                 .toList();
         scheduleDetailsRepository.saveAll(scheduleDetailsList);
+    }
+
+    public SliceResponse<ScheduleFindAllResponse> findAllSchedules(Long userId, OffsetLimit offsetLimit) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        List<ScheduleQueryEntity> schedules = scheduleRepository.findAllSchedules(user.getId(), offsetLimit.getOffset(),
+                offsetLimit.getLimit());
+
+        return SliceResponse.of(ScheduleFindAllResponse.toList(schedules), offsetLimit.getOffset(), offsetLimit.getLimit());
     }
 
     @Transactional

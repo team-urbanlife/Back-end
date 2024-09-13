@@ -1,4 +1,4 @@
-package com.wegotoo.domain.schedule.repository;
+package com.wegotoo.domain.schedule.repository.querydsl;
 
 import java.time.LocalDate;
 
