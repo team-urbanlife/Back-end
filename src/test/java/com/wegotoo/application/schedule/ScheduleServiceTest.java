@@ -2,9 +2,12 @@ package com.wegotoo.application.schedule;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.wegotoo.application.OffsetLimit;
+import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.schedule.request.DetailedPlanCreateServiceRequest;
 import com.wegotoo.application.schedule.request.ScheduleCreateServiceRequest;
 import com.wegotoo.application.schedule.request.ScheduleEditServiceRequest;
+import com.wegotoo.application.schedule.response.ScheduleFindAllResponse;
 import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.Memo;
 import com.wegotoo.domain.schedule.Schedule;
@@ -21,6 +24,7 @@ import com.wegotoo.domain.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -200,6 +204,53 @@ class ScheduleServiceTest {
         assertThat(scheduleDetails.size()).isEqualTo(0);
         assertThat(detailedPlans.size()).isEqualTo(0);
         assertThat(memos.size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("유저가 본인이 작성한 일정들을 조회 할 수 있다.")
+    void findAllSchedule() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        List<Schedule> schedules = getScheduleList();
+        scheduleRepository.saveAll(schedules);
+
+        List<ScheduleGroup> scheduleGroups = getScheduleGroupList(user, schedules);
+        scheduleGroupRepository.saveAll(scheduleGroups);
+
+        OffsetLimit offsetLimit = OffsetLimit.builder()
+                .offset(0)
+                .limit(4)
+                .build();
+        // when
+        SliceResponse<ScheduleFindAllResponse> responses = scheduleService.findAllSchedules(user.getId(),
+                offsetLimit);
+        // then
+        assertThat(responses.getContent().size()).isEqualTo(4);
+    }
+
+    private static List<ScheduleGroup> getScheduleGroupList(User user, List<Schedule> schedules) {
+        List<ScheduleGroup> scheduleGroups = IntStream.range(0, 4)
+                .mapToObj(i -> ScheduleGroup.builder()
+                        .user(user)
+                        .schedule(schedules.get(i))
+                        .build())
+                .toList();
+        return scheduleGroups;
+    }
+
+    private List<Schedule> getScheduleList() {
+        List<Schedule> schedules = IntStream.range(1, 5)
+                .mapToObj(i -> Schedule.builder()
+                        .title("제주도 여행" + i)
+                        .city("제주도")
+                        .startDate(START_DATE)
+                        .endDate(END_DATE)
+                        .totalTravelDays(5)
+                        .build())
+                .toList();
+        return schedules;
     }
 
     private DetailedPlan getDetailedPlan(ScheduleDetails scheduleDetails) {
