@@ -17,10 +17,10 @@ public class TestSecurityContextFactory implements WithSecurityContextFactory<Wi
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
         UserDetails userDetails = CustomUserDetails.builder()
-                .id(1L)
-                .username("user@email.com")
-                .password(PasswordUtils.createRandomPassword())
-                .authorities(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")))
+                .id(annotation.id())
+                .username(annotation.username())
+                .password(annotation.password())
+                .authorities(Collections.singleton(new SimpleGrantedAuthority(annotation.role())))
                 .build();
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, null,

@@ -1,0 +1,52 @@
+[[schedule-create]]
+=== 여행 일정 생성
+
+==== HTTP Request
+
+include::{snippets}/schedule/create/http-request.adoc[]
+include::{snippets}/schedule/create/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/schedule/create/http-response.adoc[]
+include::{snippets}/schedule/create/response-fields.adoc[]
+
+[[schedule-find]]
+=== 여행 일정 조회
+
+==== HTTP Request
+
+include::{snippets}/schedule/find/http-request.adoc[]
+include::{snippets}/schedule/find/query-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/schedule/find/http-response.adoc[]
+include::{snippets}/schedule/find/response-fields.adoc[]
+
+[[schedule-edit]]
+=== 여행 일정 수정
+
+==== HTTP Request
+
+include::{snippets}/schedule/edit/http-request.adoc[]
+include::{snippets}/schedule/edit/path-parameters.adoc[]
+include::{snippets}/schedule/edit/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/schedule/edit/http-response.adoc[]
+include::{snippets}/schedule/edit/response-fields.adoc[]
+
+[[schedule-delete]]
+=== 여행 일정 삭제
+
+==== HTTP Request
+
+include::{snippets}/schedule/delete/http-request.adoc[]
+include::{snippets}/schedule/delete/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/schedule/delete/http-response.adoc[]
+include::{snippets}/schedule/delete/response-fields.adoc[]

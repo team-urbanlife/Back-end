@@ -1,0 +1,28 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= WE GO TOO REST API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[Schedule-API]]
+
+== Schedule API
+
+include::api/schedule/schedule.adoc[]
+
+[[DetailedPlan-API]]
+
+== DetailedPlan API
+
+include::api/schedule/detailedPlan.adoc[]
+
+[[ScheduleDetails-API]]
+
+== ScheduleDetails
+
+include::api/schedule/scheduleDetails.adoc[]
