@@ -34,6 +34,6 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
             throw new BusinessException(NOT_VALID_USER);
         }
 
-        return ((CustomUserDetails) authentication.getDetails()).getId();
+        return ((CustomUserDetails) authentication.getPrincipal()).getId();
     }
 }
