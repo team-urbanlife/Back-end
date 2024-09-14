@@ -10,10 +10,19 @@ endif::[]
 :sectlinks:
 
 [[Schedule-API]]
+
+== Schedule API
+
 include::api/schedule/schedule.adoc[]
 
 [[DetailedPlan-API]]
+
+== DetailedPlan API
+
 include::api/schedule/detailedPlan.adoc[]
 
 [[ScheduleDetails-API]]
+
+== ScheduleDetails
+
 include::api/schedule/scheduleDetails.adoc[]

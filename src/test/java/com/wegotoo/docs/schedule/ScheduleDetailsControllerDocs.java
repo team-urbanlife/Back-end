@@ -30,7 +30,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 public class ScheduleDetailsControllerDocs extends RestDocsSupport {
 
-
     @Test
     @WithAuthUser
     @DisplayName("여행 세부 계획을 조회하는 API")
