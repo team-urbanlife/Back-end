@@ -2,6 +2,7 @@ package com.wegotoo.api.schedule;
 
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -199,6 +200,20 @@ class ScheduleControllerTest {
         mockMvc.perform(delete("/v1/schedules/{scheduleId}", scheduleId)
                         .contentType(APPLICATION_JSON)
                 )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("OK"));
+    }
+
+    @Test
+    @DisplayName("사용자가 일정 조회 API를 호출한다.")
+    void findAllSchedule() throws Exception {
+        // when // then
+        mockMvc.perform(get("/v1/schedules")
+                .contentType(APPLICATION_JSON)
+        )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("200"))

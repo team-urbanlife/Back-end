@@ -1,5 +1,6 @@
 package com.wegotoo.domain.schedule.repository;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.wegotoo.config.QueryDslConfig;
@@ -8,6 +9,7 @@ import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleDetails;
 import com.wegotoo.domain.schedule.ScheduleGroup;
 import com.wegotoo.domain.schedule.Type;
+import com.wegotoo.domain.schedule.repository.response.DetailedPlanQueryEntity;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import java.time.LocalDate;
@@ -98,6 +100,55 @@ class DetailPlanRepositoryImplTest {
         Long response = detailPlanRepository.dayIncludedPlanCount(scheduleDetails.getId(), startDay);
 
         // then
-        Assertions.assertThat(3L).isEqualTo(response);
+        assertThat(3L).isEqualTo(response);
+    }
+
+    @Test
+    @DisplayName("여행 세부 계획 조회 테스트")
+    void findDetailedPlan() throws Exception {
+        // given
+        User user = User.builder()
+                .email("user@gmail.com")
+                .name("user")
+                .build();
+        userRepository.save(user);
+
+        Schedule schedule = Schedule.builder()
+                .title("제주도 여행")
+                .city("제주도")
+                .startDate(startDay)
+                .endDate(endDay)
+                .totalTravelDays(5)
+                .build();
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = ScheduleGroup.builder()
+                .user(user)
+                .schedule(schedule)
+                .build();
+        scheduleGroupRepository.save(scheduleGroup);
+
+        ScheduleDetails scheduleDetails = ScheduleDetails.builder()
+                .date(startDay)
+                .schedule(schedule)
+                .build();
+        scheduleDetailsRepository.save(scheduleDetails);
+
+        List<DetailedPlan> plans = IntStream.range(1, 4)
+                .mapToObj(i -> DetailedPlan.builder()
+                        .name("제주도 " + i)
+                        .scheduleDetails(scheduleDetails)
+                        .latitude(11.1)
+                        .longitude(11.1)
+                        .sequence((long) i)
+                        .build())
+                .toList();
+
+        detailPlanRepository.saveAll(plans);
+        // when
+        List<DetailedPlanQueryEntity> responses = detailPlanRepository.findDetailedPlans(
+                List.of(scheduleDetails.getId()));
+        // then
+        assertThat(responses.size()).isEqualTo(3);
     }
 }

@@ -2,6 +2,7 @@ package com.wegotoo.domain.schedule.repository;
 
 import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.ScheduleDetails;
+import com.wegotoo.domain.schedule.repository.querydsl.DetailPlanRepositoryCustom;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
