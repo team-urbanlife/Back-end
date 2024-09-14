@@ -13,6 +13,8 @@ import com.wegotoo.api.schedule.request.DetailedPlanCreateRequest;
 import com.wegotoo.api.schedule.request.DetailedPlanMoveRequest;
 import com.wegotoo.application.schedule.DetailedPlanService;
 import com.wegotoo.application.schedule.request.DetailedPlanEditRequest;
+import com.wegotoo.support.ControllerTestSupport;
+import com.wegotoo.support.security.WithAuthUser;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -21,25 +23,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = DetailedPlanController.class)
-@AutoConfigureMockMvc(addFilters = false)
-class DetailedPlanControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @MockBean
-    DetailedPlanService detailedPlanService;
+class DetailedPlanControllerTest extends ControllerTestSupport {
 
     final LocalDate DATE = LocalDate.of(2024, 9, 1);
 
     @Test
     @DisplayName("세부일정의 세부계획을 작성한다.")
+    @WithAuthUser
     void writeDetailedPlan() throws Exception {
         // given
         DetailedPlanCreateRequest request = DetailedPlanCreateRequest.builder()

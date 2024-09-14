@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegotoo.application.schedule.DetailedPlanService;
 import com.wegotoo.application.schedule.ScheduleDetailsService;
+import com.wegotoo.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(ScheduleDetailsController.class)
-@AutoConfigureMockMvc(addFilters = false)
-class ScheduleDetailsControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @MockBean
-    ScheduleDetailsService scheduleDetailsService;
+class ScheduleDetailsControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("여행 세부 일정을 조회하는 API를 호출한다.")

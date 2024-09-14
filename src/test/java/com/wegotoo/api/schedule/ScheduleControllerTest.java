@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegotoo.api.schedule.request.ScheduleCreateRequest;
 import com.wegotoo.api.schedule.request.ScheduleEditRequest;
 import com.wegotoo.application.schedule.ScheduleService;
+import com.wegotoo.support.ControllerTestSupport;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,18 +23,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = ScheduleController.class)
-@AutoConfigureMockMvc(addFilters = false)
-class ScheduleControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @MockBean
-    ScheduleService scheduleService;
+class ScheduleControllerTest extends ControllerTestSupport {
 
     final LocalDate START_DATE = LocalDate.of(2024, 9, 1);
     final LocalDate END_DATE = LocalDate.of(2024, 9, 5);
@@ -220,4 +210,5 @@ class ScheduleControllerTest {
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.message").value("OK"));
     }
+
 }
