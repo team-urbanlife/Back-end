@@ -3,8 +3,7 @@ package com.wegotoo.docs.schedule;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -13,7 +12,12 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
+import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
+import static org.springframework.restdocs.payload.JsonFieldType.NULL;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -23,35 +27,26 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.wegotoo.api.schedule.ScheduleController;
 import com.wegotoo.api.schedule.request.ScheduleCreateRequest;
 import com.wegotoo.api.schedule.request.ScheduleEditRequest;
 import com.wegotoo.application.OffsetLimit;
 import com.wegotoo.application.SliceResponse;
-import com.wegotoo.application.schedule.ScheduleService;
-import com.wegotoo.application.schedule.request.ScheduleCreateServiceRequest;
 import com.wegotoo.application.schedule.response.ScheduleFindAllResponse;
 import com.wegotoo.docs.RestDocsSupport;
+import com.wegotoo.support.security.WithAuthUser;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 public class ScheduleControllerDocs extends RestDocsSupport {
-
-    private final ScheduleService scheduleService = mock(ScheduleService.class);
-
-    @Override
-    protected Object initController() {
-        return new ScheduleController(scheduleService);
-    }
 
     private final LocalDate START_DATE = LocalDate.of(2024, 9, 1);
     private final LocalDate END_DATE = LocalDate.of(2024, 9, 2);
 
     @Test
+    @WithAuthUser
     @DisplayName("여행 일자를 생성하는 API")
     void createSchedule() throws Exception {
         // given
@@ -93,6 +88,7 @@ public class ScheduleControllerDocs extends RestDocsSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("등록한 여행 일자들을 조회하는 API")
     void findAllSchedule() throws Exception {
         // given
@@ -156,9 +152,9 @@ public class ScheduleControllerDocs extends RestDocsSupport {
                                         .description("Schedule ID"),
                                 fieldWithPath("data.content[].title").type(STRING)
                                         .description("일정 제목"),
-                                fieldWithPath("data.content[].startDate").type(ARRAY)
+                                fieldWithPath("data.content[].startDate").type(STRING)
                                         .description("여행 시작 일자"),
-                                fieldWithPath("data.content[].endDate").type(ARRAY)
+                                fieldWithPath("data.content[].endDate").type(STRING)
                                         .description("여행 종료 일자"),
                                 fieldWithPath("data.content[].participants").type(NUMBER)
                                         .description("참여인원")
@@ -167,6 +163,7 @@ public class ScheduleControllerDocs extends RestDocsSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("등록한 여행 일자를 수정하는 API")
     void editSchedule() throws Exception {
         // given
@@ -215,6 +212,7 @@ public class ScheduleControllerDocs extends RestDocsSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("등록한 여행 일자를 삭제 하는 API")
     void deleteSchedule() throws Exception {
         // when // then

@@ -1,6 +1,5 @@
 package com.wegotoo.docs.schedule;
 
-import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
@@ -20,12 +19,11 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.wegotoo.api.schedule.DetailedPlanController;
 import com.wegotoo.api.schedule.request.DetailedPlanCreateRequest;
 import com.wegotoo.api.schedule.request.DetailedPlanMoveRequest;
-import com.wegotoo.application.schedule.DetailedPlanService;
 import com.wegotoo.application.schedule.request.DetailedPlanEditRequest;
 import com.wegotoo.docs.RestDocsSupport;
+import com.wegotoo.support.security.WithAuthUser;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.LongStream;
@@ -35,14 +33,8 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 public class DetailedPlanControllerDocs extends RestDocsSupport {
 
-    private final DetailedPlanService detailedPlanService = mock(DetailedPlanService.class);
-
-    @Override
-    protected Object initController() {
-        return  new DetailedPlanController(detailedPlanService);
-    }
-
     @Test
+    @WithAuthUser
     @DisplayName("세부 일정을 등록하는 API")
     void writeDetailedPlan() throws Exception {
         // given
@@ -90,6 +82,7 @@ public class DetailedPlanControllerDocs extends RestDocsSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부 일정의 장소를 수정하는 API")
     void editDetailedPlan() throws Exception {
         // given
@@ -134,6 +127,7 @@ public class DetailedPlanControllerDocs extends RestDocsSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부 일정의 순서를 변경하는 API")
     void movePlan() throws Exception {
         // given
@@ -176,6 +170,7 @@ public class DetailedPlanControllerDocs extends RestDocsSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부 일정의 장소를 삭제하는 API")
     void deleteDetailedPlan() throws Exception {
         // when // then

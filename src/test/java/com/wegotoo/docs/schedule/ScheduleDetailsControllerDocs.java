@@ -2,31 +2,26 @@ package com.wegotoo.docs.schedule;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
-import static org.springframework.restdocs.payload.JsonFieldType.NULL;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.wegotoo.api.schedule.ScheduleDetailsController;
-import com.wegotoo.application.schedule.ScheduleDetailsService;
 import com.wegotoo.application.schedule.response.TravelPlanResponse;
 import com.wegotoo.docs.RestDocsSupport;
 import com.wegotoo.domain.schedule.repository.response.DetailedPlanQueryEntity;
+import com.wegotoo.support.security.WithAuthUser;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -35,14 +30,9 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 public class ScheduleDetailsControllerDocs extends RestDocsSupport {
 
-    private final ScheduleDetailsService scheduleDetailsService = mock(ScheduleDetailsService.class);
-
-    @Override
-    protected Object initController() {
-        return new ScheduleDetailsController(scheduleDetailsService);
-    }
 
     @Test
+    @WithAuthUser
     @DisplayName("여행 세부 계획을 조회하는 API")
     void findTravelPlans() throws Exception {
         // given
@@ -87,7 +77,7 @@ public class ScheduleDetailsControllerDocs extends RestDocsSupport {
                                         .description("응답 데이터"),
                                 fieldWithPath("data[].id").type(NUMBER)
                                         .description("세부 일정 ID"),
-                                fieldWithPath("data[].travelDate").type(ARRAY)
+                                fieldWithPath("data[].travelDate").type(STRING)
                                         .description("여행 계획 일 (YYYY-MM-DD"),
                                 fieldWithPath("data[].detailedPlans").type(ARRAY)
                                         .description("세부 계획 데이터"),

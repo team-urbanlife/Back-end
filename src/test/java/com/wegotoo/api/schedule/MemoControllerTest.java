@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegotoo.application.schedule.MemoService;
 import com.wegotoo.application.schedule.request.MemoWriteRequest;
 import com.wegotoo.support.ControllerTestSupport;
+import com.wegotoo.support.security.WithAuthUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class MemoControllerTest extends ControllerTestSupport {
 
     @Test
+    @WithAuthUser
     @DisplayName("사용자가 세부 일정의 메모 작성 API를 호출한다.")
     void writeMemoAPI() throws Exception {
         // given

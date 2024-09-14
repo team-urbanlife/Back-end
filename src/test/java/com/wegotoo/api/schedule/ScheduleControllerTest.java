@@ -14,6 +14,7 @@ import com.wegotoo.api.schedule.request.ScheduleCreateRequest;
 import com.wegotoo.api.schedule.request.ScheduleEditRequest;
 import com.wegotoo.application.schedule.ScheduleService;
 import com.wegotoo.support.ControllerTestSupport;
+import com.wegotoo.support.security.WithAuthUser;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     final LocalDate END_DATE = LocalDate.of(2024, 9, 5);
 
     @Test
+    @WithAuthUser
     @DisplayName("유저가 여행 일정을 생성한다.")
     void scheduleCreate() throws Exception {
         // given
@@ -51,6 +53,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("일정을 작성할 때 지역 이름을 입력하지 않으면 예외가 발생한다.")
     void validateCityName() throws Exception {
         // given
@@ -70,6 +73,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("일정을 작성할 때 여행 시작 일을 입력하지 않으면 예외가 발생한다.")
     void validateStartDate() throws Exception {
         // given
@@ -90,6 +94,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("일정을 작성할 때 여행 종료 일을 입력하지 않으면 예외가 발생한다.")
     void validateEndDate() throws Exception {
         // given
@@ -110,6 +115,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("사용자가 일정 수정 API를 호출한다.")
     void editSchedule() throws Exception {
         // given
@@ -135,6 +141,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("사용자가 수정할 때 여행 시작 일을 작성하지 않으면 예외가 발생한다.")
     void validateEditStartDate() throws Exception {
         // given
@@ -158,6 +165,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("사용자 수정할 때 여행 종료 일을 작성하지 않으면 예외가 발생한다.")
     void validateEditEndDate() throws Exception {
         // given
@@ -181,6 +189,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("사용자가 일정 삭제 API를 호출한다.")
     void deleteSchedule() throws Exception {
         // given
@@ -198,6 +207,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("사용자가 일정 조회 API를 호출한다.")
     void findAllSchedule() throws Exception {
         // when // then

@@ -57,6 +57,7 @@ class DetailedPlanControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부일정의 세부계획을 작성할 때 여행 일자를 입력하지 않으면 예외가 발생한다.")
     void validateDetailedPlanDate() throws Exception {
         // given
@@ -80,6 +81,7 @@ class DetailedPlanControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부일정의 세부계획을 작성할 때 장소를 입력하지 않으면 예외가 발생한다.")
     void validateDetailedPlanLocal() throws Exception {
         // given
@@ -103,6 +105,7 @@ class DetailedPlanControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부일정의 세부계획을 작성할 때 위도를 입력하지 않으면 예외가 발생한다.")
     void validateDetailedPlanLatitude() throws Exception {
         // given
@@ -126,6 +129,7 @@ class DetailedPlanControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부일정의 세부계획을 작성할 때 경도를 입력하지 않으면 예외가 발생한다.")
     void validateDetailedPlanLongitude() throws Exception {
         // given
@@ -149,6 +153,7 @@ class DetailedPlanControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부계획의 내용을 수정하는 API를 호출한다.")
     void editDetailedPlan() throws Exception {
         // given
@@ -173,6 +178,7 @@ class DetailedPlanControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부계획의 내용을 수정할 때 지역 이름을 넣지 않으면 예외가 발생한다.")
     void validateEditDetailedPlanLocal() throws Exception {
         // given
@@ -195,6 +201,7 @@ class DetailedPlanControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부계획의 내용을 수정할 때 지역 위도를 넣지 않으면 예외가 발생한다.")
     void validateEditDetailedPlanLatitude() throws Exception {
         // given
@@ -217,6 +224,7 @@ class DetailedPlanControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부계획의 내용을 수정할 때 지역 경도를 넣지 않으면 예외가 발생한다.")
     void validateEditDetailedPlanLongitude() throws Exception {
         // given
@@ -239,6 +247,7 @@ class DetailedPlanControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부계획의 순서를 변경하는 API를 호출한다.")
     void movePlan() throws Exception {
         // given
@@ -263,6 +272,7 @@ class DetailedPlanControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @WithAuthUser
     @DisplayName("세부계획을 삭제하는 API를 호출한다.")
     void deleteDetailedPlan() throws Exception {
         // given
