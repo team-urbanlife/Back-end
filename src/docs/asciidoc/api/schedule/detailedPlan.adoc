@@ -1,0 +1,53 @@
+[[DetailedPlan-Create]]
+=== 세부 계획 작성
+
+==== HTTP Request
+
+include::{snippets}/detailedPlan/create/http-request.adoc[]
+include::{snippets}/detailedPlan/create/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/detailedPlan/create/http-response.adoc[]
+include::{snippets}/detailedPlan/create/response-fields.adoc[]
+
+[[DetailedPlan-edit]]
+=== 세부 계획 수정
+
+==== HTTP Request
+
+include::{snippets}/detailedPlan/edit/http-request.adoc[]
+include::{snippets}/detailedPlan/edit/path-parameters.adoc[]
+include::{snippets}/detailedPlan/edit/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/detailedPlan/edit/http-response.adoc[]
+include::{snippets}/detailedPlan/edit/response-fields.adoc[]
+
+[[DetailedPlan-move]]
+=== 세부 계획 순서 변경
+
+==== HTTP Request
+
+include::{snippets}/detailedPlan/move/http-request.adoc[]
+include::{snippets}/detailedPlan/move/path-parameters.adoc[]
+include::{snippets}/detailedPlan/move/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/detailedPlan/move/http-response.adoc[]
+include::{snippets}/detailedPlan/move/response-fields.adoc[]
+
+[[DetailedPlan-delete]]
+=== 세부 계획 삭제
+
+==== HTTP Request
+
+include::{snippets}/detailedPlan/delete/http-request.adoc[]
+include::{snippets}/detailedPlan/delete/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/detailedPlan/delete/http-response.adoc[]
+include::{snippets}/detailedPlan/delete/response-fields.adoc[]

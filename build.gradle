@@ -69,6 +69,9 @@ dependencies {
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // 날짜/시간 타입을 직렬화
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 
 tasks.named('test') {
@@ -79,4 +82,18 @@ tasks.named('test') {
 tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
+}
+
+asciidoctor {
+    attributes 'snippets': snippetsDir
+    inputs.dir snippetsDir
+    dependsOn test
+
+    // 커스텀 템플릿 디렉터리 설정
+    doFirst {
+        copy {
+            from 'src/main/resources/templates/snippets' // 템플릿 파일 위치
+            into "${buildDir}/snippets/templates" // 빌드 디렉터리로 복사
+        }
+    }
 }

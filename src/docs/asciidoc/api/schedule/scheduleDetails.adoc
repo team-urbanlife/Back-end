@@ -1,0 +1,12 @@
+[[Schedule-Find]]
+=== 여행 세부 계획 조회
+
+==== HTTP Request
+
+include::{snippets}/scheduleDetails/findTravelPlans/http-request.adoc[]
+include::{snippets}/scheduleDetails/findTravelPlans/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/scheduleDetails/findTravelPlans/http-response.adoc[]
+include::{snippets}/scheduleDetails/findTravelPlans/response-fields.adoc[]
