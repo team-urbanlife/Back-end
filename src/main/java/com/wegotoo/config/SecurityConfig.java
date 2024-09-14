@@ -3,6 +3,9 @@ package com.wegotoo.config;
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import com.wegotoo.infra.security.handler.CustomAuthenticationEntryPoint;
+import com.wegotoo.infra.security.jwt.filter.JwtAuthorizationFilter;
+import com.wegotoo.infra.security.jwt.filter.JwtLogoutFilter;
 import com.wegotoo.infra.security.oauth.CustomOAuth2UserService;
 import com.wegotoo.infra.security.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.wegotoo.infra.security.oauth.handler.OAuth2FailureHandler;
@@ -13,15 +16,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final CustomAuthenticationEntryPoint entryPoint;
     private final CustomOAuth2UserService oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final JwtAuthorizationFilter authorizationFilter;
+    private final JwtLogoutFilter logoutFilter;
     private final HttpCookieOAuth2AuthorizationRequestRepository authorizationRequestRepository;
 
     @Bean
@@ -38,7 +45,10 @@ public class SecurityConfig {
                         request
                                 .requestMatchers("/h2-console/**").permitAll()
                                 .requestMatchers("/oauth2/**").permitAll()
+                                .requestMatchers("/reissue").permitAll()
                                 .anyRequest().authenticated())
+                .exceptionHandling(exceptionHandlingConfigurer ->
+                        exceptionHandlingConfigurer.authenticationEntryPoint(entryPoint))
                 .oauth2Login(oauth2LoginConfigurer ->
                         oauth2LoginConfigurer
                                 .authorizationEndpoint(authorizationEndpointConfig ->
@@ -50,6 +60,9 @@ public class SecurityConfig {
                                         userInfoEndpointConfig.userService(oAuth2UserService))
                                 .successHandler(oAuth2SuccessHandler)
                                 .failureHandler(oAuth2FailureHandler));
+
+        http.addFilterBefore(authorizationFilter, LogoutFilter.class);
+        http.addFilterBefore(logoutFilter, JwtAuthorizationFilter.class);
 
         return http.build();
     }

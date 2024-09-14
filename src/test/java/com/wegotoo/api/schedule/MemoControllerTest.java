@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegotoo.application.schedule.MemoService;
 import com.wegotoo.application.schedule.request.MemoWriteRequest;
+import com.wegotoo.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(MemoController.class)
-@AutoConfigureMockMvc(addFilters = false)
-class MemoControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @MockBean
-    MemoService memoService;
+class MemoControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("사용자가 세부 일정의 메모 작성 API를 호출한다.")
@@ -71,4 +61,5 @@ class MemoControllerTest {
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.message").value("내용은 필수입니다."));
     }
+
 }

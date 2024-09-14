@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 
@@ -17,6 +18,13 @@ public class CookieUtils {
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
         return Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals(name))
+                .findFirst();
+    }
+
+    public static Optional<Cookie> getToken(HttpServletRequest request) {
+        return Optional.ofNullable(request.getCookies()).stream()
+                .flatMap(Arrays::stream)
+                .filter(cookie -> cookie.getName().equals(TOKEN_NAME))
                 .findFirst();
     }
 
@@ -47,6 +55,21 @@ public class CookieUtils {
                 .filter(cookie -> cookie.getName().equals(name))
                 .forEach(cookie -> {
                     ResponseCookie responseCookie = ResponseCookie.from(cookie.getName(), cookie.getValue())
+                            .value("")
+                            .path("/")
+                            .secure(true)
+                            .maxAge(0)
+                            .build();
+
+                    response.addHeader("Set-Cookie", responseCookie.toString());
+                });
+    }
+
+    public static void deleteToken(HttpServletRequest request, HttpServletResponse response) {
+        Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals(TOKEN_NAME))
+                .forEach(cookie -> {
+                    ResponseCookie responseCookie = ResponseCookie.from(cookie.getName())
                             .value("")
                             .path("/")
                             .secure(true)
