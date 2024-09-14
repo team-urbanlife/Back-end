@@ -66,4 +66,8 @@ public class User {
         return this;
     }
 
+    public void deleteRefreshToken() {
+        this.refreshToken = null;
+    }
+
 }
