@@ -46,6 +46,7 @@ public class SecurityConfig {
                                 .requestMatchers("/h2-console/**").permitAll()
                                 .requestMatchers("/oauth2/**").permitAll()
                                 .requestMatchers("/reissue").permitAll()
+                                .requestMatchers("/docs/**").permitAll()
                                 .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer.authenticationEntryPoint(entryPoint))
