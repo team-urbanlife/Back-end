@@ -1,0 +1,10 @@
+[[ChatRoom-Create]]
+=== 채팅방 생성
+==== HTTP Request
+include::{snippets}/chatRoom/create/http-request.adoc[]
+include::{snippets}/chatRoom/create/request-fields.adoc[]
+include::{snippets}/chatRoom/create/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/chatRoom/create/http-response.adoc[]
+include::{snippets}/chatRoom/create/response-fields.adoc[]

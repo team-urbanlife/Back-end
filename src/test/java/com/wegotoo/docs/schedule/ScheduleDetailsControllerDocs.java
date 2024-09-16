@@ -1,8 +1,12 @@
 package com.wegotoo.docs.schedule;
 
+import static com.wegotoo.support.security.MockAuthUtils.authorizationHeaderName;
+import static com.wegotoo.support.security.MockAuthUtils.mockBearerToken;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -54,6 +58,7 @@ public class ScheduleDetailsControllerDocs extends RestDocsSupport {
 
         // then
         mockMvc.perform(get("/v1/schedules/{scheduleId}/schedule-details", 1L)
+                        .header(authorizationHeaderName(), mockBearerToken())
                         .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())
@@ -64,6 +69,9 @@ public class ScheduleDetailsControllerDocs extends RestDocsSupport {
                         pathParameters(
                                 parameterWithName("scheduleId")
                                         .description("일정 ID")
+                        ),
+                        requestHeaders(
+                                headerWithName("Authorization").description("어세스 토큰")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -93,4 +101,5 @@ public class ScheduleDetailsControllerDocs extends RestDocsSupport {
                         )
                 ));
     }
+
 }

@@ -1,4 +1,4 @@
-package com.wegotoo.domain.chat;
+package com.wegotoo.domain.chatroom;
 
 public enum Role {
 

@@ -26,3 +26,7 @@ include::api/schedule/detailedPlan.adoc[]
 == ScheduleDetails
 
 include::api/schedule/scheduleDetails.adoc[]
+
+[[ChatRoom-API]]
+== ChatRoom
+include::api/chatroom/chatRoom.adoc[]

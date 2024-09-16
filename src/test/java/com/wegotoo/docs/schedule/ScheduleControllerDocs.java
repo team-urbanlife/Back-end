@@ -1,9 +1,13 @@
 package com.wegotoo.docs.schedule;
 
+import static com.wegotoo.support.security.MockAuthUtils.authorizationHeaderName;
+import static com.wegotoo.support.security.MockAuthUtils.mockBearerToken;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -58,6 +62,7 @@ public class ScheduleControllerDocs extends RestDocsSupport {
 
         // when // then
         mockMvc.perform(post("/v1/schedules")
+                        .header(authorizationHeaderName(), mockBearerToken())
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(APPLICATION_JSON)
                 )
@@ -66,6 +71,9 @@ public class ScheduleControllerDocs extends RestDocsSupport {
                 .andDo(document("schedule/create",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Authorization").description("어세스 토큰")
+                        ),
                         requestFields(
                                 fieldWithPath("city").type(STRING)
                                         .description("여행 도시"),
@@ -117,6 +125,7 @@ public class ScheduleControllerDocs extends RestDocsSupport {
                         .param("page", "1")
                         .param("size", "4")
                         .contentType(APPLICATION_JSON)
+                        .header(authorizationHeaderName(), mockBearerToken())
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -126,6 +135,9 @@ public class ScheduleControllerDocs extends RestDocsSupport {
                         queryParameters(
                                 parameterWithName("page").description("페이지"),
                                 parameterWithName("size").description("페이지 사이즈")
+                        ),
+                        requestHeaders(
+                                headerWithName("Authorization").description("어세스 토큰")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -176,6 +188,7 @@ public class ScheduleControllerDocs extends RestDocsSupport {
 
         // when // then
         mockMvc.perform(patch("/v1/schedules/{scheduleId}", 1L)
+                        .header(authorizationHeaderName(), mockBearerToken())
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(APPLICATION_JSON)
                 )
@@ -187,6 +200,9 @@ public class ScheduleControllerDocs extends RestDocsSupport {
                         pathParameters(
                                 parameterWithName("scheduleId")
                                         .description("Schedule ID")
+                        ),
+                        requestHeaders(
+                                headerWithName("Authorization").description("어세스 토큰")
                         ),
                         requestFields(
                                 fieldWithPath("city").type(STRING)
@@ -217,6 +233,7 @@ public class ScheduleControllerDocs extends RestDocsSupport {
     void deleteSchedule() throws Exception {
         // when // then
         mockMvc.perform(delete("/v1/schedules/{scheduleId}", 1L)
+                        .header(authorizationHeaderName(), mockBearerToken())
                         .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())
@@ -227,6 +244,9 @@ public class ScheduleControllerDocs extends RestDocsSupport {
                         pathParameters(
                                 parameterWithName("scheduleId")
                                         .description("Schedule ID")
+                        ),
+                        requestHeaders(
+                                headerWithName("Authorization").description("어세스 토큰")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -240,4 +260,5 @@ public class ScheduleControllerDocs extends RestDocsSupport {
                         )
                 ));
     }
+
 }

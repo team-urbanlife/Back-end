@@ -1,14 +1,15 @@
 package com.wegotoo.application.schedule;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.wegotoo.application.ServiceTestSupport;
 import com.wegotoo.application.schedule.request.MemoWriteServiceRequest;
 import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.Memo;
 import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleDetails;
 import com.wegotoo.domain.schedule.ScheduleGroup;
-import com.wegotoo.domain.schedule.Type;
 import com.wegotoo.domain.schedule.repository.DetailPlanRepository;
 import com.wegotoo.domain.schedule.repository.MemoRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleDetailsRepository;
@@ -21,15 +22,12 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Stream;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class MemoServiceTest {
+class MemoServiceTest extends ServiceTestSupport {
 
     @Autowired
     ScheduleRepository scheduleRepository;
@@ -59,7 +57,8 @@ class MemoServiceTest {
     void tearDown() {
         scheduleGroupRepository.deleteAllInBatch();
         memoRepository.deleteAllInBatch();
-        detailPlanRepository.deleteAllInBatch();;
+        detailPlanRepository.deleteAllInBatch();
+        ;
         scheduleDetailsRepository.deleteAllInBatch();
         scheduleRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();

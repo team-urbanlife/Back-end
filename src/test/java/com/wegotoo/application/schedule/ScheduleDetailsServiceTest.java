@@ -2,6 +2,7 @@ package com.wegotoo.application.schedule;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.wegotoo.application.ServiceTestSupport;
 import com.wegotoo.application.schedule.response.TravelPlanResponse;
 import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.Schedule;
@@ -23,10 +24,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class ScheduleDetailsServiceTest {
+class ScheduleDetailsServiceTest extends ServiceTestSupport {
 
     @Autowired
     ScheduleRepository scheduleRepository;
@@ -55,7 +54,8 @@ class ScheduleDetailsServiceTest {
     @AfterEach
     void tearDown() {
         scheduleGroupRepository.deleteAllInBatch();
-        detailPlanRepository.deleteAllInBatch();;
+        detailPlanRepository.deleteAllInBatch();
+        ;
         scheduleDetailsRepository.deleteAllInBatch();
         scheduleRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
@@ -127,4 +127,5 @@ class ScheduleDetailsServiceTest {
                 .name(name)
                 .build();
     }
+
 }

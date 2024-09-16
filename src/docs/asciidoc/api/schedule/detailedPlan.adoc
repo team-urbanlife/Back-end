@@ -5,6 +5,7 @@
 
 include::{snippets}/detailedPlan/create/http-request.adoc[]
 include::{snippets}/detailedPlan/create/request-fields.adoc[]
+include::{snippets}/detailedPlan/create/request-headers.adoc[]
 
 ==== HTTP Response
 
@@ -19,6 +20,7 @@ include::{snippets}/detailedPlan/create/response-fields.adoc[]
 include::{snippets}/detailedPlan/edit/http-request.adoc[]
 include::{snippets}/detailedPlan/edit/path-parameters.adoc[]
 include::{snippets}/detailedPlan/edit/request-fields.adoc[]
+include::{snippets}/detailedPlan/edit/request-headers.adoc[]
 
 ==== HTTP Response
 
@@ -33,6 +35,7 @@ include::{snippets}/detailedPlan/edit/response-fields.adoc[]
 include::{snippets}/detailedPlan/move/http-request.adoc[]
 include::{snippets}/detailedPlan/move/path-parameters.adoc[]
 include::{snippets}/detailedPlan/move/request-fields.adoc[]
+include::{snippets}/detailedPlan/move/request-headers.adoc[]
 
 ==== HTTP Response
 
@@ -46,6 +49,7 @@ include::{snippets}/detailedPlan/move/response-fields.adoc[]
 
 include::{snippets}/detailedPlan/delete/http-request.adoc[]
 include::{snippets}/detailedPlan/delete/path-parameters.adoc[]
+include::{snippets}/detailedPlan/delete/request-headers.adoc[]
 
 ==== HTTP Response
 

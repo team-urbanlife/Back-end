@@ -5,6 +5,7 @@
 
 include::{snippets}/schedule/create/http-request.adoc[]
 include::{snippets}/schedule/create/request-fields.adoc[]
+include::{snippets}/schedule/create/request-headers.adoc[]
 
 ==== HTTP Response
 
@@ -18,6 +19,7 @@ include::{snippets}/schedule/create/response-fields.adoc[]
 
 include::{snippets}/schedule/find/http-request.adoc[]
 include::{snippets}/schedule/find/query-parameters.adoc[]
+include::{snippets}/schedule/find/request-headers.adoc[]
 
 ==== HTTP Response
 
@@ -32,6 +34,7 @@ include::{snippets}/schedule/find/response-fields.adoc[]
 include::{snippets}/schedule/edit/http-request.adoc[]
 include::{snippets}/schedule/edit/path-parameters.adoc[]
 include::{snippets}/schedule/edit/request-fields.adoc[]
+include::{snippets}/schedule/edit/request-headers.adoc[]
 
 ==== HTTP Response
 
@@ -45,6 +48,7 @@ include::{snippets}/schedule/edit/response-fields.adoc[]
 
 include::{snippets}/schedule/delete/http-request.adoc[]
 include::{snippets}/schedule/delete/path-parameters.adoc[]
+include::{snippets}/schedule/delete/request-headers.adoc[]
 
 ==== HTTP Response
 
