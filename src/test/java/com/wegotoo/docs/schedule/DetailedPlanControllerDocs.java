@@ -1,6 +1,9 @@
 package com.wegotoo.docs.schedule;
 
+import static com.wegotoo.support.security.MockAuthUtils.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
@@ -23,6 +26,7 @@ import com.wegotoo.api.schedule.request.DetailedPlanCreateRequest;
 import com.wegotoo.api.schedule.request.DetailedPlanMoveRequest;
 import com.wegotoo.application.schedule.request.DetailedPlanEditRequest;
 import com.wegotoo.docs.RestDocsSupport;
+import com.wegotoo.support.security.MockAuthUtils;
 import com.wegotoo.support.security.WithAuthUser;
 import java.time.LocalDate;
 import java.util.List;
@@ -46,6 +50,7 @@ public class DetailedPlanControllerDocs extends RestDocsSupport {
                 .build();
         // when // then
         mockMvc.perform(post("/v1/schedule-details/{scheduleDetailsId}/detailed-plans", 1L)
+                        .header(authorizationHeaderName(), mockBearerToken())
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(APPLICATION_JSON)
                 )
@@ -57,6 +62,9 @@ public class DetailedPlanControllerDocs extends RestDocsSupport {
                         pathParameters(
                                 parameterWithName("scheduleDetailsId")
                                         .description("세부 일정 ID")
+                        ),
+                        requestHeaders(
+                                headerWithName("Authorization").description("어세스 토큰")
                         ),
                         requestFields(
                                 fieldWithPath("name").type(STRING)
@@ -93,6 +101,7 @@ public class DetailedPlanControllerDocs extends RestDocsSupport {
                 .build();
         // when // then
         mockMvc.perform(patch("/v1/detailed-plans/{detailedPlanId}", 1L)
+                        .header(authorizationHeaderName(), mockBearerToken())
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(APPLICATION_JSON)
                 )
@@ -104,6 +113,9 @@ public class DetailedPlanControllerDocs extends RestDocsSupport {
                         pathParameters(
                                 parameterWithName("detailedPlanId")
                                         .description("세부 계획 ID")
+                        ),
+                        requestHeaders(
+                                headerWithName("Authorization").description("어세스 토큰")
                         ),
                         requestFields(
                                 fieldWithPath("name").type(STRING)
@@ -138,6 +150,7 @@ public class DetailedPlanControllerDocs extends RestDocsSupport {
                         .build()).toList();
         // when // then
         mockMvc.perform(patch("/v1/scheduleDetails/{scheduleDetailsId}/detailed-plans/move", 1L)
+                        .header(authorizationHeaderName(), mockBearerToken())
                         .content(objectMapper.writeValueAsString(requests))
                         .contentType(APPLICATION_JSON)
                 )
@@ -149,6 +162,9 @@ public class DetailedPlanControllerDocs extends RestDocsSupport {
                         pathParameters(
                                 parameterWithName("scheduleDetailsId")
                                         .description("세부 일정 ID")
+                        ),
+                        requestHeaders(
+                                headerWithName("Authorization").description("어세스 토큰")
                         ),
                         requestFields(
                                 fieldWithPath("[].detailedPlanId").type(NUMBER)
@@ -175,6 +191,7 @@ public class DetailedPlanControllerDocs extends RestDocsSupport {
     void deleteDetailedPlan() throws Exception {
         // when // then
         mockMvc.perform(delete("/v1/detailed-plans/{detailedPlanId}", 1L)
+                        .header(authorizationHeaderName(), mockBearerToken())
                         .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())
@@ -185,6 +202,9 @@ public class DetailedPlanControllerDocs extends RestDocsSupport {
                         pathParameters(
                                 parameterWithName("detailedPlanId")
                                         .description("세부 계획 ID")
+                        ),
+                        requestHeaders(
+                          headerWithName("Authorization").description("어세스 토큰")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -198,4 +218,5 @@ public class DetailedPlanControllerDocs extends RestDocsSupport {
                         )
                 ));
     }
+
 }
