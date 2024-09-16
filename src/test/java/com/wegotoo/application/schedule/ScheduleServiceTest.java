@@ -3,8 +3,8 @@ package com.wegotoo.application.schedule;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.wegotoo.application.OffsetLimit;
+import com.wegotoo.application.ServiceTestSupport;
 import com.wegotoo.application.SliceResponse;
-import com.wegotoo.application.schedule.request.DetailedPlanCreateServiceRequest;
 import com.wegotoo.application.schedule.request.ScheduleCreateServiceRequest;
 import com.wegotoo.application.schedule.request.ScheduleEditServiceRequest;
 import com.wegotoo.application.schedule.response.ScheduleFindAllResponse;
@@ -30,10 +30,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class ScheduleServiceTest {
+class ScheduleServiceTest extends ServiceTestSupport {
 
     @Autowired
     ScheduleRepository scheduleRepository;
