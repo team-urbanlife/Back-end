@@ -5,6 +5,7 @@
 
 include::{snippets}/scheduleDetails/findTravelPlans/http-request.adoc[]
 include::{snippets}/scheduleDetails/findTravelPlans/path-parameters.adoc[]
+include::{snippets}/scheduleDetails/findTravelPlans/request-headers.adoc[]
 
 ==== HTTP Response
 
