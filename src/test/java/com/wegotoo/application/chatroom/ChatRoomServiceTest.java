@@ -10,11 +10,13 @@ import com.wegotoo.domain.accompany.Gender;
 import com.wegotoo.domain.accompany.Status;
 import com.wegotoo.domain.accompany.repository.AccompanyRepository;
 import com.wegotoo.domain.chatroom.ChatRoom;
+import com.wegotoo.domain.chatroom.UserChatRoom;
 import com.wegotoo.domain.chatroom.repository.ChatRoomRepository;
 import com.wegotoo.domain.chatroom.repository.UserChatRoomRepository;
 import com.wegotoo.domain.user.Role;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,6 +65,27 @@ public class ChatRoomServiceTest extends ServiceTestSupport {
         assertThat(chatRoom.getCode()).isEqualTo(result.getCode());
     }
 
+    @Test
+    @DisplayName("채팅방 생성 시 동행 게시글에 대한 채팅방이 존재하면 기존 채팅방을 반환한다.")
+    public void createChatRoomAlreadyExistsForAccompany() {
+        // given
+        User userA = userRepository.save(createUser("userA_guest"));
+        User userB = userRepository.save(createUser("userB_admin"));
+
+        Accompany accompany = accompanyRepository.save(createAccompany(userB));
+        ChatRoom chatRoom = chatRoomRepository.save(createChatRoomWithCode("000-000-000-000"));
+
+        userChatRoomRepository.saveAll(List.of(UserChatRoom.ofGuest(userA, chatRoom, accompany),
+                UserChatRoom.ofAdmin(userB, chatRoom, accompany)));
+
+        // when
+        ChatRoomResponse result = chatRoomService.createChatRoom(createRequest(accompany.getId()), userA.getId());
+
+        // then
+        assertThat(result.getId()).isEqualTo(chatRoom.getId());
+        assertThat(result.getCode()).isEqualTo(chatRoom.getCode());
+    }
+
     private User createUser(String username) {
         return User.builder()
                 .email(username + "@email.com")
@@ -81,6 +104,12 @@ public class ChatRoomServiceTest extends ServiceTestSupport {
                 .content("같이 여행가실 분 구합니다!")
                 .status(Status.RECRUIT)
                 .user(user)
+                .build();
+    }
+
+    private ChatRoom createChatRoomWithCode(String code) {
+        return ChatRoom.builder()
+                .code(code)
                 .build();
     }
 

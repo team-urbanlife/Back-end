@@ -36,12 +36,16 @@ public class ChatRoomService {
         Accompany accompany = accompanyRepository.findByIdWithUser(request.getAccompanyId())
                 .orElseThrow(() -> new BusinessException(NOT_FOUND_ACCOMPANY));
 
-        ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.create());
+        return chatRoomRepository.findByUserIdAndAccompanyId(user.getId(), accompany.getId())
+                .map(chatRoom -> ChatRoomResponse.of(chatRoom.getId(), chatRoom.getCode()))
+                .orElseGet(() -> {
+                    ChatRoom newChatRoom = chatRoomRepository.save(ChatRoom.create());
 
-        userChatRoomRepository.save(UserChatRoom.ofAdmin(accompany.getUser(), chatRoom, accompany));
-        userChatRoomRepository.save(UserChatRoom.ofGuest(user, chatRoom, accompany));
+                    userChatRoomRepository.save(UserChatRoom.ofAdmin(accompany.getUser(), newChatRoom, accompany));
+                    userChatRoomRepository.save(UserChatRoom.ofGuest(user, newChatRoom, accompany));
 
-        return ChatRoomResponse.of(chatRoom.getId(), chatRoom.getCode());
+                    return ChatRoomResponse.of(newChatRoom.getId(), newChatRoom.getCode());
+                });
     }
 
 }
