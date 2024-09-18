@@ -2,6 +2,7 @@ package com.wegotoo.application.schedule;
 
 import static com.wegotoo.exception.ErrorCode.*;
 
+import com.wegotoo.api.schedule.request.MemoEditServiceRequest;
 import com.wegotoo.application.schedule.request.MemoWriteServiceRequest;
 import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.Memo;
@@ -37,11 +38,49 @@ public class MemoService {
         ScheduleDetails scheduleDetails = detailedPlan.getScheduleDetails();
         Schedule schedule = scheduleDetails.getSchedule();
 
-        scheduleGroupRepository.findByUserIdAndScheduleId(user.getId(), schedule.getId())
-                .orElseThrow(() -> new BusinessException(UNAUTHORIZED_REQUEST));
+        validateUserHasAccessToSchedule(user.getId(), schedule.getId());
 
         Memo memo = Memo.write(request.getContent(), detailedPlan);
         memoRepository.save(memo);
+    }
+
+    @Transactional
+    public void editMemo(Long userId, Long detailedPlanId, Long memoId, MemoEditServiceRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        DetailedPlan detailedPlan = detailPlanRepository.findById(detailedPlanId)
+                .orElseThrow(() -> new BusinessException(DETAILED_PLAN_NOT_FOUND));
+
+        ScheduleDetails scheduleDetails = detailedPlan.getScheduleDetails();
+        Schedule schedule = scheduleDetails.getSchedule();
+
+        validateUserHasAccessToSchedule(user.getId(), schedule.getId());
+
+        Memo memo = memoRepository.findById(memoId).orElseThrow(() -> new BusinessException(MEMO_NOT_FOUND));
+
+        memo.edit(request.getContent());
+    }
+
+    @Transactional
+    public void deleteMemo(Long userId, Long detailedPlanId, Long memoId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        DetailedPlan detailedPlan = detailPlanRepository.findById(detailedPlanId)
+                .orElseThrow(() -> new BusinessException(DETAILED_PLAN_NOT_FOUND));
+
+        ScheduleDetails scheduleDetails = detailedPlan.getScheduleDetails();
+        Schedule schedule = scheduleDetails.getSchedule();
+
+        validateUserHasAccessToSchedule(user.getId(), schedule.getId());
+
+        Memo memo = memoRepository.findById(memoId).orElseThrow(() -> new BusinessException(MEMO_NOT_FOUND));
+
+        memoRepository.delete(memo);
+    }
+
+    private void validateUserHasAccessToSchedule(Long userId, Long scheduleId) {
+        scheduleGroupRepository.findByUserIdAndScheduleId(userId, scheduleId)
+                .orElseThrow(() -> new BusinessException(UNAUTHORIZED_REQUEST));
     }
 
 }

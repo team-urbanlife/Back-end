@@ -3,6 +3,7 @@ package com.wegotoo.application.schedule;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.wegotoo.api.schedule.request.MemoEditServiceRequest;
 import com.wegotoo.application.ServiceTestSupport;
 import com.wegotoo.application.schedule.request.MemoWriteServiceRequest;
 import com.wegotoo.domain.schedule.DetailedPlan;
@@ -157,6 +158,80 @@ class MemoServiceTest extends ServiceTestSupport {
         assertThatThrownBy(() -> memoService.writeMemo(userB.getId(), detailedPlan.getId(), request))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("권한이 없는 사용자입니다.");
+    }
+
+    @Test
+    @DisplayName("사용자가 세부 계획에서 메모를 수정한다.")
+    void editMemo() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        DetailedPlan detailedPlan = getDetailedPlan(scheduleDetailsList.get(0));
+        detailPlanRepository.save(detailedPlan);
+
+        Memo memo = Memo.builder()
+                .content("메모")
+                .detailedPlan(detailedPlan)
+                .build();
+        memoRepository.save(memo);
+
+        MemoEditServiceRequest request = MemoEditServiceRequest.builder()
+                .content("메모 수정")
+                .build();
+        // when
+        memoService.editMemo(user.getId(), detailedPlan.getId(), memo.getId(), request);
+
+        // then
+        List<Memo> memos = memoRepository.findAll();
+        assertThat(memos.get(0))
+                .extracting("id", "content")
+                .contains(memos.get(0).getId(), "메모 수정");
+    }
+
+    @Test
+    @DisplayName("사용자가 세부 계획에서 메모를 삭제한다")
+    void deleteMemo() throws Exception {
+        // given
+        User user = getUser("user@gmail.com", "user");
+        userRepository.save(user);
+
+        Schedule schedule = getSchedule(START_DATE, END_DATE);
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = getScheduleGroup(schedule, user);
+        scheduleGroupRepository.save(scheduleGroup);
+
+        List<ScheduleDetails> scheduleDetailsList = getDatesBetween(START_DATE, END_DATE)
+                .stream().map(date -> ScheduleDetails.create(date, schedule))
+                .toList();
+        scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        DetailedPlan detailedPlan = getDetailedPlan(scheduleDetailsList.get(0));
+        detailPlanRepository.save(detailedPlan);
+
+        Memo memo = Memo.builder()
+                .content("메모")
+                .detailedPlan(detailedPlan)
+                .build();
+        memoRepository.save(memo);
+        // when
+        memoService.deleteMemo(user.getId(), detailedPlan.getId(), memo.getId());
+
+        // then
+        List<Memo> memos = memoRepository.findAll();
+        assertThat(memos.size()).isEqualTo(0);
     }
 
     private DetailedPlan getDetailedPlan(ScheduleDetails scheduleDetails) {

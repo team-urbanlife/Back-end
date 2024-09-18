@@ -31,6 +31,7 @@ public class DetailPlanRepositoryImpl implements DetailPlanRepositoryCustom {
 
     @Override
     public List<DetailedPlanQueryEntity> findDetailedPlans(List<Long> scheduleDetailsIds) {
+        // TODO OrderBy 추가해야함
         return queryFactory.select(new QDetailedPlanQueryEntity(
                 detailedPlan.name,
                 detailedPlan.sequence,

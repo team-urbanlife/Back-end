@@ -43,4 +43,7 @@ public class Memo {
                 .build();
     }
 
+    public void edit(String content) {
+        this.content = content != null ? content : this.content;
+    }
 }
