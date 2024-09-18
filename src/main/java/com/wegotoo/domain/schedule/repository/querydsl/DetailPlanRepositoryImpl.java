@@ -3,6 +3,7 @@ package com.wegotoo.domain.schedule.repository.querydsl;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.types.Projections.list;
 import static com.wegotoo.domain.schedule.QDetailedPlan.detailedPlan;
+import static com.wegotoo.domain.schedule.QMemo.memo;
 import static com.wegotoo.domain.schedule.QScheduleDetails.scheduleDetails;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -31,17 +32,20 @@ public class DetailPlanRepositoryImpl implements DetailPlanRepositoryCustom {
 
     @Override
     public List<DetailedPlanQueryEntity> findDetailedPlans(List<Long> scheduleDetailsIds) {
-        // TODO OrderBy 추가해야함
         return queryFactory.select(new QDetailedPlanQueryEntity(
-                detailedPlan.name,
-                detailedPlan.sequence,
-                detailedPlan.latitude,
-                detailedPlan.longitude,
-                detailedPlan.scheduleDetails.id
-        ))
+                        detailedPlan.name,
+                        detailedPlan.sequence,
+                        detailedPlan.latitude,
+                        detailedPlan.longitude,
+                        detailedPlan.scheduleDetails.id,
+                        memo.content,
+                        memo.id
+                ))
                 .from(detailedPlan)
                 .join(detailedPlan.scheduleDetails, scheduleDetails)
+                .leftJoin(memo).on(detailedPlan.eq(memo.detailedPlan))
                 .where(detailedPlan.scheduleDetails.id.in(scheduleDetailsIds))
+                .orderBy(detailedPlan.sequence.asc())
                 .fetch();
     }
 

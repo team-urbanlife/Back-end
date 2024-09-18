@@ -17,15 +17,21 @@ public class DetailedPlanQueryEntity {
 
     private Long scheduleDetailsId;
 
+    private String memo;
+
+    private Long memoId;
+
     @Builder
     @QueryProjection
     public DetailedPlanQueryEntity(String region, Long sequence, Double latitude, Double longitude,
-                                   Long ScheduleDetailsId) {
+                                   Long ScheduleDetailsId, String memo, Long memoId) {
         this.region = region;
         this.sequence = sequence;
         this.latitude = latitude;
         this.longitude = longitude;
         this.scheduleDetailsId = ScheduleDetailsId;
+        this.memo = memo;
+        this.memoId = memoId;
     }
 
 }

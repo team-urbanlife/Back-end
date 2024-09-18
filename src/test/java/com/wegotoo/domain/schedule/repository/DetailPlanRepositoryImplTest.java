@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.wegotoo.config.QueryDslConfig;
 import com.wegotoo.domain.schedule.DetailedPlan;
+import com.wegotoo.domain.schedule.Memo;
 import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleDetails;
 import com.wegotoo.domain.schedule.ScheduleGroup;
@@ -42,11 +43,15 @@ class DetailPlanRepositoryImplTest {
     @Autowired
     DetailPlanRepository detailPlanRepository;
 
+    @Autowired
+    MemoRepository memoRepository;
+
     LocalDate startDay = LocalDate.of(2024, 9, 1);
     LocalDate endDay = LocalDate.of(2024, 9, 5);
 
     @AfterEach
     void tearDown() {
+        memoRepository.deleteAllInBatch();
         scheduleGroupRepository.deleteAllInBatch();
         detailPlanRepository.deleteAllInBatch();
         scheduleDetailsRepository.deleteAllInBatch();
@@ -150,5 +155,62 @@ class DetailPlanRepositoryImplTest {
                 List.of(scheduleDetails.getId()));
         // then
         assertThat(responses.size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("세부 계획 메모 조회 테스트")
+    void memoTest() throws Exception {
+        // given
+        User user = User.builder()
+                .email("user@gmail.com")
+                .name("user")
+                .build();
+        userRepository.save(user);
+
+        Schedule schedule = Schedule.builder()
+                .title("제주도 여행")
+                .city("제주도")
+                .startDate(startDay)
+                .endDate(endDay)
+                .totalTravelDays(5)
+                .build();
+        scheduleRepository.save(schedule);
+
+        ScheduleGroup scheduleGroup = ScheduleGroup.builder()
+                .user(user)
+                .schedule(schedule)
+                .build();
+        scheduleGroupRepository.save(scheduleGroup);
+
+        ScheduleDetails scheduleDetails = ScheduleDetails.builder()
+                .date(startDay)
+                .schedule(schedule)
+                .build();
+        scheduleDetailsRepository.save(scheduleDetails);
+
+        List<DetailedPlan> plans = IntStream.range(1, 4)
+                .mapToObj(i -> DetailedPlan.builder()
+                        .name("제주도 " + i)
+                        .scheduleDetails(scheduleDetails)
+                        .latitude(11.1)
+                        .longitude(11.1)
+                        .sequence((long) i)
+                        .build())
+                .toList();
+
+        detailPlanRepository.saveAll(plans);
+
+        Memo memo = Memo.builder()
+                .detailedPlan(plans.get(0))
+                .content("메모")
+                .build();
+        memoRepository.save(memo);
+
+        // when
+        List<DetailedPlanQueryEntity> responses = detailPlanRepository.findDetailedPlans(
+                List.of(scheduleDetails.getId()));
+        // then
+        assertThat(responses.get(0).getMemo()).isEqualTo("메모");
+        assertThat(responses.get(0).getMemoId()).isEqualTo(memo.getId());
     }
 }
