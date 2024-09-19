@@ -97,7 +97,11 @@ public class ScheduleDetailsControllerDocs extends RestDocsSupport {
                                 fieldWithPath("data[].detailedPlans[].longitude").type(NUMBER)
                                         .description("경도"),
                                 fieldWithPath("data[].detailedPlans[].scheduleDetailsId").type(NUMBER)
-                                        .description("세부 일정 ID")
+                                        .description("세부 일정 ID"),
+                                fieldWithPath("data[].detailedPlans[].memo").type(STRING)
+                                        .description("메모").optional(),
+                                fieldWithPath("data[].detailedPlans[].memoId").type(STRING)
+                                        .description("메모 ID").optional()
                         )
                 ));
     }

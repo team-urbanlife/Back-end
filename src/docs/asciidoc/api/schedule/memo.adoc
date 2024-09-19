@@ -1,0 +1,43 @@
+[[memo-create]]
+=== 메모 생성
+
+==== HTTP Request
+
+include::{snippets}/memo/create/http-request.adoc[]
+include::{snippets}/memo/create/path-parameters.adoc[]
+include::{snippets}/memo/create/request-fields.adoc[]
+include::{snippets}/memo/create/request-headers.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/memo/create/http-response.adoc[]
+include::{snippets}/memo/create/response-fields.adoc[]
+
+[[schedule-edit]]
+=== 메모 수정
+
+==== HTTP Request
+
+include::{snippets}/memo/edit/http-request.adoc[]
+include::{snippets}/memo/edit/path-parameters.adoc[]
+include::{snippets}/memo/edit/request-fields.adoc[]
+include::{snippets}/memo/edit/request-headers.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/memo/edit/http-response.adoc[]
+include::{snippets}/memo/edit/response-fields.adoc[]
+
+[[schedule-delete]]
+=== 메모 삭제
+
+==== HTTP Request
+
+include::{snippets}/memo/delete/http-request.adoc[]
+include::{snippets}/memo/delete/path-parameters.adoc[]
+include::{snippets}/memo/delete/request-headers.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/memo/delete/http-response.adoc[]
+include::{snippets}/memo/delete/response-fields.adoc[]

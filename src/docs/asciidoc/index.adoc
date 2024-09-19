@@ -27,6 +27,10 @@ include::api/schedule/detailedPlan.adoc[]
 
 include::api/schedule/scheduleDetails.adoc[]
 
+[[Memo-API]]
+== Memo
+include::api/schedule/memo.adoc[]
+
 [[ChatRoom-API]]
 == ChatRoom
 include::api/chatroom/chatRoom.adoc[]
