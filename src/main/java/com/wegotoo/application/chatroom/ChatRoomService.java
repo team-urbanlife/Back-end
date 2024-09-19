@@ -1,6 +1,6 @@
 package com.wegotoo.application.chatroom;
 
-import static com.wegotoo.exception.ErrorCode.NOT_FOUND_ACCOMPANY;
+import static com.wegotoo.exception.ErrorCode.ACCOMPANY_NOT_FOUND;
 import static com.wegotoo.exception.ErrorCode.USER_NOT_FOUND;
 
 import com.wegotoo.application.chatroom.request.ChatRoomCreateServiceRequest;
@@ -34,7 +34,7 @@ public class ChatRoomService {
                 .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
         Accompany accompany = accompanyRepository.findByIdWithUser(request.getAccompanyId())
-                .orElseThrow(() -> new BusinessException(NOT_FOUND_ACCOMPANY));
+                .orElseThrow(() -> new BusinessException(ACCOMPANY_NOT_FOUND));
 
         return chatRoomRepository.findByUserIdAndAccompanyId(user.getId(), accompany.getId())
                 .map(chatRoom -> ChatRoomResponse.of(chatRoom.getId(), chatRoom.getCode()))

@@ -89,4 +89,21 @@ public class Accompany {
         this.endDate = endDate;
     }
 
+    public void edit(LocalDate startDate, LocalDate endDate, String title, String location, Double latitude,
+                     Double longitude, int personnel, Gender gender, int startAge, int endAge,
+                     int cost, String content) {
+        this.startDate = startDate != null ? startDate : this.startDate;
+        this.endDate = endDate != null ? endDate : this.endDate;
+        this.title = title != null ? title : this.title;
+        this.location = location != null ? location : this.location;
+        this.latitude = latitude != null ? latitude : this.latitude;
+        this.longitude = longitude != null ? longitude : this.longitude;
+        this.personnel = personnel;
+        this.gender = gender != null ? gender : this.gender;
+        this.startAge = startAge;
+        this.endAge = endAge;
+        this.cost = cost;
+        this.content = content != null ? content : this.content;
+    }
+
 }

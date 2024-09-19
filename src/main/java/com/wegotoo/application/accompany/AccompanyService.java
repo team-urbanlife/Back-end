@@ -2,6 +2,7 @@ package com.wegotoo.application.accompany;
 
 import static com.wegotoo.exception.ErrorCode.*;
 
+import com.wegotoo.api.accompany.request.AccompanyEditServiceRequest;
 import com.wegotoo.application.accompany.request.AccompanyCreateServiceRequest;
 import com.wegotoo.domain.accompany.Accompany;
 import com.wegotoo.domain.accompany.repository.AccompanyRepository;
@@ -26,4 +27,17 @@ public class AccompanyService {
 
         accompanyRepository.save(request.toEntity(user));
     }
+
+    @Transactional
+    public void editAccompany(Long userId, Long accompanyId, AccompanyEditServiceRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        Accompany accompany = accompanyRepository.findByIdAndUser(accompanyId, user)
+                .orElseThrow(() -> new BusinessException(ACCOMPANY_NOT_FOUND));
+
+        accompany.edit(request.getStartDate(), request.getEndDate(), request.getTitle(), request.getLocation(),
+                request.getLatitude(), request.getLongitude(), request.getPersonnel(), request.getGender(),
+                request.getStartAge(), request.getEndAge(), request.getCost(), request.getContent());
+    }
+
 }
