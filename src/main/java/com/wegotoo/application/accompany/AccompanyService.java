@@ -24,10 +24,6 @@ public class AccompanyService {
     public void createAccompany(Long userId, AccompanyCreateServiceRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
-        Accompany accompany = Accompany.create(user, request.getStartDate(), request.getEndDate(),
-                request.getLocation(), request.getLatitude(), request.getLongitude(), request.getPersonnel(),
-                request.getGender(), request.getStartAge(), request.getEndAge() ,request.getCost(), request.getContent(), request.getTitle());
-
-        accompanyRepository.save(accompany);
+        accompanyRepository.save(request.toEntity(user));
     }
 }

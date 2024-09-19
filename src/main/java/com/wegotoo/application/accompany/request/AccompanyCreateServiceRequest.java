@@ -1,6 +1,9 @@
 package com.wegotoo.application.accompany.request;
 
+import com.wegotoo.domain.accompany.Accompany;
 import com.wegotoo.domain.accompany.Gender;
+import com.wegotoo.domain.accompany.Status;
+import com.wegotoo.domain.user.User;
 import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,6 +52,25 @@ public class AccompanyCreateServiceRequest {
         this.endAge = endAge;
         this.cost = cost;
         this.content = content;
+    }
+
+    public Accompany toEntity(User user) {
+        return Accompany.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .title(title)
+                .location(location)
+                .latitude(latitude)
+                .longitude(longitude)
+                .personnel(personnel)
+                .gender(gender)
+                .startAge(startAge)
+                .endAge(endAge)
+                .cost(cost)
+                .content(content)
+                .status(Status.RECRUIT)
+                .user(user)
+                .build();
     }
 
 }

@@ -89,24 +89,4 @@ public class Accompany {
         this.endDate = endDate;
     }
 
-    public static Accompany create(User user, LocalDate startDate, LocalDate endDate, String location, Double latitude,
-                                   Double longitude, int personnel, Gender gender, int startAge, int endAge,
-                                   int cost, String content, String title) {
-        return Accompany.builder()
-                .user(user)
-                .startDate(startDate)
-                .endDate(endDate)
-                .location(location)
-                .personnel(personnel)
-                .startAge(startAge)
-                .endAge(endAge)
-                .cost(cost)
-                .content(content)
-                .gender(gender)
-                .latitude(latitude)
-                .longitude(longitude)
-                .title(title)
-                .status(Status.RECRUIT)
-                .build();
-    }
 }
