@@ -1,6 +1,7 @@
 package com.wegotoo.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wegotoo.application.accompany.AccompanyService;
 import com.wegotoo.application.chatroom.ChatRoomService;
 import com.wegotoo.application.schedule.DetailedPlanService;
 import com.wegotoo.application.schedule.MemoService;
@@ -34,5 +35,8 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected ChatRoomService chatRoomService;
+
+    @MockBean
+    protected AccompanyService accompanyService;
 
 }
