@@ -38,4 +38,14 @@ public class AccompanyService {
         accompany.edit(request);
     }
 
+    @Transactional
+    public void deleteAccompany(Long userId, Long accompanyId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        Accompany accompany = accompanyRepository.findByIdAndUser(accompanyId, user)
+                .orElseThrow(() -> new BusinessException(ACCOMPANY_NOT_FOUND));
+
+        accompanyRepository.delete(accompany);
+    }
+
 }
