@@ -1,0 +1,68 @@
+[[accompany-create]]
+=== 동행 모집 글 생성
+
+==== HTTP Request
+
+include::{snippets}/accompany/create/http-request.adoc[]
+include::{snippets}/accompany/create/request-fields.adoc[]
+include::{snippets}/accompany/create/request-headers.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/accompany/create/http-response.adoc[]
+include::{snippets}/accompany/create/response-fields.adoc[]
+
+[[accompany-findAll]]
+=== 동행 모집 글 조회
+
+==== HTTP Request
+
+include::{snippets}/accompany/findAll/http-request.adoc[]
+include::{snippets}/accompany/findAll/query-parameters.adoc[]
+include::{snippets}/accompany/findAll/request-headers.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/accompany/findAll/http-response.adoc[]
+include::{snippets}/accompany/findAll/response-fields.adoc[]
+
+[[accompany-findOne]]
+=== 동행 모집 글 단 건 조회
+
+==== HTTP Request
+
+include::{snippets}/accompany/findOne/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/accompany/findOne/http-response.adoc[]
+include::{snippets}/accompany/findOne/response-fields.adoc[]
+
+[[accompany-edit]]
+=== 동행 모집 글 수정
+
+==== HTTP Request
+
+include::{snippets}/accompany/edit/http-request.adoc[]
+include::{snippets}/accompany/edit/path-parameters.adoc[]
+include::{snippets}/accompany/edit/request-fields.adoc[]
+include::{snippets}/schedule/edit/request-headers.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/accompany/edit/http-response.adoc[]
+include::{snippets}/accompany/edit/response-fields.adoc[]
+
+[[accompany-delete]]
+=== 동행 모집 글 삭제
+
+==== HTTP Request
+
+include::{snippets}/accompany/delete/http-request.adoc[]
+include::{snippets}/accompany/delete/path-parameters.adoc[]
+include::{snippets}/accompany/delete/request-headers.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/accompany/delete/http-response.adoc[]
+include::{snippets}/accompany/delete/response-fields.adoc[]
