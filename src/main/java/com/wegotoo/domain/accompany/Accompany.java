@@ -1,5 +1,6 @@
 package com.wegotoo.domain.accompany;
 
+import com.wegotoo.api.accompany.request.AccompanyEditServiceRequest;
 import com.wegotoo.domain.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -89,21 +90,19 @@ public class Accompany {
         this.endDate = endDate;
     }
 
-    public void edit(LocalDate startDate, LocalDate endDate, String title, String location, Double latitude,
-                     Double longitude, int personnel, Gender gender, int startAge, int endAge,
-                     int cost, String content) {
-        this.startDate = startDate != null ? startDate : this.startDate;
-        this.endDate = endDate != null ? endDate : this.endDate;
-        this.title = title != null ? title : this.title;
-        this.location = location != null ? location : this.location;
-        this.latitude = latitude != null ? latitude : this.latitude;
-        this.longitude = longitude != null ? longitude : this.longitude;
-        this.personnel = personnel;
-        this.gender = gender != null ? gender : this.gender;
-        this.startAge = startAge;
-        this.endAge = endAge;
-        this.cost = cost;
-        this.content = content != null ? content : this.content;
+    public void edit(AccompanyEditServiceRequest request) {
+        this.startDate = request.getStartDate() != null ? request.getStartDate() : startDate;
+        this.endDate = request.getEndDate() != null ? request.getEndDate() : endDate;
+        this.location = request.getLocation() != null ? request.getLocation() : location;
+        this.latitude = request.getLatitude() != null ? request.getLatitude() : latitude;
+        this.longitude = request.getLongitude() != null ? request.getLongitude() : longitude;
+        this.personnel = request.getPersonnel();
+        this.startAge = request.getStartAge();
+        this.endAge = request.getEndAge();
+        this.gender = request.getGender() != null ? request.getGender() : gender;
+        this.content = request.getContent() != null ? request.getContent() : content;
+        this.title = request.getTitle() != null ? request.getTitle() : title;
+        this.cost = request.getCost();
     }
 
 }

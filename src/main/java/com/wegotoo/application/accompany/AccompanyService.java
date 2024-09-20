@@ -35,9 +35,7 @@ public class AccompanyService {
         Accompany accompany = accompanyRepository.findByIdAndUser(accompanyId, user)
                 .orElseThrow(() -> new BusinessException(ACCOMPANY_NOT_FOUND));
 
-        accompany.edit(request.getStartDate(), request.getEndDate(), request.getTitle(), request.getLocation(),
-                request.getLatitude(), request.getLongitude(), request.getPersonnel(), request.getGender(),
-                request.getStartAge(), request.getEndAge(), request.getCost(), request.getContent());
+        accompany.edit(request);
     }
 
 }
