@@ -7,9 +7,11 @@ import com.wegotoo.application.OffsetLimit;
 import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.accompany.request.AccompanyCreateServiceRequest;
 import com.wegotoo.application.accompany.response.AccompanyFindAllResponse;
+import com.wegotoo.application.accompany.response.AccompanyFindOneResponse;
 import com.wegotoo.domain.accompany.Accompany;
 import com.wegotoo.domain.accompany.repository.AccompanyRepository;
 import com.wegotoo.domain.accompany.repository.response.AccompanyFindAllQueryEntity;
+import com.wegotoo.domain.accompany.repository.response.AccompanyFindOneQueryEntity;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import com.wegotoo.exception.BusinessException;
@@ -40,6 +42,12 @@ public class AccompanyService {
 
         return SliceResponse.of(AccompanyFindAllResponse.toList(accompany), offsetLimit.getOffset(),
                 offsetLimit.getLimit());
+    }
+
+    public AccompanyFindOneResponse findOneAccompany(Long accompanyId) {
+        // TODO 좋아요 기능 구현 시 조회수도 같이 구현 예정
+        AccompanyFindOneQueryEntity accompany = accompanyRepository.accompanyFindOne(accompanyId);
+        return AccompanyFindOneResponse.of(accompany);
     }
 
     @Transactional

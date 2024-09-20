@@ -7,6 +7,7 @@ import com.wegotoo.application.OffsetLimit;
 import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.accompany.AccompanyService;
 import com.wegotoo.application.accompany.response.AccompanyFindAllResponse;
+import com.wegotoo.application.accompany.response.AccompanyFindOneResponse;
 import com.wegotoo.infra.resolver.auth.Auth;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
@@ -56,4 +57,10 @@ public class AccompanyController {
     ) {
         return ApiResponse.ok(accompanyService.findAllAccompany(OffsetLimit.of(page, size)));
     }
+
+    @GetMapping("/v1/accompanies/{accompanyId}")
+    public ApiResponse<AccompanyFindOneResponse> findOneAccompany(@PathVariable("accompanyId") Long accompanyId) {
+        return ApiResponse.ok(accompanyService.findOneAccompany(accompanyId));
+    }
+
 }
