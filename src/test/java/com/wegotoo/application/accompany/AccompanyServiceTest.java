@@ -7,10 +7,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.wegotoo.api.accompany.request.AccompanyEditServiceRequest;
 import com.wegotoo.application.OffsetLimit;
 import com.wegotoo.application.ServiceTestSupport;
+import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.accompany.request.AccompanyCreateServiceRequest;
+import com.wegotoo.application.accompany.response.AccompanyFindAllResponse;
+import com.wegotoo.application.accompany.response.AccompanyFindOneResponse;
 import com.wegotoo.domain.accompany.Accompany;
 import com.wegotoo.domain.accompany.repository.AccompanyRepository;
 import com.wegotoo.domain.accompany.repository.response.AccompanyFindAllQueryEntity;
+import com.wegotoo.domain.accompany.repository.response.AccompanyFindOneQueryEntity;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import java.time.LocalDate;
@@ -200,11 +204,50 @@ class AccompanyServiceTest extends ServiceTestSupport {
                 .limit(4)
                 .build();
         // when
-        List<AccompanyFindAllQueryEntity> response = accompanyRepository.accompanyFindAll(
-                offsetLimit.getOffset(), offsetLimit.getLimit());
+        SliceResponse<AccompanyFindAllResponse> response = accompanyService.findAllAccompany(offsetLimit);
 
         // then
-        assertThat(response.size()).isEqualTo(4);
+        assertThat(response.getContent().size()).isEqualTo(4);
+    }
+
+    @Test
+    @DisplayName("유저가 여행 모집글을 단건 조회할 수 있다.")
+    void findOneAccompany() throws Exception {
+        // given
+        User user = User.builder()
+                .email("user@gmail.com")
+                .name("user")
+                .build();
+        userRepository.save(user);
+
+        List<Accompany> accompanies = IntStream.range(1, 5)
+                .mapToObj(i -> Accompany.builder()
+                        .startDate(START_DATE)
+                        .endDate(END_DATE)
+                        .title("제주도 여행 모집")
+                        .location("제주도")
+                        .latitude(0.0)
+                        .longitude(0.0)
+                        .personnel(3)
+                        .gender(NO_MATTER)
+                        .startAge(20)
+                        .endAge(29)
+                        .cost(1000000)
+                        .content("여행 관련 글")
+                        .user(user)
+                        .registeredDateTime(LocalDateTime.of(2024, 9, i, 0, 0, 0))
+                        .build()).toList();
+
+        accompanyRepository.saveAll(accompanies);
+
+        // when
+        AccompanyFindOneResponse response = accompanyService.findOneAccompany(
+                accompanies.get(0).getId());
+
+        // then
+        assertThat(response)
+                .extracting("accompanyId", "startDate", "endDate", "title", "content", "userName", "views", "likeCount")
+                .contains(response.getAccompanyId(), START_DATE, END_DATE, "제주도 여행 모집", "여행 관련 글", "user", 0L, 0L);
     }
 
 }

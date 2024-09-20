@@ -117,4 +117,19 @@ class AccompanyControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.message").value("OK"));
     }
 
+    @Test
+    @DisplayName("사용자가 모집글을 단건 조회하는 API를 호출한다.")
+    void findOneAccompany() throws Exception {
+
+        // when // then
+        mockMvc.perform(get("/v1/accompanies/1")
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("OK"));
+    }
+
 }
