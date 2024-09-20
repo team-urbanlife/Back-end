@@ -126,4 +126,38 @@ class AccompanyServiceTest extends ServiceTestSupport {
                         "여행 관련 글 수정");
     }
 
+    @Test
+    @DisplayName("유저가 여행 모집글을 삭제 한다")
+    void deleteAccompany() throws Exception {
+        // given
+        User user = User.builder()
+                .email("user@gmail.com")
+                .name("user")
+                .build();
+        userRepository.save(user);
+
+        Accompany accompany = Accompany.builder()
+                .startDate(START_DATE)
+                .endDate(END_DATE)
+                .title("제주도 여행 모집")
+                .location("제주도")
+                .latitude(0.0)
+                .longitude(0.0)
+                .personnel(3)
+                .gender(NO_MATTER)
+                .startAge(20)
+                .endAge(29)
+                .cost(1000000)
+                .content("여행 관련 글")
+                .user(user)
+                .build();
+        accompanyRepository.save(accompany);
+
+        // when
+        accompanyService.deleteAccompany(user.getId(), accompany.getId());
+        // then
+        List<Accompany> response = accompanyRepository.findAll();
+        assertThat(response.size()).isEqualTo(0);
+    }
+
 }

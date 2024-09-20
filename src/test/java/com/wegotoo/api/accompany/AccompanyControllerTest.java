@@ -3,6 +3,7 @@ package com.wegotoo.api.accompany;
 import static com.wegotoo.domain.accompany.Gender.NO_MATTER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -76,6 +77,21 @@ class AccompanyControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(patch("/v1/accompanies/{accompanyId}", 1)
                         .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("OK"));
+    }
+
+    @Test
+    @WithAuthUser
+    @DisplayName("여행 모집글 삭제하는 API를 호출한다.")
+    void deleteAccompany() throws Exception {
+        // when // then
+        mockMvc.perform(delete("/v1/accompanies/{accompanyId}", 1)
                         .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())
