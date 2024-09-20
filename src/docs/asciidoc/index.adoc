@@ -11,26 +11,31 @@ endif::[]
 
 [[Schedule-API]]
 
-== Schedule API
+== 여행 일정 API
 
 include::api/schedule/schedule.adoc[]
 
 [[DetailedPlan-API]]
 
-== DetailedPlan API
+== 세부 계획 API
 
 include::api/schedule/detailedPlan.adoc[]
 
 [[ScheduleDetails-API]]
 
-== ScheduleDetails
+== 세부 일정 API
 
 include::api/schedule/scheduleDetails.adoc[]
 
 [[Memo-API]]
-== Memo
+== 메모 API
 include::api/schedule/memo.adoc[]
 
+[[Accompany-API]]
+
+== 동행 모집 글 API
+include::api/accompany/accompany.adoc[]
+
 [[ChatRoom-API]]
-== ChatRoom
+== 채팅방 API
 include::api/chatroom/chatRoom.adoc[]
