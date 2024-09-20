@@ -5,8 +5,8 @@ import com.wegotoo.domain.accompany.Gender;
 import com.wegotoo.domain.accompany.Status;
 import com.wegotoo.domain.user.User;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Builder;
-import lombok.Getter;
 
 public class AccompanyCreateServiceRequest {
 
@@ -53,7 +53,7 @@ public class AccompanyCreateServiceRequest {
         this.content = content;
     }
 
-    public Accompany toEntity(User user) {
+    public Accompany toEntity(User user, LocalDateTime date) {
         return Accompany.builder()
                 .startDate(startDate)
                 .endDate(endDate)
@@ -69,6 +69,7 @@ public class AccompanyCreateServiceRequest {
                 .content(content)
                 .status(Status.RECRUIT)
                 .user(user)
+                .registeredDateTime(date)
                 .build();
     }
 

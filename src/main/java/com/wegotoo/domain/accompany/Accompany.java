@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -71,9 +72,12 @@ public class Accompany {
     @Column(name = "accompany_end_date")
     private LocalDate endDate;
 
+    @Column(name = "accompany_registered_datetime")
+    private LocalDateTime registeredDateTime;
+
     @Builder
     private Accompany(int cost, String location, String title, String content, Gender gender, Status status, User user,
-                      Double latitude, Double longitude, int personnel, int startAge, int endAge, LocalDate startDate, LocalDate endDate) {
+                      Double latitude, Double longitude, int personnel, int startAge, int endAge, LocalDate startDate, LocalDate endDate, LocalDateTime registeredDateTime) {
         this.cost = cost;
         this.location = location;
         this.title = title;
@@ -88,6 +92,7 @@ public class Accompany {
         this.endAge = endAge;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.registeredDateTime = registeredDateTime;
     }
 
     public void edit(AccompanyEditServiceRequest request) {
