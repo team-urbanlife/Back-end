@@ -5,14 +5,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.wegotoo.api.accompany.request.AccompanyEditServiceRequest;
+import com.wegotoo.application.OffsetLimit;
 import com.wegotoo.application.ServiceTestSupport;
+import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.accompany.request.AccompanyCreateServiceRequest;
+import com.wegotoo.application.accompany.response.AccompanyFindAllResponse;
+import com.wegotoo.application.accompany.response.AccompanyFindOneResponse;
 import com.wegotoo.domain.accompany.Accompany;
 import com.wegotoo.domain.accompany.repository.AccompanyRepository;
+import com.wegotoo.domain.accompany.repository.response.AccompanyFindAllQueryEntity;
+import com.wegotoo.domain.accompany.repository.response.AccompanyFindOneQueryEntity;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +39,7 @@ class AccompanyServiceTest extends ServiceTestSupport {
 
     final LocalDate START_DATE = LocalDate.of(2024, 9, 1);
     final LocalDate END_DATE = LocalDate.of(2024, 9, 3);
+    final LocalDateTime DATE = LocalDateTime.of(2024, 9, 1, 12, 0);
 
     @AfterEach
     void tearDown() {
@@ -63,7 +72,7 @@ class AccompanyServiceTest extends ServiceTestSupport {
                 .content("여행 관련 글")
                 .build();
         // when
-        accompanyService.createAccompany(user.getId(), request);
+        accompanyService.createAccompany(user.getId(), request, DATE);
 
         // then
         List<Accompany> response = accompanyRepository.findAll();
@@ -158,6 +167,87 @@ class AccompanyServiceTest extends ServiceTestSupport {
         // then
         List<Accompany> response = accompanyRepository.findAll();
         assertThat(response.size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("유저가 여행 모집글을 조회할 수 있다.")
+    void findAllAccompany() throws Exception {
+        // given
+        User user = User.builder()
+                .email("user@gmail.com")
+                .name("user")
+                .build();
+        userRepository.save(user);
+
+        List<Accompany> accompanies = IntStream.range(1, 5)
+                .mapToObj(i -> Accompany.builder()
+                        .startDate(START_DATE)
+                        .endDate(END_DATE)
+                        .title("제주도 여행 모집")
+                        .location("제주도")
+                        .latitude(0.0)
+                        .longitude(0.0)
+                        .personnel(3)
+                        .gender(NO_MATTER)
+                        .startAge(20)
+                        .endAge(29)
+                        .cost(1000000)
+                        .content("여행 관련 글")
+                        .user(user)
+                        .registeredDateTime(LocalDateTime.of(2024, 9, i, 0, 0, 0))
+                        .build()).toList();
+
+        accompanyRepository.saveAll(accompanies);
+
+        OffsetLimit offsetLimit = OffsetLimit.builder()
+                .offset(0)
+                .limit(4)
+                .build();
+        // when
+        SliceResponse<AccompanyFindAllResponse> response = accompanyService.findAllAccompany(offsetLimit);
+
+        // then
+        assertThat(response.getContent().size()).isEqualTo(4);
+    }
+
+    @Test
+    @DisplayName("유저가 여행 모집글을 단건 조회할 수 있다.")
+    void findOneAccompany() throws Exception {
+        // given
+        User user = User.builder()
+                .email("user@gmail.com")
+                .name("user")
+                .build();
+        userRepository.save(user);
+
+        List<Accompany> accompanies = IntStream.range(1, 5)
+                .mapToObj(i -> Accompany.builder()
+                        .startDate(START_DATE)
+                        .endDate(END_DATE)
+                        .title("제주도 여행 모집")
+                        .location("제주도")
+                        .latitude(0.0)
+                        .longitude(0.0)
+                        .personnel(3)
+                        .gender(NO_MATTER)
+                        .startAge(20)
+                        .endAge(29)
+                        .cost(1000000)
+                        .content("여행 관련 글")
+                        .user(user)
+                        .registeredDateTime(LocalDateTime.of(2024, 9, i, 0, 0, 0))
+                        .build()).toList();
+
+        accompanyRepository.saveAll(accompanies);
+
+        // when
+        AccompanyFindOneResponse response = accompanyService.findOneAccompany(
+                accompanies.get(0).getId());
+
+        // then
+        assertThat(response)
+                .extracting("accompanyId", "startDate", "endDate", "title", "content", "userName", "views", "likeCount")
+                .contains(response.getAccompanyId(), START_DATE, END_DATE, "제주도 여행 모집", "여행 관련 글", "user", 0L, 0L);
     }
 
 }
