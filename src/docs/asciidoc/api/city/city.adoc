@@ -1,0 +1,11 @@
+[[City-Find]]
+=== 도시 데이터 출력
+
+==== HTTP Request
+
+include::{snippets}/city/find/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/city/find/http-response.adoc[]
+include::{snippets}/city/find/response-fields.adoc[]

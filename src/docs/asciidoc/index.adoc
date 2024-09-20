@@ -39,3 +39,7 @@ include::api/accompany/accompany.adoc[]
 [[ChatRoom-API]]
 == 채팅방 API
 include::api/chatroom/chatRoom.adoc[]
+
+[[City-API]]
+== 도시 데이터 출력
+include::api/city/city.adoc[]
