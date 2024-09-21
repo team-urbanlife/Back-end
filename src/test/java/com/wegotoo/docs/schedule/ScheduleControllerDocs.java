@@ -36,7 +36,9 @@ import com.wegotoo.api.schedule.request.ScheduleEditRequest;
 import com.wegotoo.application.OffsetLimit;
 import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.schedule.response.ScheduleFindAllResponse;
+import com.wegotoo.application.schedule.response.TravelPlanResponse;
 import com.wegotoo.docs.RestDocsSupport;
+import com.wegotoo.domain.schedule.repository.response.DetailedPlanQueryEntity;
 import com.wegotoo.support.security.WithAuthUser;
 import java.time.LocalDate;
 import java.util.List;
@@ -54,11 +56,28 @@ public class ScheduleControllerDocs extends RestDocsSupport {
     @DisplayName("여행 일자를 생성하는 API")
     void createSchedule() throws Exception {
         // given
+        DetailedPlanQueryEntity queryResponse = DetailedPlanQueryEntity.builder()
+                .region("장소 이름")
+                .sequence(1L)
+                .latitude(0.0)
+                .longitude(0.0)
+                .ScheduleDetailsId(0L)
+                .build();
+
         ScheduleCreateRequest request = ScheduleCreateRequest.builder()
                 .city("여행 도시")
                 .startDate(START_DATE)
                 .endDate(END_DATE)
                 .build();
+
+        TravelPlanResponse response = TravelPlanResponse.builder()
+                .id(0L)
+                .travelDate(LocalDate.of(2024, 9, 1))
+                .detailedPlans(List.of(queryResponse))
+                .build();
+
+        given(scheduleService.createSchedule(anyLong(), any()))
+                .willReturn(List.of(response));
 
         // when // then
         mockMvc.perform(post("/v1/schedules")
@@ -89,8 +108,28 @@ public class ScheduleControllerDocs extends RestDocsSupport {
                                         .description("상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING)
                                         .description("메시지"),
-                                fieldWithPath("data").type(NULL)
-                                        .description("응답 데이터")
+                                fieldWithPath("data").type(ARRAY)
+                                        .description("응답 데이터"),
+                                fieldWithPath("data[].id").type(NUMBER)
+                                        .description("세부 일정 ID"),
+                                fieldWithPath("data[].travelDate").type(STRING)
+                                        .description("여행 계획 일 (YYYY-MM-DD"),
+                                fieldWithPath("data[].detailedPlans").type(ARRAY)
+                                        .description("세부 계획 데이터"),
+                                fieldWithPath("data[].detailedPlans[].region").type(STRING)
+                                        .description("장소 이름"),
+                                fieldWithPath("data[].detailedPlans[].sequence").type(NUMBER)
+                                        .description("세부 계획 순서"),
+                                fieldWithPath("data[].detailedPlans[].latitude").type(NUMBER)
+                                        .description("위도"),
+                                fieldWithPath("data[].detailedPlans[].longitude").type(NUMBER)
+                                        .description("경도"),
+                                fieldWithPath("data[].detailedPlans[].scheduleDetailsId").type(NUMBER)
+                                        .description("세부 일정 ID"),
+                                fieldWithPath("data[].detailedPlans[].memo").type(STRING)
+                                        .description("메모").optional(),
+                                fieldWithPath("data[].detailedPlans[].memoId").type(STRING)
+                                        .description("메모 ID").optional()
                         )
                 ));
     }

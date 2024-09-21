@@ -7,6 +7,7 @@ import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.schedule.request.ScheduleCreateServiceRequest;
 import com.wegotoo.application.schedule.request.ScheduleEditServiceRequest;
 import com.wegotoo.application.schedule.response.ScheduleFindAllResponse;
+import com.wegotoo.application.schedule.response.TravelPlanResponse;
 import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleDetails;
@@ -16,6 +17,8 @@ import com.wegotoo.domain.schedule.repository.MemoRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleDetailsRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleGroupRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleRepository;
+import com.wegotoo.domain.schedule.repository.response.DetailedPlanQueryEntity;
+import com.wegotoo.domain.schedule.repository.response.ScheduleDetailsQueryEntity;
 import com.wegotoo.domain.schedule.repository.response.ScheduleQueryEntity;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
@@ -40,21 +43,28 @@ public class ScheduleService {
     private final MemoRepository memoRepository;
 
     @Transactional
-    public void createSchedule(Long userId, ScheduleCreateServiceRequest request) {
+    public List<TravelPlanResponse> createSchedule(Long userId, ScheduleCreateServiceRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
         Schedule schedule = Schedule.create(request.getCity(), request.getStartDate(),
                 request.getEndDate(), request.totalTravelDays());
-        scheduleRepository.save(schedule);
+        Schedule scheduleSave = scheduleRepository.save(schedule);
 
-        ScheduleGroup scheduleGroup = ScheduleGroup.create(user, schedule);
+        ScheduleGroup scheduleGroup = ScheduleGroup.create(user, scheduleSave);
         scheduleGroupRepository.save(scheduleGroup);
 
         List<ScheduleDetails> scheduleDetailsList = getDatesBetween(request.getStartDate(), request.getEndDate())
                 .stream().map(date -> ScheduleDetails.create(date, schedule))
                 .toList();
         scheduleDetailsRepository.saveAll(scheduleDetailsList);
+
+        List<ScheduleDetailsQueryEntity> scheduleDetails = scheduleDetailsRepository.findScheduleDetails(scheduleSave.getId());
+
+        List<Long> scheduleDetailsIds = scheduleDetails.stream().map(ScheduleDetailsQueryEntity::getId).toList();
+        List<DetailedPlanQueryEntity> detailedPlans = detailPlanRepository.findDetailedPlans(scheduleDetailsIds);
+
+        return TravelPlanResponse.toList(scheduleDetails, detailedPlans);
     }
 
     public SliceResponse<ScheduleFindAllResponse> findAllSchedules(Long userId, OffsetLimit offsetLimit) {
