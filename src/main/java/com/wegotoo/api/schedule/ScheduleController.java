@@ -7,8 +7,10 @@ import com.wegotoo.application.OffsetLimit;
 import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.schedule.ScheduleService;
 import com.wegotoo.application.schedule.response.ScheduleFindAllResponse;
+import com.wegotoo.application.schedule.response.TravelPlanResponse;
 import com.wegotoo.infra.resolver.auth.Auth;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,11 +28,9 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping("/v1/schedules")
-    public ApiResponse<Void> createSchedule(@RequestBody @Valid ScheduleCreateRequest request,
-                                            @Auth Long userId) {
-        //todo 로그인 기능 구현될 시 0L 대신 로그인 유저 정보 값으로 변경 예정
-        scheduleService.createSchedule(userId, request.toService());
-        return ApiResponse.ok();
+    public ApiResponse<List<TravelPlanResponse>> createSchedule(@RequestBody @Valid ScheduleCreateRequest request,
+                                                                @Auth Long userId) {
+        return ApiResponse.ok(scheduleService.createSchedule(userId, request.toService()));
     }
 
     @GetMapping("/v1/schedules")
