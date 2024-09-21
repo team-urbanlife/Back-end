@@ -30,7 +30,7 @@ public class Invitation {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @Column(name = "invitation_inviter")
+    @JoinColumn(name = "user_id")
     private User inviter;
 
     @ManyToOne(fetch = FetchType.LAZY)
