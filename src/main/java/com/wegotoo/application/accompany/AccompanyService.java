@@ -30,10 +30,15 @@ public class AccompanyService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void createAccompany(Long userId, AccompanyCreateServiceRequest request, LocalDateTime date) {
+    public AccompanyFindOneResponse createAccompany(Long userId, AccompanyCreateServiceRequest request,
+                                                    LocalDateTime date) {
         User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
-        accompanyRepository.save(request.toEntity(user, date));
+        Accompany accompany = accompanyRepository.save(request.toEntity(user, date));
+
+        AccompanyFindOneQueryEntity response = accompanyRepository.accompanyFindOne(accompany.getId());
+
+        return AccompanyFindOneResponse.of(response);
     }
 
     public SliceResponse<AccompanyFindAllResponse> findAllAccompany(OffsetLimit offsetLimit) {

@@ -28,11 +28,10 @@ public class AccompanyController {
     private final AccompanyService accompanyService;
 
     @PostMapping("/v1/accompanies")
-    public ApiResponse<Void> createAccompany(@Auth Long userId,
+    public ApiResponse<AccompanyFindOneResponse> createAccompany(@Auth Long userId,
                                              @RequestBody @Valid AccompanyCreateRequest request) {
         LocalDateTime date = LocalDateTime.now();
-        accompanyService.createAccompany(userId, request.toService(), date);
-        return ApiResponse.ok();
+        return ApiResponse.ok(accompanyService.createAccompany(userId, request.toService(), date));
     }
 
     @PatchMapping("/v1/accompanies/{accompanyId}")
