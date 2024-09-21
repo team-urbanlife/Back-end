@@ -45,7 +45,13 @@ public class AccompanyRepositoryImpl implements AccompanyRepositoryCustom {
                 accompany.title,
                 accompany.content,
                 user.name,
-                accompany.registeredDateTime
+                accompany.registeredDateTime,
+                accompany.location,
+                accompany.personnel,
+                accompany.gender,
+                accompany.startAge,
+                accompany.endAge,
+                accompany.cost
         ))
                 .from(accompany)
                 .join(accompany.user, user)

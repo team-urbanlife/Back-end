@@ -73,6 +73,27 @@ public class AccompanyControllerDocs extends RestDocsSupport {
                 .content("여행 관련 글")
                 .build();
 
+        AccompanyFindOneResponse response = AccompanyFindOneResponse.builder()
+                .accompanyId(1L)
+                .startDate(START_DATE)
+                .endDate(END_DATE)
+                .title("동행 제목")
+                .content("동행 내용")
+                .userName("사용자 이름")
+                .registeredDateTime(LocalDateTime.of(2024, 9, 1, 0, 0, 0))
+                .views(0L)
+                .likeCount(0L)
+                .location("지역")
+                .personnel(4)
+                .gender(NO_MATTER)
+                .startAge(20)
+                .endAge(29)
+                .cost(1000000)
+                .build();
+
+        given(accompanyService.createAccompany(anyLong(), any(), any()))
+                .willReturn(response);
+
         // when // then
         mockMvc.perform(post("/v1/accompanies")
                         .header(authorizationHeaderName(), mockBearerToken())
@@ -120,8 +141,38 @@ public class AccompanyControllerDocs extends RestDocsSupport {
                                         .description("상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING)
                                         .description("메시지"),
-                                fieldWithPath("data").type(NULL)
-                                        .description("응답 데이터")
+                                fieldWithPath("data").type(OBJECT)
+                                        .description("응답 데이터"),
+                                fieldWithPath("data.accompanyId").type(NUMBER)
+                                        .description("accompany ID"),
+                                fieldWithPath("data.startDate").type(STRING)
+                                        .description("여행 시작 일자"),
+                                fieldWithPath("data.endDate").type(STRING)
+                                        .description("여행 종료 일자"),
+                                fieldWithPath("data.title").type(STRING)
+                                        .description("동행 제목"),
+                                fieldWithPath("data.content").type(STRING)
+                                        .description("동행 내용"),
+                                fieldWithPath("data.userName").type(STRING)
+                                        .description("작성자 이름"),
+                                fieldWithPath("data.registeredDateTime").type(STRING)
+                                        .description("작성 일자"),
+                                fieldWithPath("data.views").type(NUMBER)
+                                        .description("조회수 (09.20 아직 조회수 기능은 구현 X)"),
+                                fieldWithPath("data.likeCount").type(NUMBER)
+                                        .description("좋아요 개수 (09.20 아직 좋아요 기능은 구현 X)"),
+                                fieldWithPath("data.location").type(STRING)
+                                        .description("지역"),
+                                fieldWithPath("data.personnel").type(NUMBER)
+                                        .description("모집 인원"),
+                                fieldWithPath("data.gender").type(STRING)
+                                        .description("성별"),
+                                fieldWithPath("data.startAge").type(NUMBER)
+                                        .description("최소 연령"),
+                                fieldWithPath("data.endAge").type(NUMBER)
+                                        .description("최대 연령"),
+                                fieldWithPath("data.cost").type(NUMBER)
+                                        .description("예상 금액")
                         )
                 ));
     }
@@ -224,13 +275,18 @@ public class AccompanyControllerDocs extends RestDocsSupport {
                 .registeredDateTime(LocalDateTime.of(2024, 9, 1, 0, 0, 0))
                 .views(0L)
                 .likeCount(0L)
+                .location("지역")
+                .personnel(4)
+                .gender(NO_MATTER)
+                .startAge(20)
+                .endAge(29)
+                .cost(1000000)
                 .build();
 
-        // when
         given(accompanyService.findOneAccompany(anyLong()))
                 .willReturn(response);
 
-        // then
+        // when // then
         mockMvc.perform(get("/v1/accompanies/{accompanyId}", 1L)
                         .contentType(APPLICATION_JSON)
                 )
@@ -269,7 +325,19 @@ public class AccompanyControllerDocs extends RestDocsSupport {
                                 fieldWithPath("data.views").type(NUMBER)
                                         .description("조회수 (09.20 아직 조회수 기능은 구현 X)"),
                                 fieldWithPath("data.likeCount").type(NUMBER)
-                                        .description("좋아요 개수 (09.20 아직 좋아요 기능은 구현 X)")
+                                        .description("좋아요 개수 (09.20 아직 좋아요 기능은 구현 X)"),
+                                fieldWithPath("data.location").type(STRING)
+                                        .description("지역"),
+                                fieldWithPath("data.personnel").type(NUMBER)
+                                        .description("모집 인원"),
+                                fieldWithPath("data.gender").type(STRING)
+                                        .description("성별"),
+                                fieldWithPath("data.startAge").type(NUMBER)
+                                        .description("최소 연령"),
+                                fieldWithPath("data.endAge").type(NUMBER)
+                                        .description("최대 연령"),
+                                fieldWithPath("data.cost").type(NUMBER)
+                                        .description("예상 금액")
                         )
                 ));
     }
