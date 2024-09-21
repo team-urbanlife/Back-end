@@ -19,7 +19,8 @@ public enum ErrorCode {
     NOT_FOUND_REFRESH_TOKEN(404, "리프레시 토큰을 찾을 수 없습니다."),
     NOT_VALID_USER(401, "인증되지 않은 사용자입니다."),
     ACCOMPANY_NOT_FOUND(404, "동행 게시글을 찾을 수 없습니다."),
-    MEMO_NOT_FOUND(404, "메모를 찾을 수 없습니다.");
+    MEMO_NOT_FOUND(404, "메모를 찾을 수 없습니다."),
+    INVITATION_INVALID(401, "유효하지 않은 초대입니다.");
 
     private final int code;
     private final String message;
