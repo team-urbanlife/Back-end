@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active:
+      - test-env
+    group:
+      test-env:
+        - local
+    include:
+      - jwt
+      - oauth

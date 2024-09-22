@@ -21,3 +21,9 @@ spring:
         show_sql: true
         format_sql: true
     defer-datasource-initialization: true
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: wegotoo
