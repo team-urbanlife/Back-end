@@ -17,4 +17,8 @@ public class ErrorResponse {
         return new ErrorResponse(code, message);
     }
 
+    public static ErrorResponse of(BusinessException ex) {
+        return new ErrorResponse(ex.getCode(), ex.getMessage());
+    }
+
 }
