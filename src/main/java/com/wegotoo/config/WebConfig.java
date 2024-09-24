@@ -8,6 +8,7 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 
 import com.wegotoo.infra.resolver.auth.AuthArgumentResolver;
+import com.wegotoo.infra.resolver.refresh.AppRefreshTokenArgumentResolver;
 import com.wegotoo.infra.resolver.refresh.RefreshTokenArgumentResolver;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final AuthArgumentResolver authArgumentResolver;
     private final RefreshTokenArgumentResolver refreshTokenArgumentResolver;
+    private final AppRefreshTokenArgumentResolver appRefreshTokenArgumentResolver;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(authArgumentResolver);
         resolvers.add(refreshTokenArgumentResolver);
+        resolvers.add(appRefreshTokenArgumentResolver);
     }
 
     @Override

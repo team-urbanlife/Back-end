@@ -6,7 +6,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 import com.wegotoo.infra.security.handler.CustomAuthenticationEntryPoint;
 import com.wegotoo.infra.security.jwt.filter.JwtAuthorizationFilter;
-import com.wegotoo.infra.security.jwt.filter.JwtLogoutFilter;
 import com.wegotoo.infra.security.oauth.CustomOAuth2UserService;
 import com.wegotoo.infra.security.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.wegotoo.infra.security.oauth.handler.OAuth2FailureHandler;
@@ -29,7 +28,6 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
     private final JwtAuthorizationFilter authorizationFilter;
-    private final JwtLogoutFilter logoutFilter;
     private final HttpCookieOAuth2AuthorizationRequestRepository authorizationRequestRepository;
 
     @Bean
@@ -46,7 +44,8 @@ public class SecurityConfig {
                         request
                                 .requestMatchers("/h2-console/**").permitAll()
                                 .requestMatchers("/oauth2/**").permitAll()
-                                .requestMatchers("/reissue").permitAll()
+                                .requestMatchers("/v1/reissue").permitAll()
+                                .requestMatchers("/v1/app/reissue").permitAll()
                                 .requestMatchers("/docs/**").permitAll()
                                 .requestMatchers(GET, "/v1/accompanies/**").permitAll()
                                 .requestMatchers("/ws/**").permitAll()
@@ -66,7 +65,6 @@ public class SecurityConfig {
                                 .failureHandler(oAuth2FailureHandler));
 
         http.addFilterBefore(authorizationFilter, LogoutFilter.class);
-        http.addFilterBefore(logoutFilter, JwtAuthorizationFilter.class);
 
         return http.build();
     }
