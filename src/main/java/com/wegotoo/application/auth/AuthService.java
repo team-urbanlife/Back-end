@@ -1,5 +1,7 @@
 package com.wegotoo.application.auth;
 
+import static com.wegotoo.exception.ErrorCode.*;
+
 import com.wegotoo.application.auth.response.TokenResponse;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
@@ -19,9 +21,9 @@ public class AuthService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void logout(String refreshToken) {
-        User user = userRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    public void logout(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
         user.deleteRefreshToken();
     }
@@ -29,7 +31,7 @@ public class AuthService {
     @Transactional
     public TokenResponse validateAndReissueToken(String token) {
         User user = userRepository.findByRefreshToken(token)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
         String accessToken = tokenProvider.createAccessToken(user.getId(), user.getEmail(), user.getRole());
         String refreshToken = tokenProvider.createRefreshToken();

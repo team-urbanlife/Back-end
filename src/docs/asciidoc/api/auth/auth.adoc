@@ -1,0 +1,44 @@
+[[auth-web-logout]]
+=== 웹 로그아웃 API
+==== HTTP Request
+include::{snippets}/auth/logout_web/http-request.adoc[]
+include::{snippets}/auth/logout_web/request-headers.adoc[]
+include::{snippets}/auth/logout_web/request-cookies.adoc[]
+
+==== HTTP Response
+include::{snippets}/auth/logout_web/http-response.adoc[]
+include::{snippets}/auth/logout_web/response-cookies.adoc[]
+include::{snippets}/auth/logout_web/response-fields.adoc[]
+
+[[auth-web-reissue]]
+=== 웹 토큰 재발급 API
+==== HTTP Request
+include::{snippets}/auth/reissue_web/http-request.adoc[]
+include::{snippets}/auth/reissue_web/request-cookies.adoc[]
+
+==== HTTP Response
+include::{snippets}/auth/reissue_web/http-response.adoc[]
+include::{snippets}/auth/reissue_web/response-headers.adoc[]
+include::{snippets}/auth/reissue_web/response-cookies.adoc[]
+include::{snippets}/auth/reissue_web/response-fields.adoc[]
+
+[[auth-app-logout]]
+=== 앱 로그아웃 API
+==== HTTP Request
+include::{snippets}/auth/logout_app/http-request.adoc[]
+include::{snippets}/auth/logout_app/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/auth/logout_app/http-response.adoc[]
+include::{snippets}/auth/logout_app/response-fields.adoc[]
+
+[[auth-app-reissue]]
+=== 앱 토큰 재발급 API
+==== HTTP Request
+include::{snippets}/auth/reissue_app/http-request.adoc[]
+include::{snippets}/auth/reissue_app/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/auth/reissue_app/http-response.adoc[]
+include::{snippets}/auth/reissue_app/response-headers.adoc[]
+include::{snippets}/auth/reissue_app/response-fields.adoc[]

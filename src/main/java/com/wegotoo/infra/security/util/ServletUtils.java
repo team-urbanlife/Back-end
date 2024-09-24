@@ -13,14 +13,31 @@ public class ServletUtils {
         return request.getHeader("Authorization");
     }
 
+    public static String findAuthorizationRefreshHeaderToRequest() {
+        HttpServletRequest request = findServletRequest();
+        return request.getHeader("Authorization-refresh");
+    }
+
     public static void addAuthorizationHeaderToResponse(String token) {
         HttpServletResponse response = findServletResponse();
         response.addHeader("Authorization", "Bearer " + token);
     }
 
+    public static void addAuthorizationRefreshHeaderToResponse(String token) {
+        HttpServletResponse response = findServletResponse();
+        response.addHeader("Authorization-refresh", token);
+    }
+
     public static void addRefreshTokenCookieToResponse(String token) {
         HttpServletResponse response = findServletResponse();
         CookieUtils.addToken(response, token);
+    }
+
+    public static void deleteRefreshTokenCookieToResponse() {
+        HttpServletRequest request = findServletRequest();
+        HttpServletResponse response = findServletResponse();
+
+        CookieUtils.deleteToken(request, response);
     }
 
     private static HttpServletRequest findServletRequest() {

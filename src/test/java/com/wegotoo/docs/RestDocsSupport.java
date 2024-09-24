@@ -2,6 +2,7 @@ package com.wegotoo.docs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegotoo.application.accompany.AccompanyService;
+import com.wegotoo.application.auth.AuthService;
 import com.wegotoo.application.chatroom.ChatRoomService;
 import com.wegotoo.application.city.CityService;
 import com.wegotoo.application.schedule.DetailedPlanService;
@@ -50,6 +51,9 @@ public abstract class RestDocsSupport {
 
     @MockBean
     protected CityService cityService;
+
+    @MockBean
+    protected AuthService authService;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
