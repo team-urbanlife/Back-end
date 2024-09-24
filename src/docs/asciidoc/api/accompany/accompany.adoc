@@ -19,7 +19,6 @@ include::{snippets}/accompany/create/response-fields.adoc[]
 
 include::{snippets}/accompany/findAll/http-request.adoc[]
 include::{snippets}/accompany/findAll/query-parameters.adoc[]
-include::{snippets}/accompany/findAll/request-headers.adoc[]
 
 ==== HTTP Response
 

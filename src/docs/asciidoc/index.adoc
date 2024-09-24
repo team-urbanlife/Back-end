@@ -41,5 +41,9 @@ include::api/accompany/accompany.adoc[]
 include::api/chatroom/chatRoom.adoc[]
 
 [[City-API]]
-== 도시 데이터 출력
+== 도시 API
 include::api/city/city.adoc[]
+
+[[Auth-API]]
+== 인증/인가 API
+include::api/auth/auth.adoc[]
