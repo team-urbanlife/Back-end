@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 .requestMatchers("/docs/**").permitAll()
                                 .requestMatchers(GET, "/v1/accompanies/**").permitAll()
                                 .requestMatchers("/ws/**").permitAll()
+                                .requestMatchers("/v1/notification/**").permitAll()
                                 .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer.authenticationEntryPoint(entryPoint))
