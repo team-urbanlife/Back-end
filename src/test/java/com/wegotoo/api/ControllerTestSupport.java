@@ -5,6 +5,7 @@ import com.wegotoo.application.accompany.AccompanyService;
 import com.wegotoo.application.auth.AuthService;
 import com.wegotoo.application.chatroom.ChatRoomService;
 import com.wegotoo.application.city.CityService;
+import com.wegotoo.application.notification.NotificationService;
 import com.wegotoo.application.schedule.DetailedPlanService;
 import com.wegotoo.application.schedule.MemoService;
 import com.wegotoo.application.schedule.ScheduleDetailsService;
@@ -46,5 +47,8 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected AuthService authService;
+
+    @MockBean
+    protected NotificationService notificationService;
 
 }
