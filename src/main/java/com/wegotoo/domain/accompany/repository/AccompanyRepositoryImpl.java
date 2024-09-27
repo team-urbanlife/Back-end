@@ -19,14 +19,15 @@ public class AccompanyRepositoryImpl implements AccompanyRepositoryCustom {
     @Override
     public List<AccompanyFindAllQueryEntity> accompanyFindAll(Integer offset, Integer size) {
         return queryFactory.select(new QAccompanyFindAllQueryEntity(
-                accompany.id,
-                accompany.startDate,
-                accompany.endDate,
-                accompany.title,
-                accompany.content,
-                user.name,
-                accompany.registeredDateTime
-        ))
+                        accompany.id,
+                        accompany.startDate,
+                        accompany.endDate,
+                        accompany.title,
+                        accompany.content,
+                        user.name,
+                        accompany.registeredDateTime,
+                        user.profileImage
+                ))
                 .from(accompany)
                 .join(accompany.user, user)
                 .offset(offset)
@@ -39,20 +40,21 @@ public class AccompanyRepositoryImpl implements AccompanyRepositoryCustom {
     @Override
     public AccompanyFindOneQueryEntity accompanyFindOne(Long accompanyId) {
         return queryFactory.select(new QAccompanyFindOneQueryEntity(
-                accompany.id,
-                accompany.startDate,
-                accompany.endDate,
-                accompany.title,
-                accompany.content,
-                user.name,
-                accompany.registeredDateTime,
-                accompany.location,
-                accompany.personnel,
-                accompany.gender,
-                accompany.startAge,
-                accompany.endAge,
-                accompany.cost
-        ))
+                        accompany.id,
+                        accompany.startDate,
+                        accompany.endDate,
+                        accompany.title,
+                        accompany.content,
+                        user.name,
+                        accompany.registeredDateTime,
+                        accompany.location,
+                        accompany.personnel,
+                        accompany.gender,
+                        accompany.startAge,
+                        accompany.endAge,
+                        accompany.cost,
+                        user.profileImage
+                ))
                 .from(accompany)
                 .join(accompany.user, user)
                 .where(accompany.id.eq(accompanyId))

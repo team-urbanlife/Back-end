@@ -37,11 +37,13 @@ public class AccompanyFindOneQueryEntity {
 
     private int cost;
 
+    private String userProfileImage;
+
     @QueryProjection
     public AccompanyFindOneQueryEntity(Long accompanyId, LocalDate startDate, LocalDate endDate, String title,
                                        String content, String userName, LocalDateTime registeredDateTime,
                                        String location, int personnel, Gender gender, int startAge, int endAge,
-                                       int cost) {
+                                       int cost, String userProfileImage) {
         this.accompanyId = accompanyId;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -55,6 +57,7 @@ public class AccompanyFindOneQueryEntity {
         this.startAge = startAge;
         this.endAge = endAge;
         this.cost = cost;
+        this.userProfileImage = userProfileImage;
     }
 
 }

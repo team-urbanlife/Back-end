@@ -42,11 +42,13 @@ public class AccompanyFindOneResponse {
 
     private int cost;
 
+    private String userProfileImage;
+
     @Builder
     private AccompanyFindOneResponse(Long accompanyId, LocalDate startDate, LocalDate endDate, String title,
                                      String content, String userName, LocalDateTime registeredDateTime, Long views,
                                      Long likeCount, String location, int personnel, Gender gender, int startAge,
-                                     int endAge, int cost) {
+                                     int endAge, int cost, String userProfileImage) {
         this.accompanyId = accompanyId;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -62,6 +64,7 @@ public class AccompanyFindOneResponse {
         this.startAge = startAge;
         this.endAge = endAge;
         this.cost = cost;
+        this.userProfileImage = userProfileImage;
     }
 
     public static AccompanyFindOneResponse of(AccompanyFindOneQueryEntity accompany) {
@@ -81,6 +84,7 @@ public class AccompanyFindOneResponse {
                 .startAge(accompany.getStartAge())
                 .endAge(accompany.getEndAge())
                 .cost(accompany.getCost())
+                .userProfileImage(accompany.getUserProfileImage())
                 .build();
     }
 }

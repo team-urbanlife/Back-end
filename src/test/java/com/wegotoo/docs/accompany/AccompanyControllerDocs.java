@@ -89,6 +89,7 @@ public class AccompanyControllerDocs extends RestDocsSupport {
                 .startAge(20)
                 .endAge(29)
                 .cost(1000000)
+                .userProfileImage("이미지 URL")
                 .build();
 
         given(accompanyService.createAccompany(anyLong(), any(), any()))
@@ -172,7 +173,9 @@ public class AccompanyControllerDocs extends RestDocsSupport {
                                 fieldWithPath("data.endAge").type(NUMBER)
                                         .description("최대 연령"),
                                 fieldWithPath("data.cost").type(NUMBER)
-                                        .description("예상 금액")
+                                        .description("예상 금액"),
+                                fieldWithPath("data.userProfileImage").type(STRING)
+                                        .description("유저 프로필 이미지")
                         )
                 ));
     }
@@ -190,6 +193,7 @@ public class AccompanyControllerDocs extends RestDocsSupport {
                 .content("동행 내용")
                 .userName("사용자 이름")
                 .registeredDateTime(LocalDateTime.of(2024, 9, 1, 0, 0, 0))
+                .userProfileImage("이미지 URL")
                 .build();
 
         SliceResponse<AccompanyFindAllResponse> response = SliceResponse.<AccompanyFindAllResponse>builder()
@@ -255,7 +259,9 @@ public class AccompanyControllerDocs extends RestDocsSupport {
                                 fieldWithPath("data.content[].userName").type(STRING)
                                         .description("작성자 이름"),
                                 fieldWithPath("data.content[].registeredDateTime").type(STRING)
-                                        .description("작성 일자")
+                                        .description("작성 일자"),
+                                fieldWithPath("data.content[].userProfileImage").type(STRING)
+                                        .description("유저 프로필 이미지")
                         )
                 ));
     }
@@ -281,6 +287,7 @@ public class AccompanyControllerDocs extends RestDocsSupport {
                 .startAge(20)
                 .endAge(29)
                 .cost(1000000)
+                .userProfileImage("이미지 URL")
                 .build();
 
         given(accompanyService.findOneAccompany(anyLong()))
@@ -337,7 +344,9 @@ public class AccompanyControllerDocs extends RestDocsSupport {
                                 fieldWithPath("data.endAge").type(NUMBER)
                                         .description("최대 연령"),
                                 fieldWithPath("data.cost").type(NUMBER)
-                                        .description("예상 금액")
+                                        .description("예상 금액"),
+                                fieldWithPath("data.userProfileImage").type(STRING)
+                                        .description("유저 프로필 이미지")
                         )
                 ));
     }
