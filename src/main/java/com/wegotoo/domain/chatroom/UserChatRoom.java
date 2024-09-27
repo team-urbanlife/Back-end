@@ -40,7 +40,7 @@ public class UserChatRoom {
     private Accompany accompany;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_chat_id")
+    @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 
     @Builder
