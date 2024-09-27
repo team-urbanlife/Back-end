@@ -24,9 +24,11 @@ public class AccompanyFindAllQueryEntity {
 
     private LocalDateTime registeredDateTime;
 
+    private String userProfileImage;
+
     @QueryProjection
     public AccompanyFindAllQueryEntity(Long accompanyId, LocalDate startDate, LocalDate endDate, String title,
-                                       String content, String userName, LocalDateTime registeredDateTime) {
+                                       String content, String userName, LocalDateTime registeredDateTime, String userProfileImage) {
         this.accompanyId = accompanyId;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -34,6 +36,7 @@ public class AccompanyFindAllQueryEntity {
         this.content = content;
         this.userName = userName;
         this.registeredDateTime = registeredDateTime;
+        this.userProfileImage = userProfileImage;
     }
 
 }

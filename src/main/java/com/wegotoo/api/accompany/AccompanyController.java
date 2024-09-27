@@ -30,7 +30,7 @@ public class AccompanyController {
     @PostMapping("/v1/accompanies")
     public ApiResponse<AccompanyFindOneResponse> createAccompany(@Auth Long userId,
                                              @RequestBody @Valid AccompanyCreateRequest request) {
-        LocalDateTime date = LocalDateTime.now();
+        LocalDateTime date = LocalDateTime.now().withNano(0);
         return ApiResponse.ok(accompanyService.createAccompany(userId, request.toService(), date));
     }
 
