@@ -1,14 +1,18 @@
 package com.wegotoo.application.chatroom;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 import com.wegotoo.application.ServiceTestSupport;
 import com.wegotoo.application.chatroom.request.ChatRoomCreateServiceRequest;
+import com.wegotoo.application.chatroom.response.ChatRoomFindAllResponse;
 import com.wegotoo.application.chatroom.response.ChatRoomResponse;
 import com.wegotoo.domain.accompany.Accompany;
 import com.wegotoo.domain.accompany.Gender;
 import com.wegotoo.domain.accompany.Status;
 import com.wegotoo.domain.accompany.repository.AccompanyRepository;
+import com.wegotoo.domain.chat.Chat;
+import com.wegotoo.domain.chat.repository.ChatRepository;
 import com.wegotoo.domain.chatroom.ChatRoom;
 import com.wegotoo.domain.chatroom.UserChatRoom;
 import com.wegotoo.domain.chatroom.repository.ChatRoomRepository;
@@ -17,6 +21,7 @@ import com.wegotoo.domain.user.Role;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import java.util.List;
+import java.util.stream.LongStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +31,9 @@ public class ChatRoomServiceTest extends ServiceTestSupport {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ChatRepository chatRepository;
 
     @Autowired
     ChatRoomRepository chatRoomRepository;
@@ -41,10 +49,52 @@ public class ChatRoomServiceTest extends ServiceTestSupport {
 
     @AfterEach
     void tearDown() {
+        chatRepository.deleteAll();
         userChatRoomRepository.deleteAllInBatch();
         accompanyRepository.deleteAllInBatch();
         chatRoomRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
+    }
+
+    @Test
+    @DisplayName("채팅방을 조회한다.")
+    public void findAllChatRooms() {
+        // given
+        User userA = userRepository.save(createUser("userA"));
+        User userB = userRepository.save(createUser("userB"));
+        User userC = userRepository.save(createUser("userC"));
+        User userD = userRepository.save(createUser("userD"));
+        User userE = userRepository.save(createUser("userE"));
+
+        Accompany accompany = accompanyRepository.save(createAccompany(userA));
+
+        ChatRoom chatRoomA = chatRoomRepository.save(createChatRoomWithCode("0000A"));
+        ChatRoom chatRoomB = chatRoomRepository.save(createChatRoomWithCode("0000B"));
+        ChatRoom chatRoomC = chatRoomRepository.save(createChatRoomWithCode("0000C"));
+        ChatRoom chatRoomD = chatRoomRepository.save(createChatRoomWithCode("0000D"));
+
+        userChatRoomRepository.saveAll(createUserChatRooms(userA, userB, chatRoomA, accompany));
+        userChatRoomRepository.saveAll(createUserChatRooms(userA, userC, chatRoomB, accompany));
+        userChatRoomRepository.saveAll(createUserChatRooms(userA, userD, chatRoomC, accompany));
+        userChatRoomRepository.saveAll(createUserChatRooms(userA, userE, chatRoomD, accompany));
+
+        List<Chat> chatsA = chatRepository.saveAll(createChats(userA, userB, chatRoomA));
+        List<Chat> chatsB = chatRepository.saveAll(createChats(userA, userC, chatRoomB));
+        List<Chat> chatsC = chatRepository.saveAll(createChats(userA, userD, chatRoomC));
+        List<Chat> chatsD = chatRepository.saveAll(createChats(userA, userE, chatRoomD));
+
+        // when
+        List<ChatRoomFindAllResponse> result = chatRoomService.findAllChatRooms(userA.getId());
+
+        // then
+        assertThat(result).hasSize(4)
+                .extracting("chatRoomId", "otherUserProfileImage", "lastMessage")
+                .containsExactly(
+                        tuple(chatRoomD.getId(), "profile_image.com/userE", "message20"),
+                        tuple(chatRoomC.getId(), "profile_image.com/userD", "message20"),
+                        tuple(chatRoomB.getId(), "profile_image.com/userC", "message20"),
+                        tuple(chatRoomA.getId(), "profile_image.com/userB", "message20")
+                );
     }
 
     @Test
@@ -89,10 +139,9 @@ public class ChatRoomServiceTest extends ServiceTestSupport {
     private User createUser(String username) {
         return User.builder()
                 .email(username + "@email.com")
-                .name(username)
                 .latitude(1.1)
                 .role(Role.USER)
-                .profileImage(username + ".com/profile_image")
+                .profileImage("profile_image.com/" + username)
                 .build();
     }
 
@@ -111,6 +160,40 @@ public class ChatRoomServiceTest extends ServiceTestSupport {
         return ChatRoom.builder()
                 .code(code)
                 .build();
+    }
+
+    private UserChatRoom createUserChatRoom(User user, ChatRoom chatRoom, Accompany accompany,
+                                            com.wegotoo.domain.chatroom.Role role) {
+        return UserChatRoom.builder()
+                .user(user)
+                .chatRoom(chatRoom)
+                .accompany(accompany)
+                .role(role)
+                .build();
+    }
+
+    private List<UserChatRoom> createUserChatRooms(User admin, User guest, ChatRoom chatRoom, Accompany accompany) {
+        return List.of(createUserChatRoom(admin, chatRoom, accompany, com.wegotoo.domain.chatroom.Role.ADMIN),
+                createUserChatRoom(guest, chatRoom, accompany, com.wegotoo.domain.chatroom.Role.GUEST));
+    }
+
+    private Chat createChat(User user, ChatRoom chatRoom, Long messageNumber) {
+        return Chat.builder()
+                .chatRoomId(chatRoom.getId())
+                .senderId(user.getId())
+                .roomCode(chatRoom.getCode())
+                .message("message" + messageNumber)
+                .build();
+    }
+
+    private List<Chat> createChats(User admin, User guest, ChatRoom chatRoom) {
+        return LongStream.rangeClosed(1, 20)
+                .mapToObj(i -> isOdd(i) ? createChat(admin, chatRoom, i) : createChat(guest, chatRoom, i))
+                .toList();
+    }
+
+    private boolean isOdd(Long number) {
+        return number % 2 == 1;
     }
 
     private ChatRoomCreateServiceRequest createRequest(Long accompanyId) {

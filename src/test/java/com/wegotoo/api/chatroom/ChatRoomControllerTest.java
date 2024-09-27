@@ -1,18 +1,33 @@
 package com.wegotoo.api.chatroom;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.wegotoo.api.chatroom.request.ChatRoomCreateRequest;
 import com.wegotoo.api.ControllerTestSupport;
+import com.wegotoo.api.chatroom.request.ChatRoomCreateRequest;
 import com.wegotoo.support.security.WithAuthUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class ChatRoomControllerTest extends ControllerTestSupport {
+
+    @Test
+    @WithAuthUser
+    @DisplayName("채팅방을 전체 조회한다.")
+    public void findChatRooms() throws Exception {
+        // when // then
+        mockMvc.perform(get("/v1/chat-rooms")
+                        .contentType(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("OK"));
+    }
 
     @Test
     @WithAuthUser
