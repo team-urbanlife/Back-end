@@ -23,6 +23,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     public ChatResponse sendChatMessage(Long userId, ChatSendServiceRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(NOT_VALID_USER));
