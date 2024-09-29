@@ -1,12 +1,15 @@
 package com.wegotoo.application.chatroom;
 
 import static com.wegotoo.exception.ErrorCode.ACCOMPANY_NOT_FOUND;
+import static com.wegotoo.exception.ErrorCode.CHAT_ROOM_NOT_FOUND;
 import static com.wegotoo.exception.ErrorCode.USER_NOT_FOUND;
 import static java.util.stream.Collectors.toMap;
 
 import com.wegotoo.application.chatroom.request.ChatRoomCreateServiceRequest;
 import com.wegotoo.application.chatroom.response.ChatRoomFindAllResponse;
+import com.wegotoo.application.chatroom.response.ChatRoomFindOneResponse;
 import com.wegotoo.application.chatroom.response.ChatRoomResponse;
+import com.wegotoo.application.chatroom.response.ChatRoomUserResponse;
 import com.wegotoo.domain.accompany.Accompany;
 import com.wegotoo.domain.accompany.repository.AccompanyRepository;
 import com.wegotoo.domain.chat.Chat;
@@ -37,6 +40,18 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserChatRoomRepository userChatRoomRepository;
     private final AccompanyRepository accompanyRepository;
+
+    public ChatRoomFindOneResponse findChatRoom(Long userId, Long chatRoomId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new BusinessException(CHAT_ROOM_NOT_FOUND));
+
+        List<UserChatRoom> userChatRooms = userChatRoomRepository.findByChatRoomIdWithUser(chatRoom.getId());
+
+        return ChatRoomFindOneResponse.of(userChatRooms);
+    }
 
     public List<ChatRoomFindAllResponse> findAllChatRooms(Long userId) {
         User user = userRepository.findById(userId)

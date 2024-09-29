@@ -13,15 +13,17 @@ public class ChatRoomFindAllResponse {
 
     private Long chatRoomId;
     private Long accompanyId;
+    private String accompanyTitle;
     private String otherUserProfileImage;
     private String lastMessage;
     private LocalDateTime lastMessageCreateAt;
 
     @Builder
-    private ChatRoomFindAllResponse(Long chatRoomId, Long accompanyId, String otherUserProfileImage, String lastMessage,
-                                    LocalDateTime lastMessageCreateAt) {
+    private ChatRoomFindAllResponse(Long chatRoomId, Long accompanyId, String otherUserProfileImage,
+                                    String accompanyTitle, String lastMessage, LocalDateTime lastMessageCreateAt) {
         this.chatRoomId = chatRoomId;
         this.accompanyId = accompanyId;
+        this.accompanyTitle = accompanyTitle;
         this.otherUserProfileImage = otherUserProfileImage;
         this.lastMessage = lastMessage;
         this.lastMessageCreateAt = lastMessageCreateAt;
@@ -38,6 +40,7 @@ public class ChatRoomFindAllResponse {
         return ChatRoomFindAllResponse.builder()
                 .chatRoomId(userChatRoom.getChatRoomId())
                 .accompanyId(userChatRoom.getAccompanyId())
+                .accompanyTitle(userChatRoom.getAccompanyTitle())
                 .otherUserProfileImage(userChatRoom.getOtherUserProfileImage())
                 .lastMessage(chat.getMessage())
                 .lastMessageCreateAt(chat.getCreateAt())
