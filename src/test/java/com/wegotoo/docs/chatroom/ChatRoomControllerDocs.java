@@ -27,7 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.wegotoo.api.chatroom.request.ChatRoomCreateRequest;
 import com.wegotoo.application.chatroom.request.ChatRoomCreateServiceRequest;
 import com.wegotoo.application.chatroom.response.ChatRoomFindAllResponse;
+import com.wegotoo.application.chatroom.response.ChatRoomFindOneResponse;
 import com.wegotoo.application.chatroom.response.ChatRoomResponse;
+import com.wegotoo.application.chatroom.response.ChatRoomUserResponse;
 import com.wegotoo.docs.RestDocsSupport;
 import com.wegotoo.support.security.WithAuthUser;
 import java.time.LocalDateTime;
@@ -39,6 +41,39 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class ChatRoomControllerDocs extends RestDocsSupport {
+
+    @Test
+    @WithAuthUser
+    @DisplayName("채팅방 단건 조회")
+    public void findChatRoom() throws Exception {
+        // given
+        given(chatRoomService.findChatRoom(anyLong(), anyLong()))
+                .willReturn(createFindOneResponse());
+
+        // when // then
+        mockMvc.perform(get("/v1/chat-rooms/{chatRoomId}", 1L)
+                        .header(authorizationHeaderName(), mockBearerToken())
+                        .contentType(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("chatRoom/findOne",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(authorizationHeaderName()).description("어세스 토큰")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(NUMBER).description("코드"),
+                                fieldWithPath("status").type(STRING).description("상태"),
+                                fieldWithPath("message").type(STRING).description("메세지"),
+                                fieldWithPath("data").type(OBJECT).description("응답 데이터"),
+                                fieldWithPath("data.users[]").type(ARRAY).description("사용자 정보"),
+                                fieldWithPath("data.users[].id").description("사용자 아이디"),
+                                fieldWithPath("data.users[].name").description("사용자 이름"),
+                                fieldWithPath("data.users[].profileImage").description("사용자 프로필 사진")
+                        )
+                ));
+    }
 
     @Test
     @WithAuthUser
@@ -73,6 +108,8 @@ public class ChatRoomControllerDocs extends RestDocsSupport {
                                         .description("채팅방 아이디"),
                                 fieldWithPath("data[].accompanyId").type(NUMBER)
                                         .description("동행 아이디"),
+                                fieldWithPath("data[].accompanyTitle").type(STRING)
+                                                .description("동행 제목"),
                                 fieldWithPath("data[].otherUserProfileImage").type(STRING)
                                         .description("타 사용자 프로필 이미지"),
                                 fieldWithPath("data[].lastMessage").type(STRING)
@@ -125,11 +162,24 @@ public class ChatRoomControllerDocs extends RestDocsSupport {
                 ));
     }
 
+    private ChatRoomFindOneResponse createFindOneResponse() {
+        List<ChatRoomUserResponse> response = LongStream.rangeClosed(1, 2)
+                .mapToObj(i -> ChatRoomUserResponse.builder()
+                        .id(i)
+                        .name("user" + i)
+                        .profileImage("profile_image.com/" + i)
+                        .build())
+                .toList();
+
+        return ChatRoomFindOneResponse.builder().users(response).build();
+    }
+
     private List<ChatRoomFindAllResponse> createFindAllResponse() {
         return LongStream.rangeClosed(1, 4)
                 .mapToObj(i -> ChatRoomFindAllResponse.builder()
                         .chatRoomId(i)
                         .accompanyId(i)
+                        .accompanyTitle("같이 제주도 가실 분??")
                         .otherUserProfileImage("profile_image.com/" + i)
                         .lastMessage("message content" + i)
                         .lastMessageCreateAt(LocalDateTime.now())

@@ -6,6 +6,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 import com.wegotoo.application.ServiceTestSupport;
 import com.wegotoo.application.chatroom.request.ChatRoomCreateServiceRequest;
 import com.wegotoo.application.chatroom.response.ChatRoomFindAllResponse;
+import com.wegotoo.application.chatroom.response.ChatRoomFindOneResponse;
 import com.wegotoo.application.chatroom.response.ChatRoomResponse;
 import com.wegotoo.domain.accompany.Accompany;
 import com.wegotoo.domain.accompany.Gender;
@@ -57,7 +58,30 @@ public class ChatRoomServiceTest extends ServiceTestSupport {
     }
 
     @Test
-    @DisplayName("채팅방을 조회한다.")
+    @DisplayName("채팅방을 단건 조회한다.")
+    public void findChatRoom() {
+        // given
+        User userA = userRepository.save(createUser("userA"));
+        User userB = userRepository.save(createUser("userB"));
+        Accompany accompany = accompanyRepository.save(createAccompany(userA));
+        ChatRoom chatRoom = chatRoomRepository.save(createChatRoomWithCode("0000A"));
+
+        userChatRoomRepository.saveAll(createUserChatRooms(userA, userB, chatRoom, accompany));
+
+        // when
+        ChatRoomFindOneResponse result = chatRoomService.findChatRoom(userA.getId(), chatRoom.getId());
+
+        // then
+        assertThat(result.getUsers()).hasSize(2)
+                .extracting("id", "name", "profileImage")
+                .containsExactly(
+                        tuple(userA.getId(), userA.getName(), userA.getProfileImage()),
+                        tuple(userB.getId(), userB.getName(), userB.getProfileImage())
+                );
+    }
+
+    @Test
+    @DisplayName("채팅방을 전체 조회한다.")
     public void findAllChatRooms() {
         // given
         User userA = userRepository.save(createUser("userA"));
@@ -138,6 +162,7 @@ public class ChatRoomServiceTest extends ServiceTestSupport {
 
     private User createUser(String username) {
         return User.builder()
+                .name(username)
                 .email(username + "@email.com")
                 .latitude(1.1)
                 .role(Role.USER)

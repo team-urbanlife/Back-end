@@ -17,6 +17,20 @@ public class ChatRoomControllerTest extends ControllerTestSupport {
 
     @Test
     @WithAuthUser
+    @DisplayName("채팅방을 단건 조회한다.")
+    public void findChatRoom() throws Exception {
+        // when // then
+        mockMvc.perform(get("/v1/chat-rooms/1")
+                        .contentType(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("OK"));
+    }
+
+    @Test
+    @WithAuthUser
     @DisplayName("채팅방을 전체 조회한다.")
     public void findChatRooms() throws Exception {
         // when // then
