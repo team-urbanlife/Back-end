@@ -26,6 +26,7 @@ public class UserChatRoomRepositoryImpl implements UserChatRoomRepositoryCustom 
         return queryFactory.select(new QUserChatRoomQueryEntity(
                         chatRoom.id,
                         accompany.id,
+                        accompany.title,
                         otherUserChatRoom.user.profileImage
                 ))
                 .from(userChatRoom)

@@ -8,12 +8,15 @@ public class UserChatRoomQueryEntity {
 
     private Long chatRoomId;
     private Long accompanyId;
+    private String accompanyTitle;
     private String otherUserProfileImage;
 
     @QueryProjection
-    public UserChatRoomQueryEntity(Long chatRoomId, Long accompanyId, String otherUserProfileImage) {
+    public UserChatRoomQueryEntity(Long chatRoomId, Long accompanyId, String accompanyTitle,
+                                   String otherUserProfileImage) {
         this.chatRoomId = chatRoomId;
         this.accompanyId = accompanyId;
+        this.accompanyTitle = accompanyTitle;
         this.otherUserProfileImage = otherUserProfileImage;
     }
 

@@ -1,4 +1,12 @@
 [[ChatRoom-FindAll]]
+=== 채팅방 단건 조회
+==== HTTP Request
+include::{snippets}/chatRoom/findOne/http-request.adoc[]
+include::{snippets}/chatRoom/findOne/request-headers.adoc[]
+==== HTTP Response
+include::{snippets}/chatRoom/findOne/http-response.adoc[]
+include::{snippets}/chatRoom/findOne/response-fields.adoc[]
+
 === 채팅방 전체 조회
 ==== HTTP Request
 include::{snippets}/chatRoom/findAll/http-request.adoc[]
