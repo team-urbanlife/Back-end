@@ -5,6 +5,7 @@ import com.wegotoo.api.auth.AuthController;
 import com.wegotoo.api.chatroom.ChatRoomController;
 import com.wegotoo.api.city.CityController;
 import com.wegotoo.api.notification.NotificationController;
+import com.wegotoo.api.s3.S3Controller;
 import com.wegotoo.api.schedule.DetailedPlanController;
 import com.wegotoo.api.schedule.MemoController;
 import com.wegotoo.api.schedule.ScheduleController;
@@ -34,7 +35,8 @@ import org.springframework.context.annotation.Import;
         AccompanyController.class,
         CityController.class,
         AuthController.class,
-        NotificationController.class
+        NotificationController.class,
+        S3Controller.class
 },
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
