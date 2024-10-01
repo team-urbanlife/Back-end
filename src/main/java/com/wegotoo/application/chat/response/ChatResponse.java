@@ -1,10 +1,12 @@
-package com.wegotoo.application.chat;
+package com.wegotoo.application.chat.response;
 
 import static lombok.AccessLevel.PROTECTED;
 
 import com.wegotoo.domain.chat.Chat;
 import com.wegotoo.domain.user.User;
+import com.wegotoo.domain.user.Users;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +42,12 @@ public class ChatResponse {
                 .message(chat.getMessage())
                 .createAt(chat.getCreateAt())
                 .build();
+    }
+
+    public static List<ChatResponse> toList(Users users, List<Chat> chats) {
+        return chats.stream()
+                .map(chat -> of(users.findById(chat.getSenderId()), chat))
+                .toList();
     }
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 public interface ChatRepositoryCustom {
 
+    List<Chat> findAllByChatRoomId(Long chatRoomId, Integer offset, Integer limit);
     List<Chat> findLatestChatsByChatRoomIds(List<Long> chatRoomIds);
 
 }

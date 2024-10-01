@@ -10,11 +10,13 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort
 import com.wegotoo.domain.chat.Chat;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -22,6 +24,17 @@ import org.springframework.stereotype.Repository;
 public class ChatRepositoryImpl implements ChatRepositoryCustom {
 
     private final MongoTemplate mongoTemplate;
+
+    @Override
+    public List<Chat> findAllByChatRoomId(Long chatRoomId, Integer offset, Integer limit) {
+        Query query = new Query();
+
+        query.addCriteria(Criteria.where("chatRoomId").is(chatRoomId));
+        query.skip(offset).limit(limit + 1);
+        query.with(Sort.by(Sort.Direction.DESC, "_id"));
+
+        return mongoTemplate.find(query, Chat.class);
+    }
 
     @Override
     public List<Chat> findLatestChatsByChatRoomIds(List<Long> chatRoomIds) {
