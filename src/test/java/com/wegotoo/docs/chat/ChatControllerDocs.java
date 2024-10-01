@@ -100,14 +100,14 @@ public class ChatControllerDocs extends RestDocsSupport {
                                         .description("데이터 사이즈"),
                                 fieldWithPath("data.content[]").type(ARRAY)
                                         .description("채팅 데이터"),
+                                fieldWithPath("data.content[].chatRoomId").type(NUMBER)
+                                        .description("채팅방 아이디"),
                                 fieldWithPath("data.content[].senderId").type(NUMBER)
                                         .description("채팅 전송자 ID"),
                                 fieldWithPath("data.content[].senderName").type(STRING)
                                         .description("채팅 전송자 이름"),
                                 fieldWithPath("data.content[].senderProfileImage").type(STRING)
                                         .description("채팅 전송자 프로필 이미지"),
-                                fieldWithPath("data.content[].roomCode").type(STRING)
-                                        .description("채팅방 코드"),
                                 fieldWithPath("data.content[].message").type(STRING)
                                         .description("채팅 내용"),
                                 fieldWithPath("data.content[].createAt").type(STRING)
@@ -118,10 +118,10 @@ public class ChatControllerDocs extends RestDocsSupport {
 
     private ChatResponse createChatResponse(Long userId, Long number) {
         return ChatResponse.builder()
+                .chatRoomId(1L)
                 .senderId(userId)
                 .senderName("user" + userId)
                 .senderProfileImage("profile_image.com/" + userId)
-                .roomCode("00001")
                 .message("message" + number)
                 .createAt(LocalDateTime.now())
                 .build();

@@ -75,8 +75,8 @@ public class ChatServiceTest extends ServiceTestSupport {
         User user = userRepository.save(createUser("userA"));
 
         ChatSendServiceRequest request = ChatSendServiceRequest.builder()
+                .chatRoomId(1L)
                 .message("안녕하세요 반갑습니다!")
-                .roomCode("XXXX-XXXX-XXXX-XXXX")
                 .build();
 
         // when
@@ -87,7 +87,7 @@ public class ChatServiceTest extends ServiceTestSupport {
         assertThat(result.getSenderId()).isEqualTo(chat.getSenderId());
         assertThat(result.getSenderName()).isEqualTo(user.getName());
         assertThat(result.getSenderProfileImage()).isEqualTo(user.getProfileImage());
-        assertThat(result.getRoomCode()).isEqualTo(chat.getRoomCode());
+        assertThat(result.getChatRoomId()).isEqualTo(chat.getChatRoomId());
         assertThat(result.getMessage()).isEqualTo(chat.getMessage());
     }
 
@@ -99,8 +99,8 @@ public class ChatServiceTest extends ServiceTestSupport {
         User user = userRepository.save(createUser("userA"));
 
         ChatSendServiceRequest request = ChatSendServiceRequest.builder()
+                .chatRoomId(1L)
                 .message("안녕하세요 반갑습니다!")
-                .roomCode("XXXX-XXXX-XXXX-XXXX")
                 .build();
 
         // when // then
