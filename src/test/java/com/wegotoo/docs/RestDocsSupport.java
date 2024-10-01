@@ -6,6 +6,7 @@ import com.wegotoo.application.auth.AuthService;
 import com.wegotoo.application.chatroom.ChatRoomService;
 import com.wegotoo.application.city.CityService;
 import com.wegotoo.application.notification.NotificationService;
+import com.wegotoo.application.s3.S3Service;
 import com.wegotoo.application.schedule.DetailedPlanService;
 import com.wegotoo.application.schedule.MemoService;
 import com.wegotoo.application.schedule.ScheduleDetailsService;
@@ -58,6 +59,9 @@ public abstract class RestDocsSupport {
 
     @MockBean
     protected NotificationService notificationService;
+
+    @MockBean
+    protected S3Service s3Service;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {

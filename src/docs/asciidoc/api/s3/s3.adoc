@@ -1,0 +1,26 @@
+[[s3-upload]]
+=== 이미지 업로드
+
+==== HTTP Request
+
+include::{snippets}/s3/upload/http-request.adoc[]
+include::{snippets}/s3/upload/request-parts.adoc[]
+include::{snippets}/s3/upload/form-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/s3/upload/http-response.adoc[]
+include::{snippets}/s3/upload/response-fields.adoc[]
+
+[[s3-remove]]
+=== 이미지 제거
+
+==== HTTP Request
+
+include::{snippets}/s3/delete/http-request.adoc[]
+include::{snippets}/s3/delete/form-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/s3/delete/http-response.adoc[]
+include::{snippets}/s3/delete/response-fields.adoc[]
