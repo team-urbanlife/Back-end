@@ -16,29 +16,29 @@ import lombok.NoArgsConstructor;
 public class ChatResponse {
 
     private Long senderId;
+    private Long chatRoomId;
     private String senderName;
     private String senderProfileImage;
-    private String roomCode;
     private String message;
     private LocalDateTime createAt;
 
     @Builder
-    private ChatResponse(Long senderId, String senderName, String senderProfileImage, String roomCode, String message,
+    private ChatResponse(Long senderId, Long chatRoomId, String senderName, String senderProfileImage, String message,
                          LocalDateTime createAt) {
         this.senderId = senderId;
+        this.chatRoomId = chatRoomId;
         this.senderName = senderName;
         this.senderProfileImage = senderProfileImage;
-        this.roomCode = roomCode;
         this.message = message;
         this.createAt = createAt;
     }
 
     public static ChatResponse of(User user, Chat chat) {
         return ChatResponse.builder()
+                .chatRoomId(chat.getChatRoomId())
                 .senderId(user.getId())
                 .senderName(user.getName())
                 .senderProfileImage(user.getProfileImage())
-                .roomCode(chat.getRoomCode())
                 .message(chat.getMessage())
                 .createAt(chat.getCreateAt())
                 .build();

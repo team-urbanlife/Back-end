@@ -34,14 +34,14 @@ public class ChatController {
         return ApiResponse.ok(chatService.findAllChats(userId, chatRoomId, OffsetLimit.of(page, size)));
     }
 
-    @MessageMapping("/chat-rooms/{roomCode}/send")
-    @SendTo("/topic/chat-rooms/{roomCode}")
+    @MessageMapping("/chat-rooms/{chatRoomId}/send")
+    @SendTo("/topic/chat-rooms/{chatRoomId}")
     public ChatResponse sendChat(
             @Auth Long userId,
             @Payload ChatSendRequest request,
-            @DestinationVariable("roomCode") String roomCode
+            @DestinationVariable("chatRoomId") Long chatRoomId
     ) {
-        return chatService.sendChatMessage(userId, request.toService(roomCode));
+        return chatService.sendChatMessage(userId, request.toService(chatRoomId));
     }
 
 }

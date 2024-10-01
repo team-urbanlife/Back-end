@@ -10,20 +10,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatSendServiceRequest {
 
+    private Long chatRoomId;
     private String message;
-    private String roomCode;
 
     @Builder
-    private ChatSendServiceRequest(String message, String roomCode) {
+    private ChatSendServiceRequest(Long chatRoomId, String message) {
+        this.chatRoomId = chatRoomId;
         this.message = message;
-        this.roomCode = roomCode;
     }
 
     public Chat toDocument(Long senderId) {
         return Chat.builder()
                 .senderId(senderId)
+                .chatRoomId(chatRoomId)
                 .message(message)
-                .roomCode(roomCode)
                 .build();
     }
 
