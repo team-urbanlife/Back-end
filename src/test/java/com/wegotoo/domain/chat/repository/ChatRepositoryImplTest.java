@@ -1,15 +1,13 @@
 package com.wegotoo.domain.chat.repository;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
 import com.wegotoo.config.EmbeddedMongoConfig;
 import com.wegotoo.config.MongoConfig;
 import com.wegotoo.domain.chat.Chat;
-import com.wegotoo.domain.chat.repository.ChatRepository;
 import java.util.List;
 import java.util.stream.LongStream;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +25,41 @@ public class ChatRepositoryImplTest {
     @AfterEach
     void tearDown() {
         chatRepository.deleteAll();
+    }
+
+    @Test
+    @DisplayName("채팅 전체 조회")
+    public void findAllByChatRoomId() {
+        // given
+        List<Chat> chats = chatRepository.saveAll(createChatsWithUsers(1L, 2L, 1L));
+
+        // when
+        List<Chat> result = chatRepository.findAllByChatRoomId(1L, 0, 5);
+
+        // then
+        assertThat(result).hasSize(6)
+                .extracting("chatRoomId", "senderId", "message")
+                .containsExactly(
+                        tuple(1L, 2L, "message: 20"),
+                        tuple(1L, 1L, "message: 19"),
+                        tuple(1L, 2L, "message: 18"),
+                        tuple(1L, 1L, "message: 17"),
+                        tuple(1L, 2L, "message: 16"),
+                        tuple(1L, 1L, "message: 15")
+                );
+    }
+
+    @Test
+    @DisplayName("채팅 전체 조회 시 채팅이 존재하지 않으면 빈 리스트 반환")
+    public void findAllByChatRoomIdWithoutChat() {
+        // given
+        Long invalidChatRoomId = 1L;
+
+        // when
+        List<Chat> result = chatRepository.findAllByChatRoomId(invalidChatRoomId, 0, 5);
+
+        // then
+        assertThat(result).isEmpty();
     }
 
     @Test
