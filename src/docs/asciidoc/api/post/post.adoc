@@ -1,0 +1,13 @@
+[[post-create]]
+=== 여행 게시글 생성
+
+==== HTTP Request
+
+include::{snippets}/post/create/http-request.adoc[]
+include::{snippets}/post/create/request-fields.adoc[]
+include::{snippets}/post/create/request-headers.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/post/create/http-response.adoc[]
+include::{snippets}/post/create/response-fields.adoc[]
