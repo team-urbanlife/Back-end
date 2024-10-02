@@ -1,0 +1,11 @@
+[[Chat-FindAll]]
+=== 채팅 조회
+==== HTTP Request
+include::{snippets}/chat/findAll/http-request.adoc[]
+include::{snippets}/chat/findAll/request-headers.adoc[]
+include::{snippets}/chat/findAll/path-parameters.adoc[]
+include::{snippets}/chat/findAll/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/chat/findAll/http-response.adoc[]
+include::{snippets}/chat/findAll/response-fields.adoc[]

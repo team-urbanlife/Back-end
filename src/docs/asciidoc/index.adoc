@@ -59,3 +59,7 @@ include::api/notification/notification.adoc[]
 [[S3-API]]
 == S3 API
 include::api/s3/s3.adoc[]
+
+[[Chat-API]]
+== Chat API
+include::api/chat/chat.adoc[]

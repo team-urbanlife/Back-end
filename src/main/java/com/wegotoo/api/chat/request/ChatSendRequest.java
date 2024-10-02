@@ -17,9 +17,9 @@ public class ChatSendRequest {
         this.message = message;
     }
 
-    public ChatSendServiceRequest toService(String chatRoomCode) {
+    public ChatSendServiceRequest toService(Long chatRoomId) {
         return ChatSendServiceRequest.builder()
-                .roomCode(chatRoomCode)
+                .chatRoomId(chatRoomId)
                 .message(message)
                 .build();
     }

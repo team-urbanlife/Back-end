@@ -2,6 +2,7 @@ package com.wegotoo.support;
 
 import com.wegotoo.api.accompany.AccompanyController;
 import com.wegotoo.api.auth.AuthController;
+import com.wegotoo.api.chat.ChatController;
 import com.wegotoo.api.chatroom.ChatRoomController;
 import com.wegotoo.api.city.CityController;
 import com.wegotoo.api.notification.NotificationController;
@@ -38,7 +39,8 @@ import org.springframework.context.annotation.Import;
         AuthController.class,
         NotificationController.class,
         S3Controller.class,
-        PostController.class
+        PostController.class,
+        ChatController.class
 },
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
