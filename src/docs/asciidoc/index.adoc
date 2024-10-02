@@ -40,6 +40,10 @@ include::api/accompany/accompany.adoc[]
 == 채팅방 API
 include::api/chatroom/chatRoom.adoc[]
 
+[[Post-API]]
+== 여행 게시글 API
+include::api/post/post.adoc[]
+
 [[City-API]]
 == 도시 API
 include::api/city/city.adoc[]
