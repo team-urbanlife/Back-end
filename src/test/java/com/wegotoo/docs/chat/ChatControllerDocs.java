@@ -2,8 +2,9 @@ package com.wegotoo.docs.chat;
 
 import static com.wegotoo.support.security.MockAuthUtils.authorizationHeaderName;
 import static com.wegotoo.support.security.MockAuthUtils.mockBearerToken;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -26,8 +27,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.wegotoo.application.OffsetLimit;
-import com.wegotoo.application.SliceResponse;
+import com.wegotoo.application.CursorResponse;
 import com.wegotoo.application.chat.response.ChatResponse;
 import com.wegotoo.docs.RestDocsSupport;
 import com.wegotoo.support.security.WithAuthUser;
@@ -46,21 +46,18 @@ public class ChatControllerDocs extends RestDocsSupport {
     public void findChats() throws Exception {
         // given
         Long chatRoomId = 1L;
-        OffsetLimit offsetLimit = OffsetLimit.of(1, 10);
 
-        given(chatService.findAllChats(anyLong(), anyLong(), any(OffsetLimit.class)))
-                .willReturn(SliceResponse.<ChatResponse>builder()
-                        .content(createChatResponses())
-                        .hasContent(true)
-                        .first(true)
-                        .last(false)
-                        .number(1)
+        given(chatService.findAllChats(anyLong(), anyLong(), anyString(), anyInt()))
+                .willReturn(CursorResponse.<String, ChatResponse>builder()
+                        .hasNext(true)
+                        .nextCursor("_000X")
                         .size(10)
+                        .content(createChatResponses())
                         .build());
 
         // when // then
         mockMvc.perform(get("/v1/chat-rooms/{chatRoomId}/chats", chatRoomId)
-                        .param("page", "1")
+                        .param("cursor", "00011")
                         .param("size", "10")
                         .header(authorizationHeaderName(), mockBearerToken())
                         .contentType(APPLICATION_JSON))
@@ -76,7 +73,7 @@ public class ChatControllerDocs extends RestDocsSupport {
                                 parameterWithName("chatRoomId").description("채팅방 아이디")
                         ),
                         queryParameters(
-                                parameterWithName("page").description("페이지"),
+                                parameterWithName("cursor").description("마지막 채팅 아이디"),
                                 parameterWithName("size").description("페이지 사이즈")
                         ),
                         responseFields(
@@ -88,18 +85,16 @@ public class ChatControllerDocs extends RestDocsSupport {
                                         .description("메세지"),
                                 fieldWithPath("data").type(OBJECT)
                                         .description("응답 데이터"),
-                                fieldWithPath("data.hasContent").type(BOOLEAN)
+                                fieldWithPath("data.hasNext").type(BOOLEAN)
                                         .description("데이터 존재 여부"),
-                                fieldWithPath("data.isFirst").type(BOOLEAN)
-                                        .description("첫 번째 페이지 여부"),
-                                fieldWithPath("data.isLast").type(BOOLEAN)
-                                        .description("마지막 페이지 여부"),
-                                fieldWithPath("data.number").type(NUMBER)
-                                        .description("현재 페이지 번호"),
+                                fieldWithPath("data.nextCursor").type(STRING)
+                                        .description("다음 데이터 커서"),
                                 fieldWithPath("data.size").type(NUMBER)
                                         .description("데이터 사이즈"),
                                 fieldWithPath("data.content[]").type(ARRAY)
                                         .description("채팅 데이터"),
+                                fieldWithPath("data.content[].id").type(STRING)
+                                        .description("채팅 아이디"),
                                 fieldWithPath("data.content[].chatRoomId").type(NUMBER)
                                         .description("채팅방 아이디"),
                                 fieldWithPath("data.content[].senderId").type(NUMBER)
@@ -118,6 +113,7 @@ public class ChatControllerDocs extends RestDocsSupport {
 
     private ChatResponse createChatResponse(Long userId, Long number) {
         return ChatResponse.builder()
+                .id("_000" + number)
                 .chatRoomId(1L)
                 .senderId(userId)
                 .senderName("user" + userId)

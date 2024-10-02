@@ -4,9 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 
-import com.wegotoo.application.OffsetLimit;
+import com.wegotoo.application.CursorResponse;
 import com.wegotoo.application.ServiceTestSupport;
-import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.chat.request.ChatSendServiceRequest;
 import com.wegotoo.application.chat.response.ChatResponse;
 import com.wegotoo.domain.chat.Chat;
@@ -49,14 +48,12 @@ public class ChatServiceTest extends ServiceTestSupport {
         List<Chat> chats = chatRepository.saveAll(createChats(userA, userB, 1L));
 
         // when
-        SliceResponse<ChatResponse> result = chatService.findAllChats(userA.getId(), 1L, OffsetLimit.of(1, 5));
+        CursorResponse<String, ChatResponse> result = chatService.findAllChats(userA.getId(), 1L, null, 5);
 
         // then
-        assertThat(result.isHasContent()).isTrue();
-        assertThat(result.isFirst()).isTrue();
-        assertThat(result.isLast()).isFalse();
-        assertThat(result.getNumber()).isEqualTo(1);
+        assertThat(result.isHasNext()).isTrue();
         assertThat(result.getSize()).isEqualTo(5);
+        assertThat(result.getNextCursor()).isEqualTo(chats.get(15).getId());
         assertThat(result.getContent()).hasSize(5)
                 .extracting("senderId", "senderName", "message")
                 .containsExactly(
@@ -65,6 +62,62 @@ public class ChatServiceTest extends ServiceTestSupport {
                         tuple(userB.getId(), "userB", "message: 18"),
                         tuple(userA.getId(), "userA", "message: 17"),
                         tuple(userB.getId(), "userB", "message: 16")
+                );
+    }
+
+    @Test
+    @DisplayName("다음 채팅 메세지 조회한다.")
+    public void findAllChatsNextCursor() throws Exception {
+        // given
+        User userA = userRepository.save(createUser("userA"));
+        User userB = userRepository.save(createUser("userB"));
+
+        List<Chat> chats = chatRepository.saveAll(createChats(userA, userB, 1L));
+
+        // when
+        CursorResponse<String, ChatResponse> result = chatService.findAllChats(userA.getId(), 1L,
+                chats.get(15).getId(), 5);
+
+        // then
+        assertThat(result.isHasNext()).isTrue();
+        assertThat(result.getSize()).isEqualTo(5);
+        assertThat(result.getNextCursor()).isEqualTo(chats.get(10).getId());
+        assertThat(result.getContent()).hasSize(5)
+                .extracting("senderId", "senderName", "message")
+                .containsExactly(
+                        tuple(userA.getId(), "userA", "message: 15"),
+                        tuple(userB.getId(), "userB", "message: 14"),
+                        tuple(userA.getId(), "userA", "message: 13"),
+                        tuple(userB.getId(), "userB", "message: 12"),
+                        tuple(userA.getId(), "userA", "message: 11")
+                );
+    }
+
+    @Test
+    @DisplayName("마지막 채팅 메세지 조회한다.")
+    public void findAllChatsLastCursor() throws Exception {
+        // given
+        User userA = userRepository.save(createUser("userA"));
+        User userB = userRepository.save(createUser("userB"));
+
+        List<Chat> chats = chatRepository.saveAll(createChats(userA, userB, 1L));
+
+        // when
+        CursorResponse<String, ChatResponse> result = chatService.findAllChats(userA.getId(), 1L,
+                chats.get(5).getId(), 5);
+
+        // then
+        assertThat(result.isHasNext()).isFalse();
+        assertThat(result.getSize()).isEqualTo(5);
+        assertThat(result.getNextCursor()).isNull();
+        assertThat(result.getContent()).hasSize(5)
+                .extracting("senderId", "senderName", "message")
+                .containsExactly(
+                        tuple(userA.getId(), "userA", "message: 5"),
+                        tuple(userB.getId(), "userB", "message: 4"),
+                        tuple(userA.getId(), "userA", "message: 3"),
+                        tuple(userB.getId(), "userB", "message: 2"),
+                        tuple(userA.getId(), "userA", "message: 1")
                 );
     }
 

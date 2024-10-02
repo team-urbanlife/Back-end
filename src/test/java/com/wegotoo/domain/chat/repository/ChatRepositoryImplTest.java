@@ -34,7 +34,7 @@ public class ChatRepositoryImplTest {
         List<Chat> chats = chatRepository.saveAll(createChatsWithUsers(1L, 2L, 1L));
 
         // when
-        List<Chat> result = chatRepository.findAllByChatRoomId(1L, 0, 5);
+        List<Chat> result = chatRepository.findAllByChatRoomId(1L, null, 5);
 
         // then
         assertThat(result).hasSize(6)
@@ -56,7 +56,7 @@ public class ChatRepositoryImplTest {
         Long invalidChatRoomId = 1L;
 
         // when
-        List<Chat> result = chatRepository.findAllByChatRoomId(invalidChatRoomId, 0, 5);
+        List<Chat> result = chatRepository.findAllByChatRoomId(invalidChatRoomId, null, 5);
 
         // then
         assertThat(result).isEmpty();

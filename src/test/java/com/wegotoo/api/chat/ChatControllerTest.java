@@ -23,7 +23,6 @@ public class ChatControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(get("/v1/chat-rooms/{chatRoomId}/chats", chatRoomId)
-                        .param("page", "1")
                         .param("size", "20")
                         .header(authorizationHeaderName(), mockBearerToken()))
                 .andExpect(status().isOk())

@@ -2,6 +2,7 @@ package com.wegotoo.api.chat;
 
 import com.wegotoo.api.ApiResponse;
 import com.wegotoo.api.chat.request.ChatSendRequest;
+import com.wegotoo.application.CursorResponse;
 import com.wegotoo.application.OffsetLimit;
 import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.chat.response.ChatResponse;
@@ -25,13 +26,13 @@ public class ChatController {
     private final ChatService chatService;
 
     @GetMapping("/v1/chat-rooms/{chatRoomId}/chats")
-    public ApiResponse<SliceResponse<ChatResponse>> findChats(
+    public ApiResponse<CursorResponse<String, ChatResponse>> findChats(
             @Auth Long userId,
             @PathVariable("chatRoomId") Long chatRoomId,
-            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "cursor", required = false) String cursorId,
             @RequestParam(value = "size", required = false, defaultValue = "50") Integer size
     ) {
-        return ApiResponse.ok(chatService.findAllChats(userId, chatRoomId, OffsetLimit.of(page, size)));
+        return ApiResponse.ok(chatService.findAllChats(userId, chatRoomId, cursorId, size));
     }
 
     @MessageMapping("/chat-rooms/{chatRoomId}/send")

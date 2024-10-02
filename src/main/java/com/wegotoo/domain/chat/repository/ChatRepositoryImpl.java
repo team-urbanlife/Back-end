@@ -26,11 +26,16 @@ public class ChatRepositoryImpl implements ChatRepositoryCustom {
     private final MongoTemplate mongoTemplate;
 
     @Override
-    public List<Chat> findAllByChatRoomId(Long chatRoomId, Integer offset, Integer limit) {
+    public List<Chat> findAllByChatRoomId(Long chatRoomId, String cursorId, Integer limit) {
         Query query = new Query();
 
         query.addCriteria(Criteria.where("chatRoomId").is(chatRoomId));
-        query.skip(offset).limit(limit + 1);
+
+        if (cursorId != null) {
+            query.addCriteria(Criteria.where("_id").lt(cursorId));
+        }
+
+        query.limit(limit + 1);
         query.with(Sort.by(Sort.Direction.DESC, "_id"));
 
         return mongoTemplate.find(query, Chat.class);
