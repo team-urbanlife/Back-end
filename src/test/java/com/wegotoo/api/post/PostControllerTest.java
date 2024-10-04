@@ -1,13 +1,16 @@
 package com.wegotoo.api.post;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.wegotoo.api.ControllerTestSupport;
+import com.wegotoo.api.post.request.ContentEditRequest;
 import com.wegotoo.api.post.request.ContentWriteRequest;
+import com.wegotoo.api.post.request.PostEditRequest;
 import com.wegotoo.api.post.request.PostWriteRequest;
 import com.wegotoo.domain.post.ContentType;
 import com.wegotoo.support.security.WithAuthUser;
@@ -97,6 +100,33 @@ class PostControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.message").value("TEXT는 필수입니다."));
+    }
+
+    @Test
+    @WithAuthUser
+    @DisplayName("유저가 게시글을 수정하는 API를 호출한다.")
+    void editPost() throws Exception {
+        // given
+        ContentEditRequest content = ContentEditRequest.builder()
+                .id(0L)
+                .type(ContentType.T)
+                .text("첫 문단 수정")
+                .build();
+
+        PostEditRequest request = PostEditRequest.builder()
+                .title("제목 수정")
+                .contents(List.of(content))
+                .build();
+        // when // then
+        mockMvc.perform(patch("/v1/posts/{postId}", 1L)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("OK"));
     }
 
     private static PostWriteRequest getPostWriteRequest(List<ContentWriteRequest> contents) {
