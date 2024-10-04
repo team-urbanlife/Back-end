@@ -54,4 +54,12 @@ public class Post {
                 .registeredDateTime(registeredDateTime)
                 .build();
     }
+
+    public boolean isOwner(Long id) {
+        return user.isOwner(id);
+    }
+
+    public void edit(String title) {
+        this.title = title != null ? title : this.title;
+    }
 }
