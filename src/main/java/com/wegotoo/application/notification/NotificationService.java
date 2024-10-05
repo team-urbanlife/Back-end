@@ -58,10 +58,11 @@ public class NotificationService {
         return !notifications.isEmpty();
     }
 
+    // TODO 해당 로직 변경 해야함
     private void sendNotifications(List<Notification> notifications, SseEmitter sseEmitter) {
         notifications.stream()
                 .map(Notification::getMessage)
-                .forEach(message -> sendNotification(sseEmitter, message));
+                .forEach(message -> sendNotification(sseEmitter, null));
     }
 
     private void sendNotification(SseEmitter sseEmitter, ChatSendServiceRequest request) {
