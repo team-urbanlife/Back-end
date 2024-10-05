@@ -50,7 +50,7 @@ public class PostService {
     public void editPost(Long userId, Long postId, PostEditServiceRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
-        Post post = postRepository.findById(postId).orElseThrow(() -> new BusinessException(POST_NOT_FOUND));
+        Post post = postRepository.findByIdWithUser(postId).orElseThrow(() -> new BusinessException(POST_NOT_FOUND));
 
         if (!post.isOwner(user.getId())) {
             throw new BusinessException(UNAUTHORIZED_REQUEST);
