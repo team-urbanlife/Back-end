@@ -20,8 +20,8 @@ public class NotificationService {
     private final SseEmitterRepository sseEmitterRepository;
     private final NotificationRepository notificationRepository;
 
-    private final String SUBSCRIBE_NOTIFICATION = "구독 성공";
-    private final String CHATTING_NOTIFICATION = "채팅 알림";
+    private final String SUBSCRIBE_NOTIFICATION = "Subscription Success";
+    private final String CHATTING_NOTIFICATION = "Chat Notification";
 
     @Transactional
     public SseEmitter subscribe(Long userId) throws IOException {
