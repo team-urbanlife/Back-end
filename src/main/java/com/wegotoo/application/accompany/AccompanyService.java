@@ -49,6 +49,17 @@ public class AccompanyService {
                 offsetLimit.getLimit());
     }
 
+    public SliceResponse<AccompanyFindAllResponse> findAllUserAccompanies(Long userId, OffsetLimit offsetLimit) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        List<AccompanyFindAllQueryEntity> accompanies = accompanyRepository.findAllAccompanyByUserId(user.getId(),
+                offsetLimit.getOffset(), offsetLimit.getLimit());
+
+        return SliceResponse.of(AccompanyFindAllResponse.toList(accompanies), offsetLimit.getOffset(),
+                offsetLimit.getLimit());
+    }
+
     public AccompanyFindOneResponse findOneAccompany(Long accompanyId) {
         // TODO 좋아요 기능 구현 시 조회수도 같이 구현 예정
         AccompanyFindOneQueryEntity accompany = accompanyRepository.accompanyFindOne(accompanyId);
