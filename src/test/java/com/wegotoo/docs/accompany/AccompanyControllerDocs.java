@@ -34,7 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.wegotoo.api.accompany.request.AccompanyCreateRequest;
 import com.wegotoo.api.accompany.request.AccompanyEditRequest;
-import com.wegotoo.api.schedule.request.ScheduleEditRequest;
 import com.wegotoo.application.OffsetLimit;
 import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.accompany.response.AccompanyFindAllResponse;
@@ -224,6 +223,97 @@ public class AccompanyControllerDocs extends RestDocsSupport {
                                         .optional(),
                                 parameterWithName("size").description("페이지 사이즈")
                                         .optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(OBJECT)
+                                        .description("응답 데이터"),
+                                fieldWithPath("data.hasContent").type(BOOLEAN)
+                                        .description("데이터 존재 여부"),
+                                fieldWithPath("data.isFirst").type(BOOLEAN)
+                                        .description("첫 번째 페이지 여부"),
+                                fieldWithPath("data.isLast").type(BOOLEAN)
+                                        .description("마지막 페이지 여부"),
+                                fieldWithPath("data.number").type(NUMBER)
+                                        .description("현재 페이지 번호"),
+                                fieldWithPath("data.size").type(NUMBER)
+                                        .description("토론방 반환 사이즈"),
+                                fieldWithPath("data.content[]").type(ARRAY)
+                                        .description("여행 일정 데이터"),
+                                fieldWithPath("data.content[].accompanyId").type(NUMBER)
+                                        .description("accompany ID"),
+                                fieldWithPath("data.content[].startDate").type(STRING)
+                                        .description("여행 시작 일자"),
+                                fieldWithPath("data.content[].endDate").type(STRING)
+                                        .description("여행 종료 일자"),
+                                fieldWithPath("data.content[].title").type(STRING)
+                                        .description("동행 제목"),
+                                fieldWithPath("data.content[].content").type(STRING)
+                                        .description("동행 내용"),
+                                fieldWithPath("data.content[].userName").type(STRING)
+                                        .description("작성자 이름"),
+                                fieldWithPath("data.content[].registeredDateTime").type(STRING)
+                                        .description("작성 일자"),
+                                fieldWithPath("data.content[].userProfileImage").type(STRING)
+                                        .description("유저 프로필 이미지")
+                        )
+                ));
+    }
+
+    @Test
+    @WithAuthUser
+    @DisplayName("작성한 동행 모집 글을 조회하는 API")
+    void findAllUserAccompany() throws Exception {
+        // given
+        AccompanyFindAllResponse findAllResponse = AccompanyFindAllResponse.builder()
+                .accompanyId(1L)
+                .startDate(START_DATE)
+                .endDate(END_DATE)
+                .title("동행 제목")
+                .content("동행 내용")
+                .userName("사용자 이름")
+                .registeredDateTime(LocalDateTime.of(2024, 9, 1, 0, 0, 0))
+                .userProfileImage("이미지 URL")
+                .build();
+
+        SliceResponse<AccompanyFindAllResponse> response = SliceResponse.<AccompanyFindAllResponse>builder()
+                .content(List.of(findAllResponse))
+                .hasContent(true)
+                .number(1)
+                .size(4)
+                .first(true)
+                .last(false)
+                .build();
+        // when
+        given(accompanyService.findAllAccompany(any(OffsetLimit.class)))
+                .willReturn(response);
+
+        // then
+        mockMvc.perform(get("/v1/accompanies")
+                        .param("page", "1")
+                        .param("size", "4")
+                        .header(authorizationHeaderName(), mockBearerToken())
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("accompany/findAllByUser",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("page").description("페이지")
+                                        .optional(),
+                                parameterWithName("size").description("페이지 사이즈")
+                                        .optional()
+                        ),
+                        requestHeaders(
+                                headerWithName("Authorization")
+                                        .description("어세스 토큰")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
