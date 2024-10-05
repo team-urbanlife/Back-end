@@ -49,7 +49,7 @@ public class ChatService {
 
         Chat chat = chatRepository.save(request.toDocument(user.getId()));
 
-        eventPublisher.publishEvent(ChatMessageSentEvent.to(user.getId(), request.getMessage()));
+        eventPublisher.publishEvent(ChatMessageSentEvent.to(user.getId(), request));
 
         return ChatResponse.of(user, chat);
     }

@@ -1,5 +1,6 @@
 package com.wegotoo.application.event;
 
+import com.wegotoo.application.chat.request.ChatSendServiceRequest;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,18 +9,18 @@ public class ChatMessageSentEvent {
 
     private final Long receiverId;
 
-    private final String message;
+    private final ChatSendServiceRequest request;
 
     @Builder
-    private ChatMessageSentEvent(Long receiverId, String message) {
+    private ChatMessageSentEvent(Long receiverId, ChatSendServiceRequest request) {
         this.receiverId = receiverId;
-        this.message = message;
+        this.request = request;
     }
 
-    public static ChatMessageSentEvent to(Long id, String message) {
+    public static ChatMessageSentEvent to(Long id, ChatSendServiceRequest request) {
         return ChatMessageSentEvent.builder()
                 .receiverId(id)
-                .message(message)
+                .request(request)
                 .build();
     }
 }

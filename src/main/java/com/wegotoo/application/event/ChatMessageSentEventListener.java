@@ -14,7 +14,7 @@ public class ChatMessageSentEventListener {
 
     @EventListener
     public void handleChatMessageSentEvent(ChatMessageSentEvent event) throws NotificationSendException {
-        notificationService.notifyChatting(event.getReceiverId(), event.getMessage());
+        notificationService.notifyChatting(event.getReceiverId(), event.getRequest());
     }
 
 }
