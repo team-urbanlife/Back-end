@@ -70,4 +70,7 @@ public class User {
         this.refreshToken = null;
     }
 
+    public boolean isOwner(Long id) {
+        return this.id.equals(id);
+    }
 }

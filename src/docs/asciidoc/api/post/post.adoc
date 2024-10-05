@@ -11,3 +11,18 @@ include::{snippets}/post/create/request-headers.adoc[]
 
 include::{snippets}/post/create/http-response.adoc[]
 include::{snippets}/post/create/response-fields.adoc[]
+
+[[post-edit]]
+=== 여행 게시글 수정
+
+==== HTTP Request
+
+include::{snippets}/post/edit/http-request.adoc[]
+include::{snippets}/post/edit/path-parameters.adoc[]
+include::{snippets}/post/edit/request-fields.adoc[]
+include::{snippets}/post/edit/request-headers.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/post/edit/http-response.adoc[]
+include::{snippets}/post/edit/response-fields.adoc[]

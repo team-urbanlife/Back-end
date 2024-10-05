@@ -25,7 +25,9 @@ public enum ErrorCode {
     NOT_IMAGE(500, "이미지 형식이 아닙니다."),
     IMAGE_NOT_FOUND(404, "이미지를 찾을 수 없습니다."),
     S3_UPLOAD_FAIL(500, "이미지 업로드에 실패했습니다."),
-    CHAT_ROOM_NOT_FOUND(404, "채팅방을 찾을 수 없습니다.");
+    CHAT_ROOM_NOT_FOUND(404, "채팅방을 찾을 수 없습니다."),
+    POST_NOT_FOUND(404, "게시글을 찾을 수 없습니다."),
+    CONTENT_NOT_FOUND(404, "컨텐츠를 찾을 수 없습니다.");
 
     private final int code;
     private final String message;

@@ -50,4 +50,9 @@ public class Content {
                 .post(post)
                 .build();
     }
+
+    public void edit(ContentType type, String text) {
+        this.type = type != null ? type : this.type;
+        this.text = text != null ? text : this.text;
+    }
 }
