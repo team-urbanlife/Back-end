@@ -1,5 +1,6 @@
 package com.wegotoo.application.notification;
 
+import com.wegotoo.application.chat.request.ChatSendServiceRequest;
 import com.wegotoo.domain.notification.Notification;
 import com.wegotoo.domain.notification.repository.NotificationRepository;
 import com.wegotoo.domain.notification.repository.SseEmitterRepository;
@@ -20,8 +21,8 @@ public class NotificationService {
     private final SseEmitterRepository sseEmitterRepository;
     private final NotificationRepository notificationRepository;
 
-    private final String SUBSCRIBE_NOTIFICATION = "구독 성공";
-    private final String CHATTING_NOTIFICATION = "채팅 알림";
+    private final String SUBSCRIBE_NOTIFICATION = "Subscription Success";
+    private final String CHATTING_NOTIFICATION = "Chat Notification";
 
     @Transactional
     public SseEmitter subscribe(Long userId) throws IOException {
@@ -43,12 +44,12 @@ public class NotificationService {
     }
 
     @Transactional
-    public void notifyChatting(Long receiverId, String message) {
+    public void notifyChatting(Long receiverId, ChatSendServiceRequest request) {
         if (isUserSubscribed(receiverId)) {
             SseEmitter sseEmitter = sseEmitterRepository.getEmitter(receiverId);
-            sendNotification(sseEmitter, message);
+            sendNotification(sseEmitter, request);
         } else {
-            Notification notification = Notification.create(receiverId, message);
+            Notification notification = Notification.create(receiverId, request.getMessage());
             notificationRepository.save(notification);
         }
     }
@@ -57,15 +58,16 @@ public class NotificationService {
         return !notifications.isEmpty();
     }
 
+    // TODO 해당 로직 변경 해야함
     private void sendNotifications(List<Notification> notifications, SseEmitter sseEmitter) {
         notifications.stream()
                 .map(Notification::getMessage)
-                .forEach(message -> sendNotification(sseEmitter, message));
+                .forEach(message -> sendNotification(sseEmitter, null));
     }
 
-    private void sendNotification(SseEmitter sseEmitter, String message) {
+    private void sendNotification(SseEmitter sseEmitter, ChatSendServiceRequest request) {
         try {
-            sseEmitter.send(SseEmitter.event().name(CHATTING_NOTIFICATION).data(message));
+            sseEmitter.send(SseEmitter.event().name(CHATTING_NOTIFICATION).data(request));
         } catch (IOException e) {
             log.error("알림 전송 실패: {}", e.getMessage(), e);
         }
