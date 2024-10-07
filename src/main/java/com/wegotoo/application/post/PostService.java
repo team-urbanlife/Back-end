@@ -2,21 +2,29 @@ package com.wegotoo.application.post;
 
 import static com.wegotoo.exception.ErrorCode.*;
 
+import com.wegotoo.application.OffsetLimit;
+import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.post.request.ContentEditServiceRequest;
 import com.wegotoo.application.post.request.PostEditServiceRequest;
 import com.wegotoo.application.post.request.PostWriteServiceRequest;
 import com.wegotoo.application.post.response.ContentResponse;
+import com.wegotoo.application.post.response.PostFindAllResponse;
 import com.wegotoo.application.post.response.PostFindOneResponse;
 import com.wegotoo.domain.post.Content;
 import com.wegotoo.domain.post.Post;
 import com.wegotoo.domain.post.repository.ContentRepository;
 import com.wegotoo.domain.post.repository.PostRepository;
+import com.wegotoo.domain.post.repository.response.ContentImageQueryEntity;
+import com.wegotoo.domain.post.repository.response.ContentTextQueryEntity;
+import com.wegotoo.domain.post.repository.response.PostQueryEntity;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import com.wegotoo.exception.BusinessException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,6 +52,28 @@ public class PostService {
         List<Content> contentsSave = contentRepository.saveAll(contents);
 
         return PostFindOneResponse.of(postSave, user, ContentResponse.toList(contentsSave));
+    }
+
+    public SliceResponse<PostFindAllResponse> findAllPost(OffsetLimit offsetLimit) {
+        List<PostQueryEntity> posts = postRepository.findAllPost(offsetLimit.getOffset(), offsetLimit.getLimit());
+
+        List<Long> postIds = posts.stream().map(PostQueryEntity::getId).toList();
+
+        List<ContentTextQueryEntity> allContentTexts = contentRepository.findAllPostWithContentText(postIds);
+        List<ContentImageQueryEntity> allContentImages = contentRepository.findAllPostWithContentImage(postIds);
+
+        List<ContentTextQueryEntity> firstContentText = getFirstContentText(allContentTexts);
+        List<ContentImageQueryEntity> firstContentImage = getFirstContentImage(allContentImages);
+
+        return SliceResponse.of(PostFindAllResponse.toList(posts, firstContentText, firstContentImage),
+                offsetLimit.getOffset(), offsetLimit.getLimit());
+    }
+
+    public PostFindOneResponse findOnePost(Long postId) {
+        Post post = postRepository.findByIdWithUser(postId).orElseThrow(() -> new BusinessException(POST_NOT_FOUND));
+
+        List<Content> contents = contentRepository.findAllByPostIdOrderByIdAsc(post.getId());
+        return PostFindOneResponse.of(post, post.getUser(), ContentResponse.toList(contents));
     }
 
     @Transactional
@@ -75,6 +105,28 @@ public class PostService {
 
             content.edit(match.getType(), match.getText());
         });
+    }
+
+    private List<ContentImageQueryEntity> getFirstContentImage(List<ContentImageQueryEntity> allContentImages) {
+        return allContentImages.stream()
+                .collect(Collectors.groupingBy(ContentImageQueryEntity::getPostId))
+                .values().stream()
+                .map(list -> list.stream()
+                        .min(Comparator.comparing(ContentImageQueryEntity::getContentId))
+                        .orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    private List<ContentTextQueryEntity> getFirstContentText(List<ContentTextQueryEntity> allContentTexts) {
+        return allContentTexts.stream()
+                .collect(Collectors.groupingBy(ContentTextQueryEntity::getPostId))
+                .values().stream()
+                .map(list -> list.stream()
+                        .min(Comparator.comparing(ContentTextQueryEntity::getContentId))
+                        .orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
     }
 
 }

@@ -13,7 +13,7 @@ include::{snippets}/accompany/create/http-response.adoc[]
 include::{snippets}/accompany/create/response-fields.adoc[]
 
 [[accompany-findAll]]
-=== 동행 모집 글 조회
+=== 동행 모집 글 무한 스크롤 조회
 
 ==== HTTP Request
 
