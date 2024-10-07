@@ -1,5 +1,6 @@
 package com.wegotoo.docs.post;
 
+import static com.wegotoo.domain.accompany.Gender.NO_MATTER;
 import static com.wegotoo.support.security.MockAuthUtils.authorizationHeaderName;
 import static com.wegotoo.support.security.MockAuthUtils.mockBearerToken;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,6 +38,7 @@ import com.wegotoo.api.post.request.PostWriteRequest;
 import com.wegotoo.application.OffsetLimit;
 import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.accompany.response.AccompanyFindAllResponse;
+import com.wegotoo.application.accompany.response.AccompanyFindOneResponse;
 import com.wegotoo.application.post.response.ContentResponse;
 import com.wegotoo.application.post.response.PostFindAllResponse;
 import com.wegotoo.application.post.response.PostFindOneResponse;
@@ -242,6 +244,85 @@ public class PostControllerDocs extends RestDocsSupport {
                                         .description("유저 프로필 이미지"),
                                 fieldWithPath("data.content[].registeredDateTime").type(STRING)
                                         .description("작성 일자")
+                        )
+                ));
+    }
+
+    @Test
+    @WithAuthUser
+    @DisplayName("여행 게시글을 단 건 조회하는 API")
+    void findOneAccompany() throws Exception {
+        // given
+        ContentResponse text = ContentResponse.builder()
+                .id(1L)
+                .type(ContentType.T)
+                .text("내용")
+                .build();
+
+        ContentResponse image = ContentResponse.builder()
+                .id(2L)
+                .type(ContentType.IMAGE)
+                .text("이미지 URL")
+                .build();
+        List<ContentResponse> content = new ArrayList<>();
+        content.add(text);
+        content.add(image);
+
+        PostFindOneResponse response = PostFindOneResponse.builder()
+                .id(1L)
+                .title("제목")
+                .userName("작성자 이름")
+                .userProfileImage("작성자 프로필 이미지 URL")
+                .views(0)
+                .contents(content)
+                .registeredDateTime(LocalDateTime.now().withNano(0))
+                .build();
+
+        given(postService.findOnePost(anyLong()))
+                .willReturn(response);
+
+        // when // then
+        mockMvc.perform(get("/v1/posts/{postId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("post/findOne",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("postId")
+                                        .description("Post ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(OBJECT)
+                                        .description("응답 데이터"),
+                                fieldWithPath("data.id").type(NUMBER)
+                                        .description("게시글 ID"),
+                                fieldWithPath("data.title").type(STRING)
+                                        .description("제목"),
+                                fieldWithPath("data.userName").type(STRING)
+                                        .description("작성자 이름"),
+                                fieldWithPath("data.userProfileImage").type(STRING)
+                                        .description("유저 프로필 이미지"),
+                                fieldWithPath("data.views").type(NUMBER)
+                                        .description("조회수 (10.2 아직 조회수 기능은 구현 X)"),
+                                fieldWithPath("data.registeredDateTime").type(STRING)
+                                        .description("작성 일자"),
+                                fieldWithPath("data.contents").type(ARRAY)
+                                        .description("문단 별 Content"),
+                                fieldWithPath("data.contents[].id").type(NUMBER)
+                                        .description("Content 순서"),
+                                fieldWithPath("data.contents[].type").type(STRING)
+                                        .description("타입"),
+                                fieldWithPath("data.contents[].text").type(STRING)
+                                        .description("내용")
                         )
                 ));
     }
