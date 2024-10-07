@@ -12,6 +12,19 @@ include::{snippets}/post/create/request-headers.adoc[]
 include::{snippets}/post/create/http-response.adoc[]
 include::{snippets}/post/create/response-fields.adoc[]
 
+[[post-findAll]]
+=== 동행 모집 글 조회
+
+==== HTTP Request
+
+include::{snippets}/post/findAll/http-request.adoc[]
+include::{snippets}/post/findAll/query-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/post/findAll/http-response.adoc[]
+include::{snippets}/post/findAll/response-fields.adoc[]
+
 [[post-edit]]
 === 여행 게시글 수정
 
