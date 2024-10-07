@@ -53,14 +53,7 @@ public class ChatService {
 
         Chat chat = chatRepository.save(request.toDocument(user.getId()));
 
-        List<UserChatRoom> userChatRooms = userChatRoomRepository.findByChatRoomIdWithUser(request.getChatRoomId());
-
-        User otherUser = userChatRooms.stream()
-                .map(UserChatRoom::getUser)
-                .filter(chatUser -> !chatUser.getId().equals(user.getId()))
-                .findFirst().orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
-
-        eventPublisher.publishEvent(ChatMessageSentEvent.to(otherUser.getId(), request));
+        eventPublisher.publishEvent(ChatMessageSentEvent.to(user.getId(), request.getChatRoomId(), request.getMessage()));
 
         return ChatResponse.of(user, chat);
     }

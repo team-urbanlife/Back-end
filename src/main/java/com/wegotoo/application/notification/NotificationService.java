@@ -44,12 +44,12 @@ public class NotificationService {
     }
 
     @Transactional
-    public void notifyChatting(Long receiverId, ChatSendServiceRequest request) {
+    public void notifyChatting(Long receiverId, Long chatRoomId, String message) {
         if (isUserSubscribed(receiverId)) {
             SseEmitter sseEmitter = sseEmitterRepository.getEmitter(receiverId);
-            sendNotification(sseEmitter, request);
+            sendNotification(sseEmitter, chatRoomId, message);
         } else {
-            Notification notification = Notification.create(receiverId, request.getMessage());
+            Notification notification = Notification.create(receiverId, chatRoomId, message);
             notificationRepository.save(notification);
         }
     }
@@ -60,14 +60,13 @@ public class NotificationService {
 
     // TODO 해당 로직 변경 해야함
     private void sendNotifications(List<Notification> notifications, SseEmitter sseEmitter) {
-        notifications.stream()
-                .map(Notification::getMessage)
-                .forEach(message -> sendNotification(sseEmitter, null));
+        notifications
+                .forEach(message -> sendNotification(sseEmitter, message.getChatRoomId(), message.getMessage()));
     }
 
-    private void sendNotification(SseEmitter sseEmitter, ChatSendServiceRequest request) {
+    private void sendNotification(SseEmitter sseEmitter, Long chatRoomId, String message) {
         try {
-            sseEmitter.send(SseEmitter.event().name(CHATTING_NOTIFICATION).data(request));
+            sseEmitter.send(SseEmitter.event().name(CHATTING_NOTIFICATION).data(chatRoomId).data(message));
         } catch (IOException e) {
             log.error("알림 전송 실패: {}", e.getMessage(), e);
         }

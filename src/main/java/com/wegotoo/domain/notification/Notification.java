@@ -20,18 +20,22 @@ public class Notification {
 
     private Long receiverId;
 
+    private Long chatRoomId;
+
     private String message;
 
     @Builder
-    private Notification(Long id, Long receiverId, String message) {
+    private Notification(Long id, Long receiverId, Long chatRoomId, String message) {
         this.id = id;
         this.receiverId = receiverId;
+        this.chatRoomId = chatRoomId;
         this.message = message;
     }
 
-    public static Notification create(Long receiverId, String message) {
+    public static Notification create(Long receiverId,Long chatRoomId, String message) {
         return Notification.builder().
                 receiverId(receiverId)
+                .chatRoomId(chatRoomId)
                 .message(message)
                 .build();
     }
