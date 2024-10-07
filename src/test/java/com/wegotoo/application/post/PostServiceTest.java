@@ -2,11 +2,14 @@ package com.wegotoo.application.post;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.wegotoo.application.OffsetLimit;
 import com.wegotoo.application.ServiceTestSupport;
+import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.post.request.ContentEditServiceRequest;
 import com.wegotoo.application.post.request.ContentWriteServiceRequest;
 import com.wegotoo.application.post.request.PostEditServiceRequest;
 import com.wegotoo.application.post.request.PostWriteServiceRequest;
+import com.wegotoo.application.post.response.PostFindAllResponse;
 import com.wegotoo.application.post.response.PostFindOneResponse;
 import com.wegotoo.domain.post.Content;
 import com.wegotoo.domain.post.ContentType;
@@ -109,6 +112,65 @@ class PostServiceTest extends ServiceTestSupport {
                 .extracting("id", "text")
                 .contains(contentList.get(0).getId(), "첫 문단 수정");
 
+    }
+
+    @Test
+    @DisplayName("유저가 게시글을 전체 조회 했을 때 객체는 게시글 번호, 제목, 첫 문단, 썸네일, 유저 이름, 유저 이미지가 담긴다.")
+    void findAllPosts() throws Exception {
+        //given
+        User user = User.builder()
+                .name("user")
+                .email("user@email.com")
+                .profileImage("이미지")
+                .build();
+        userRepository.save(user);
+
+        Post post = Post.builder()
+                .title("제목")
+                .view(0)
+                .user(user)
+                .build();
+        postRepository.save(post);
+
+        Post post1 = Post.builder()
+                .title("제목")
+                .view(0)
+                .user(user)
+                .build();
+        postRepository.save(post1);
+
+        Content content1 = getContent(post, ContentType.T, "글1");
+        Content content2 = getContent(post, ContentType.IMAGE, "이미지1");
+        Content content3 = getContent(post, ContentType.T, "글2");
+        Content content4 = getContent(post, ContentType.IMAGE, "이미지2");
+
+        Content content5 = getContent(post1, ContentType.IMAGE, "이미지");
+        Content content6 = getContent(post1, ContentType.IMAGE, "이미지1");
+        Content content7 = getContent(post1, ContentType.IMAGE, "이미지");
+        Content content8 = getContent(post1, ContentType.T, "글123");
+
+        contentRepository.saveAll(List.of(content1, content2, content3, content4, content5, content6, content7, content8));
+        OffsetLimit offsetLimit = OffsetLimit.builder()
+                .offset(0)
+                .limit(10)
+                .build();
+
+        // when
+        SliceResponse<PostFindAllResponse> response = postService.findAllPost(offsetLimit);
+
+        // then
+        assertThat(response.getSize()).isEqualTo(2);
+        assertThat(response.getContent().get(0))
+                .extracting("postId", "title", "content", "thumbnail", "userName", "userProfileImage")
+                .contains(post.getId(), "제목", "글1", "이미지1", user.getName(), "이미지");
+    }
+
+    private static Content getContent(Post post, ContentType type, String text) {
+        return Content.builder()
+                .type(type)
+                .post(post)
+                .text(text)
+                .build();
     }
 
     private static List<Content> getContentList(Post post) {
