@@ -12,6 +12,7 @@ import com.wegotoo.infra.resolver.auth.Auth;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +52,13 @@ public class PostController {
                                       @PathVariable("postId") Long postId,
                                       @RequestBody PostEditRequest request) {
         postService.editPost(userId, postId, request.toService());
+        return ApiResponse.ok();
+    }
+
+    @DeleteMapping("/v1/posts/{postId}")
+    public ApiResponse<Void> deletePost(@Auth Long userId,
+                                        @PathVariable("postId") Long postId) {
+        postService.deletePost(userId, postId);
         return ApiResponse.ok();
     }
 }

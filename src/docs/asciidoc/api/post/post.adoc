@@ -52,3 +52,17 @@ include::{snippets}/post/edit/request-headers.adoc[]
 
 include::{snippets}/post/edit/http-response.adoc[]
 include::{snippets}/post/edit/response-fields.adoc[]
+
+[[post-delete]]
+=== 여행 게시글 삭제
+
+==== HTTP Request
+
+include::{snippets}/post/delete/http-request.adoc[]
+include::{snippets}/post/delete/path-parameters.adoc[]
+include::{snippets}/post/delete/request-headers.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/post/delete/http-response.adoc[]
+include::{snippets}/post/delete/response-fields.adoc[]

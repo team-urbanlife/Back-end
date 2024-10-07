@@ -107,6 +107,19 @@ public class PostService {
         });
     }
 
+    @Transactional
+    public void deletePost(Long userId, Long postId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+        Post post = postRepository.findByIdWithUser(postId).orElseThrow(() -> new BusinessException(POST_NOT_FOUND));
+
+        if (!post.isOwner(user.getId())) {
+            throw new BusinessException(UNAUTHORIZED_REQUEST);
+        }
+
+        contentRepository.deleteAllByPostId(post);
+        postRepository.delete(post);
+    }
+
     private List<ContentImageQueryEntity> getFirstContentImage(List<ContentImageQueryEntity> allContentImages) {
         return allContentImages.stream()
                 .collect(Collectors.groupingBy(ContentImageQueryEntity::getPostId))
