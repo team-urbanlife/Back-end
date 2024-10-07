@@ -27,6 +27,13 @@ public class NotificationService {
     @Transactional
     public SseEmitter subscribe(Long userId) throws IOException {
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+        if (isUserSubscribed(userId)) {
+            SseEmitter existingEmitter = sseEmitterRepository.getEmitter(userId);
+            if (existingEmitter != null) {
+                existingEmitter.complete();
+                sseEmitterRepository.removeEmitter(userId);
+            }
+        }
 
         List<Notification> notifications = notificationRepository.findByReceiverId(userId);
         if (hasNotifications(notifications)) {
