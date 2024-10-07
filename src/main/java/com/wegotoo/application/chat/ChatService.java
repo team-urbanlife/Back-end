@@ -9,6 +9,8 @@ import com.wegotoo.application.chat.response.ChatResponse;
 import com.wegotoo.application.event.ChatMessageSentEvent;
 import com.wegotoo.domain.chat.Chat;
 import com.wegotoo.domain.chat.repository.ChatRepository;
+import com.wegotoo.domain.chatroom.UserChatRoom;
+import com.wegotoo.domain.chatroom.repository.UserChatRoomRepository;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.Users;
 import com.wegotoo.domain.user.repository.UserRepository;
@@ -29,8 +31,10 @@ public class ChatService {
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final UserChatRoomRepository userChatRoomRepository;
 
-    public CursorResponse<String, ChatResponse> findAllChats(Long userId, Long chatRoomId, String cursorId, Integer limit) {
+    public CursorResponse<String, ChatResponse> findAllChats(Long userId, Long chatRoomId, String cursorId,
+                                                             Integer limit) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
@@ -49,7 +53,14 @@ public class ChatService {
 
         Chat chat = chatRepository.save(request.toDocument(user.getId()));
 
-        eventPublisher.publishEvent(ChatMessageSentEvent.to(user.getId(), request));
+        List<UserChatRoom> userChatRooms = userChatRoomRepository.findByChatRoomIdWithUser(request.getChatRoomId());
+
+        User otherUser = userChatRooms.stream()
+                .map(UserChatRoom::getUser)
+                .filter(chatUser -> !chatUser.getId().equals(user.getId()))
+                .findFirst().orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        eventPublisher.publishEvent(ChatMessageSentEvent.to(otherUser.getId(), request));
 
         return ChatResponse.of(user, chat);
     }
