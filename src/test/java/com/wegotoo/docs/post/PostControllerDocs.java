@@ -10,6 +10,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -251,7 +252,7 @@ public class PostControllerDocs extends RestDocsSupport {
     @Test
     @WithAuthUser
     @DisplayName("여행 게시글을 단 건 조회하는 API")
-    void findOneAccompany() throws Exception {
+    void findOnePost() throws Exception {
         // given
         ContentResponse text = ContentResponse.builder()
                 .id(1L)
@@ -378,6 +379,40 @@ public class PostControllerDocs extends RestDocsSupport {
                                         .description("타입 : T(텍스트), IMAGE(이미지)"),
                                 fieldWithPath("contents[].text").type(STRING)
                                         .description("내용")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(NULL)
+                                        .description("응답 데이터")
+                        )
+                ));
+    }
+
+    @Test
+    @WithAuthUser
+    @DisplayName("여행 게시글을 삭제 하는 API")
+    void deletePost() throws Exception {
+        // when // then
+        mockMvc.perform(delete("/v1/posts/{postId}", 1L)
+                        .header(authorizationHeaderName(), mockBearerToken())
+                        .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("post/delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("postId")
+                                        .description("Post ID")
+                        ),
+                        requestHeaders(
+                                headerWithName("Authorization").description("어세스 토큰")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
