@@ -37,6 +37,27 @@ public class AccompanyRepositoryImpl implements AccompanyRepositoryCustom {
                 .fetch();
     }
 
+    public List<AccompanyFindAllQueryEntity> findAllAccompanyByUserId(Long userId, Integer offset, Integer limit) {
+        return queryFactory.select(new QAccompanyFindAllQueryEntity(
+                        accompany.id,
+                        accompany.startDate,
+                        accompany.endDate,
+                        accompany.title,
+                        accompany.content,
+                        user.name,
+                        accompany.registeredDateTime,
+                        user.profileImage
+                ))
+                .from(accompany)
+                .join(accompany.user, user)
+                .where(user.id.eq(userId))
+                .offset(offset)
+                .limit(limit + 1)
+                .groupBy(accompany.id)
+                .orderBy(accompany.registeredDateTime.desc())
+                .fetch();
+    }
+
     @Override
     public AccompanyFindOneQueryEntity accompanyFindOne(Long accompanyId) {
         return queryFactory.select(new QAccompanyFindOneQueryEntity(

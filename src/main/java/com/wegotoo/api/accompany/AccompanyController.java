@@ -57,6 +57,15 @@ public class AccompanyController {
         return ApiResponse.ok(accompanyService.findAllAccompany(OffsetLimit.of(page, size)));
     }
 
+    @GetMapping("/v1/users/accompanies")
+    public ApiResponse<SliceResponse<AccompanyFindAllResponse>> findAllUserAccompany(
+            @Auth Long userId,
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "page", required = false, defaultValue = "4") Integer  size
+    ) {
+        return ApiResponse.ok(accompanyService.findAllUserAccompanies(userId, OffsetLimit.of(page, size)));
+    }
+
     @GetMapping("/v1/accompanies/{accompanyId}")
     public ApiResponse<AccompanyFindOneResponse> findOneAccompany(@PathVariable("accompanyId") Long accompanyId) {
         return ApiResponse.ok(accompanyService.findOneAccompany(accompanyId));

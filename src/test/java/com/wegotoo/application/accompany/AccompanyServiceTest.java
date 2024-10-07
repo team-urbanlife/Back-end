@@ -2,6 +2,8 @@ package com.wegotoo.application.accompany;
 
 import static com.wegotoo.domain.accompany.Gender.NO_MATTER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.wegotoo.api.accompany.request.AccompanyEditServiceRequest;
@@ -17,6 +19,7 @@ import com.wegotoo.domain.accompany.repository.response.AccompanyFindAllQueryEnt
 import com.wegotoo.domain.accompany.repository.response.AccompanyFindOneQueryEntity;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
+import com.wegotoo.exception.BusinessException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,11 +54,7 @@ class AccompanyServiceTest extends ServiceTestSupport {
     @DisplayName("유저가 여행 모집글을 작성한다.")
     void createAccompany() throws Exception {
         // given
-        User user = User.builder()
-                .email("user@gmail.com")
-                .name("user")
-                .build();
-        userRepository.save(user);
+        User user = userRepository.save(createUser("user"));
 
         AccompanyCreateServiceRequest request = AccompanyCreateServiceRequest.builder()
                 .startDate(START_DATE)
@@ -71,6 +70,7 @@ class AccompanyServiceTest extends ServiceTestSupport {
                 .cost(1000000)
                 .content("여행 관련 글")
                 .build();
+
         // when
         accompanyService.createAccompany(user.getId(), request, DATE);
 
@@ -86,11 +86,7 @@ class AccompanyServiceTest extends ServiceTestSupport {
     @DisplayName("유저가 여행 모집글을 수정한다.")
     void editAccompany() throws Exception {
         // given
-        User user = User.builder()
-                .email("user@gmail.com")
-                .name("user")
-                .build();
-        userRepository.save(user);
+        User user = userRepository.save(createUser("user"));
 
         Accompany accompany = Accompany.builder()
                 .startDate(START_DATE)
@@ -139,11 +135,7 @@ class AccompanyServiceTest extends ServiceTestSupport {
     @DisplayName("유저가 여행 모집글을 삭제 한다")
     void deleteAccompany() throws Exception {
         // given
-        User user = User.builder()
-                .email("user@gmail.com")
-                .name("user")
-                .build();
-        userRepository.save(user);
+        User user = userRepository.save(createUser("user"));
 
         Accompany accompany = Accompany.builder()
                 .startDate(START_DATE)
@@ -173,11 +165,7 @@ class AccompanyServiceTest extends ServiceTestSupport {
     @DisplayName("유저가 여행 모집글을 조회할 수 있다.")
     void findAllAccompany() throws Exception {
         // given
-        User user = User.builder()
-                .email("user@gmail.com")
-                .name("user")
-                .build();
-        userRepository.save(user);
+        User user = userRepository.save(createUser("user"));
 
         List<Accompany> accompanies = IntStream.range(1, 5)
                 .mapToObj(i -> Accompany.builder()
@@ -203,6 +191,7 @@ class AccompanyServiceTest extends ServiceTestSupport {
                 .offset(0)
                 .limit(4)
                 .build();
+
         // when
         SliceResponse<AccompanyFindAllResponse> response = accompanyService.findAllAccompany(offsetLimit);
 
@@ -211,14 +200,61 @@ class AccompanyServiceTest extends ServiceTestSupport {
     }
 
     @Test
+    @DisplayName("유저가 작성한 여행 모집글을 조회할 수 있다.")
+    void findAllUserAccompany() throws Exception {
+        // given
+        User user = userRepository.save(createUser("user"));
+
+        List<Accompany> accompanies = IntStream.rangeClosed(1, 5)
+                .mapToObj(i -> Accompany.builder()
+                        .startDate(START_DATE)
+                        .endDate(END_DATE)
+                        .title("제주도 여행 모집")
+                        .location("제주도")
+                        .latitude(0.0)
+                        .longitude(0.0)
+                        .personnel(3)
+                        .gender(NO_MATTER)
+                        .startAge(20)
+                        .endAge(29)
+                        .cost(1000000)
+                        .content("여행 관련 글")
+                        .user(user)
+                        .registeredDateTime(LocalDateTime.of(2024, 9, i, 0, 0, 0))
+                        .build()).toList();
+
+        accompanyRepository.saveAll(accompanies);
+
+        // when
+        SliceResponse<AccompanyFindAllResponse> result = accompanyService.findAllUserAccompanies(
+                user.getId(), OffsetLimit.of(1, 5));
+
+        // then
+        assertThat(result.isFirst()).isTrue();
+        assertThat(result.isLast()).isTrue();
+        assertThat(result.isHasContent()).isTrue();
+        assertThat(result.getNumber()).isEqualTo(1);
+        assertThat(result.getSize()).isEqualTo(5);
+        assertThat(result.getContent()).hasSize(5);
+    }
+
+    @Test
+    @DisplayName("잘못된 유저 정보로 사용자 여행 모집글을 조회한다.")
+    public void findAllUserAccompanyWithoutUser() {
+        // given
+        Long invalidUserId = 1L;
+
+        // when // then
+        assertThatThrownBy(() -> accompanyService.findAllUserAccompanies(invalidUserId, OffsetLimit.of(1, 5)))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("사용자를 찾을 수 없습니다.");
+    }
+
+    @Test
     @DisplayName("유저가 여행 모집글을 단건 조회할 수 있다.")
     void findOneAccompany() throws Exception {
         // given
-        User user = User.builder()
-                .email("user@gmail.com")
-                .name("user")
-                .build();
-        userRepository.save(user);
+        User user = userRepository.save(createUser("user"));
 
         List<Accompany> accompanies = IntStream.range(1, 5)
                 .mapToObj(i -> Accompany.builder()
@@ -248,6 +284,13 @@ class AccompanyServiceTest extends ServiceTestSupport {
         assertThat(response)
                 .extracting("accompanyId", "startDate", "endDate", "title", "content", "userName", "views", "likeCount")
                 .contains(response.getAccompanyId(), START_DATE, END_DATE, "제주도 여행 모집", "여행 관련 글", "user", 0L, 0L);
+    }
+
+    private User createUser(String name) {
+        return User.builder()
+                .name(name)
+                .email(name + "@gmail.com")
+                .build();
     }
 
 }

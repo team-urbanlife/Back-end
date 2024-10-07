@@ -1,7 +1,7 @@
 package com.wegotoo.api.accompany;
 
-import static com.wegotoo.domain.accompany.Gender.NO_MATTER;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.wegotoo.support.security.MockAuthUtils.authorizationHeaderName;
+import static com.wegotoo.support.security.MockAuthUtils.mockBearerToken;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.wegotoo.api.ControllerTestSupport;
 import com.wegotoo.api.accompany.request.AccompanyCreateRequest;
 import com.wegotoo.api.accompany.request.AccompanyEditRequest;
-import com.wegotoo.application.accompany.request.AccompanyCreateServiceRequest;
 import com.wegotoo.support.security.WithAuthUser;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
@@ -112,6 +111,19 @@ class AccompanyControllerTest extends ControllerTestSupport {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("OK"));
+    }
+
+    @Test
+    @WithAuthUser
+    @DisplayName("사용자가 작성한 모집글을 조회하는 API를 호출한다.")
+    void findAllUserAccompany() throws Exception {
+        // when // then
+        mockMvc.perform(get("/v1/users/accompanies")
+                        .header(authorizationHeaderName(), mockBearerToken())
+                        .contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.code").value("200"))
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.message").value("OK"));
