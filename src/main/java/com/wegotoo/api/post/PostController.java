@@ -41,6 +41,11 @@ public class PostController {
         return ApiResponse.ok(postService.findAllPost(OffsetLimit.of(page, size)));
     }
 
+    @GetMapping("/v1/posts/{postId}")
+    public ApiResponse<PostFindOneResponse> findOnePost(@PathVariable("postId") Long postId) {
+        return ApiResponse.ok(postService.findOnePost(postId));
+    }
+
     @PatchMapping("/v1/posts/{postId}")
     public ApiResponse<Void> editPost(@Auth Long userId,
                                       @PathVariable("postId") Long postId,

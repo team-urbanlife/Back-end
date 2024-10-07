@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -68,6 +67,13 @@ public class PostService {
 
         return SliceResponse.of(PostFindAllResponse.toList(posts, firstContentText, firstContentImage),
                 offsetLimit.getOffset(), offsetLimit.getLimit());
+    }
+
+    public PostFindOneResponse findOnePost(Long postId) {
+        Post post = postRepository.findByIdWithUser(postId).orElseThrow(() -> new BusinessException(POST_NOT_FOUND));
+
+        List<Content> contents = contentRepository.findAllByPostIdOrderByIdAsc(post.getId());
+        return PostFindOneResponse.of(post, post.getUser(), ContentResponse.toList(contents));
     }
 
     @Transactional

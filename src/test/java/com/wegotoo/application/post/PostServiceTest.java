@@ -165,6 +165,35 @@ class PostServiceTest extends ServiceTestSupport {
                 .contains(post.getId(), "제목", "글1", "이미지1", user.getName(), "이미지");
     }
 
+    @Test
+    @DisplayName("게시글을 단건 조회 하면 컨텐츠 블록도 같이 출력된다.")
+    void findOnePost() throws Exception {
+        // given
+        User user = User.builder()
+                .name("user")
+                .email("user@email.com")
+                .build();
+        userRepository.save(user);
+
+        Post post = Post.builder()
+                .title("제목 ")
+                .view(0)
+                .user(user)
+                .build();
+        postRepository.save(post);
+
+        Content content1 = getContent(post, ContentType.T, "글1");
+        Content content2 = getContent(post, ContentType.IMAGE, "이미지1");
+        Content content3 = getContent(post, ContentType.T, "글2");
+        Content content4 = getContent(post, ContentType.IMAGE, "이미지2");
+
+        contentRepository.saveAll(List.of(content1, content2, content3, content4));
+        // when
+        PostFindOneResponse response = postService.findOnePost(post.getId());
+        // then
+        assertThat(response.getContents().size()).isEqualTo(4);
+    }
+
     private static Content getContent(Post post, ContentType type, String text) {
         return Content.builder()
                 .type(type)

@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface ContentRepository extends JpaRepository<Content, Long>, ContentRepositoryCustom {
 
     List<Content> findByIdIn(List<Long> contentIds);
+
+    List<Content> findAllByPostIdOrderByIdAsc(Long id);
 }
