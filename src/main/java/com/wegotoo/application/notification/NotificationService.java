@@ -23,10 +23,11 @@ public class NotificationService {
 
     private final String SUBSCRIBE_NOTIFICATION = "Subscription Success";
     private final String CHATTING_NOTIFICATION = "Chat Notification";
+    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
 
     @Transactional
     public SseEmitter subscribe(Long userId) throws IOException {
-        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+        SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
         if (isUserSubscribed(userId)) {
             SseEmitter existingEmitter = sseEmitterRepository.getEmitter(userId);
             if (existingEmitter != null) {
