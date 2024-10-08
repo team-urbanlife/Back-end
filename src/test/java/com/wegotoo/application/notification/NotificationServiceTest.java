@@ -21,7 +21,7 @@ class NotificationServiceTest {
         notificationService.subscribe(receiverId);
 
         // when
-        notificationService.notifyChatting(receiverId, null);
+        notificationService.notifyChatting(receiverId, null, null);
 
     }
 }

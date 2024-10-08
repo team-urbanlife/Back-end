@@ -7,20 +7,24 @@ import lombok.Getter;
 @Getter
 public class ChatMessageSentEvent {
 
-    private final Long receiverId;
+    private final Long sendUserId;
 
-    private final ChatSendServiceRequest request;
+    private final Long chatRoomId;
+
+    private final String message;
 
     @Builder
-    private ChatMessageSentEvent(Long receiverId, ChatSendServiceRequest request) {
-        this.receiverId = receiverId;
-        this.request = request;
+    private ChatMessageSentEvent(Long sendUserId, Long chatRoomId, String message) {
+        this.sendUserId = sendUserId;
+        this.chatRoomId = chatRoomId;
+        this.message = message;
     }
 
-    public static ChatMessageSentEvent to(Long id, ChatSendServiceRequest request) {
+    public static ChatMessageSentEvent to(Long sendUserId, Long chatRoomId, String message) {
         return ChatMessageSentEvent.builder()
-                .receiverId(id)
-                .request(request)
+                .sendUserId(sendUserId)
+                .chatRoomId(chatRoomId)
+                .message(message)
                 .build();
     }
 }
