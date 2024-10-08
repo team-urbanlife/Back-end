@@ -1,0 +1,25 @@
+=== 여행 게시글 좋아요 생성
+
+==== HTTP Request
+
+include::{snippets}/likepost/create/http-request.adoc[]
+include::{snippets}/likepost/create/request-headers.adoc[]
+include::{snippets}/likepost/create/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/likepost/create/http-response.adoc[]
+include::{snippets}/likepost/create/response-fields.adoc[]
+
+=== 여행 게시글 좋아요 삭제
+
+==== HTTP Request
+
+include::{snippets}/likepost/delete/http-request.adoc[]
+include::{snippets}/likepost/create/request-headers.adoc[]
+include::{snippets}/likepost/delete/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/likepost/delete/http-response.adoc[]
+include::{snippets}/likepost/delete/response-fields.adoc[]
