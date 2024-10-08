@@ -44,7 +44,7 @@ public class NotificationService {
 
         setupSseEmitterHandlers(userId, sseEmitter);
 
-        sseEmitter.send(SseEmitter.event().name(SUBSCRIBE_NOTIFICATION));
+        sseEmitter.send(SseEmitter.event().name(SUBSCRIBE_NOTIFICATION).data(DEFAULT_TIMEOUT));
 
         sseEmitterRepository.addEmitter(userId, sseEmitter);
 
