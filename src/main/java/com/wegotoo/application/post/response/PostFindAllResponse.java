@@ -30,9 +30,11 @@ public class PostFindAllResponse {
 
     private LocalDateTime registeredDateTime;
 
+    private Long likeCount;
+
     @Builder
     private PostFindAllResponse(Long postId, String title, String content, String thumbnail, String userName,
-                                String userProfileImage, LocalDateTime registeredDateTime) {
+                                String userProfileImage, LocalDateTime registeredDateTime, Long likeCount) {
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -40,6 +42,7 @@ public class PostFindAllResponse {
         this.userName = userName;
         this.userProfileImage = userProfileImage;
         this.registeredDateTime = registeredDateTime;
+        this.likeCount = likeCount;
     }
 
     public static PostFindAllResponse of(PostQueryEntity post, String content, String thumbnail) {
@@ -51,6 +54,7 @@ public class PostFindAllResponse {
                 .userName(post.getUserName())
                 .userProfileImage(post.getUserProfileImage())
                 .registeredDateTime(post.getRegistrationDate())
+                .likeCount(post.getLikeCount())
                 .build();
     }
 

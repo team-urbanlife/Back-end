@@ -51,7 +51,7 @@ public class PostService {
                 .toList();
         List<Content> contentsSave = contentRepository.saveAll(contents);
 
-        return PostFindOneResponse.of(postSave, user, ContentResponse.toList(contentsSave));
+        return PostFindOneResponse.of(postSave, user, ContentResponse.toList(contentsSave), 0L);
     }
 
     public SliceResponse<PostFindAllResponse> findAllPost(OffsetLimit offsetLimit) {
@@ -72,8 +72,9 @@ public class PostService {
     public PostFindOneResponse findOnePost(Long postId) {
         Post post = postRepository.findByIdWithUser(postId).orElseThrow(() -> new BusinessException(POST_NOT_FOUND));
 
+        Long likeCount = postRepository.findPostLikeCount(post.getId());
         List<Content> contents = contentRepository.findAllByPostIdOrderByIdAsc(post.getId());
-        return PostFindOneResponse.of(post, post.getUser(), ContentResponse.toList(contents));
+        return PostFindOneResponse.of(post, post.getUser(), ContentResponse.toList(contents), likeCount);
     }
 
     @Transactional

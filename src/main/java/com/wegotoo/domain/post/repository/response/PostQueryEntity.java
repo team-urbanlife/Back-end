@@ -20,15 +20,18 @@ public class PostQueryEntity {
 
     private LocalDateTime registrationDate;
 
+    private Long likeCount;
+
     @Builder
     @QueryProjection
     public PostQueryEntity(Long id, String title, String userName, String userProfileImage,
-                            LocalDateTime registrationDate) {
+                            LocalDateTime registrationDate, Long likeCount) {
         this.id = id;
         this.title = title;
         this.userName = userName;
         this.userProfileImage = userProfileImage;
         this.registrationDate = registrationDate;
+        this.likeCount = likeCount;
     }
 
 }

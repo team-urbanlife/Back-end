@@ -1,5 +1,6 @@
 package com.wegotoo.domain.post.repository.querydsl;
 
+import static com.wegotoo.domain.like.QPostLike.postLike;
 import static com.wegotoo.domain.post.QPost.post;
 import static com.wegotoo.domain.user.QUser.user;
 
@@ -21,15 +22,26 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 post.title,
                 user.name,
                 user.profileImage,
-                post.registeredDateTime
+                post.registeredDateTime,
+                postLike.count()
         ))
                 .from(post)
                 .join(post.user, user)
+                .leftJoin(postLike).on(post.eq(postLike.post))
                 .offset(offset)
                 .limit(size + 1)
                 .groupBy(post.id)
                 .orderBy(post.registeredDateTime.desc())
                 .fetch();
+    }
+
+    @Override
+    public Long findPostLikeCount(Long postId) {
+        return queryFactory.select(postLike.count())
+                .from(post)
+                .leftJoin(postLike).on(post.eq(postLike.post))
+                .where(post.id.eq(postId))
+                .fetchOne();
     }
 
 }
