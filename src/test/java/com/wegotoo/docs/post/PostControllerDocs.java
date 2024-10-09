@@ -102,6 +102,7 @@ public class PostControllerDocs extends RestDocsSupport {
                 .views(0)
                 .contents(content)
                 .registeredDateTime(LocalDateTime.now().withNano(0))
+                .likeCount(0L)
                 .build();
 
         given(postService.writePost(anyLong(), any(), any()))
@@ -152,6 +153,8 @@ public class PostControllerDocs extends RestDocsSupport {
                                         .description("조회수 (10.2 아직 조회수 기능은 구현 X)"),
                                 fieldWithPath("data.registeredDateTime").type(STRING)
                                         .description("작성 일자"),
+                                fieldWithPath("data.likeCount").type(NUMBER)
+                                        .description("좋아요 개수"),
                                 fieldWithPath("data.contents").type(ARRAY)
                                         .description("문단 별 Content"),
                                 fieldWithPath("data.contents[].id").type(NUMBER)
@@ -179,6 +182,7 @@ public class PostControllerDocs extends RestDocsSupport {
                 .userName("작성자 이름")
                 .userProfileImage("작성자 프로필 이미지")
                 .registeredDateTime(now)
+                .likeCount(0L)
                 .build();
 
         SliceResponse<PostFindAllResponse> response = SliceResponse.<PostFindAllResponse>builder()
@@ -244,7 +248,9 @@ public class PostControllerDocs extends RestDocsSupport {
                                 fieldWithPath("data.content[].userProfileImage").type(STRING)
                                         .description("유저 프로필 이미지"),
                                 fieldWithPath("data.content[].registeredDateTime").type(STRING)
-                                        .description("작성 일자")
+                                        .description("작성 일자"),
+                                fieldWithPath("data.content[].likeCount").type(NUMBER)
+                                        .description("좋아요 개수")
                         )
                 ));
     }
@@ -277,6 +283,7 @@ public class PostControllerDocs extends RestDocsSupport {
                 .views(0)
                 .contents(content)
                 .registeredDateTime(LocalDateTime.now().withNano(0))
+                .likeCount(0L)
                 .build();
 
         given(postService.findOnePost(anyLong()))
@@ -316,6 +323,8 @@ public class PostControllerDocs extends RestDocsSupport {
                                         .description("조회수 (10.2 아직 조회수 기능은 구현 X)"),
                                 fieldWithPath("data.registeredDateTime").type(STRING)
                                         .description("작성 일자"),
+                                fieldWithPath("data.likeCount").type(NUMBER)
+                                        .description("좋아요 개수"),
                                 fieldWithPath("data.contents").type(ARRAY)
                                         .description("문단 별 Content"),
                                 fieldWithPath("data.contents[].id").type(NUMBER)

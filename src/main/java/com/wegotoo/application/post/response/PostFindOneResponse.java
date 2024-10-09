@@ -27,10 +27,12 @@ public class PostFindOneResponse {
 
     private LocalDateTime registeredDateTime;
 
+    private Long likeCount;
+
     @Builder
     private PostFindOneResponse(Long id, String title, String userName, String userProfileImage,
                                 List<ContentResponse> contents,
-                                int views, LocalDateTime registeredDateTime) {
+                                int views, LocalDateTime registeredDateTime, Long likeCount) {
         this.id = id;
         this.title = title;
         this.userName = userName;
@@ -38,9 +40,10 @@ public class PostFindOneResponse {
         this.contents = contents;
         this.views = views;
         this.registeredDateTime = registeredDateTime;
+        this.likeCount = likeCount;
     }
 
-    public static PostFindOneResponse of(Post post, User user, List<ContentResponse> contents) {
+    public static PostFindOneResponse of(Post post, User user, List<ContentResponse> contents, Long likeCount) {
         return PostFindOneResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -49,6 +52,7 @@ public class PostFindOneResponse {
                 .contents(contents)
                 .views(post.getView())
                 .registeredDateTime(post.getRegisteredDateTime())
+                .likeCount(likeCount)
                 .build();
     }
 }

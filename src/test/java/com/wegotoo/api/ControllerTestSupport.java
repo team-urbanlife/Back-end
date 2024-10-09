@@ -6,6 +6,7 @@ import com.wegotoo.application.auth.AuthService;
 import com.wegotoo.application.chat.ChatService;
 import com.wegotoo.application.chatroom.ChatRoomService;
 import com.wegotoo.application.city.CityService;
+import com.wegotoo.application.like.PostLikeService;
 import com.wegotoo.application.notification.NotificationService;
 import com.wegotoo.application.post.PostService;
 import com.wegotoo.application.s3.S3Service;
@@ -62,5 +63,8 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected ChatService chatService;
+
+    @MockBean
+    protected PostLikeService postLikeService;
 
 }
