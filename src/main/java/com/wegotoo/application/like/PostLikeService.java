@@ -2,6 +2,7 @@ package com.wegotoo.application.like;
 
 import static com.wegotoo.exception.ErrorCode.*;
 
+import com.wegotoo.application.like.response.PostIds;
 import com.wegotoo.domain.like.PostLike;
 import com.wegotoo.domain.like.repository.PostLikeRepository;
 import com.wegotoo.domain.post.Post;
@@ -10,6 +11,7 @@ import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import com.wegotoo.exception.BusinessException;
 import com.wegotoo.exception.ErrorCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,5 +49,13 @@ public class PostLikeService {
                 .orElseThrow(() -> new BusinessException(LIKE_NOT_FOUND));
 
         postLikeRepository.delete(postLike);
+    }
+
+    public PostIds findPostIds(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        List<Long> postIds = postLikeRepository.findPostIdsByUserId(user.getId());
+
+        return PostIds.of(postIds);
     }
 }

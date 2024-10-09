@@ -23,3 +23,15 @@ include::{snippets}/likepost/delete/path-parameters.adoc[]
 
 include::{snippets}/likepost/delete/http-response.adoc[]
 include::{snippets}/likepost/delete/response-fields.adoc[]
+
+=== 좋아요한 게시글 ID 조회
+
+==== HTTP Request
+
+include::{snippets}/likepost/get-ids/http-request.adoc[]
+include::{snippets}/likepost/create/request-headers.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/likepost/get-ids/http-response.adoc[]
+include::{snippets}/likepost/get-ids/response-fields.adoc[]
