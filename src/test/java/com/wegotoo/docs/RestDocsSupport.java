@@ -14,6 +14,7 @@ import com.wegotoo.application.schedule.DetailedPlanService;
 import com.wegotoo.application.schedule.MemoService;
 import com.wegotoo.application.schedule.ScheduleDetailsService;
 import com.wegotoo.application.schedule.ScheduleService;
+import com.wegotoo.application.user.UserService;
 import com.wegotoo.support.ControllerWebMvcTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,6 +75,9 @@ public abstract class RestDocsSupport {
 
     @MockBean
     protected PostLikeService postLikeService;
+
+    @MockBean
+    protected UserService userService;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {

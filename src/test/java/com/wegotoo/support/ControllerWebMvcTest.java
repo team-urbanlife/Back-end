@@ -13,6 +13,7 @@ import com.wegotoo.api.schedule.DetailedPlanController;
 import com.wegotoo.api.schedule.MemoController;
 import com.wegotoo.api.schedule.ScheduleController;
 import com.wegotoo.api.schedule.ScheduleDetailsController;
+import com.wegotoo.api.user.UserController;
 import com.wegotoo.config.SecurityConfig;
 import com.wegotoo.config.WebConfig;
 import com.wegotoo.support.config.TestWebConfig;
@@ -42,7 +43,8 @@ import org.springframework.context.annotation.Import;
         S3Controller.class,
         PostController.class,
         ChatController.class,
-        PostLikeController.class
+        PostLikeController.class,
+        UserController.class
 },
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
