@@ -63,3 +63,7 @@ include::api/s3/s3.adoc[]
 [[Chat-API]]
 == Chat API
 include::api/chat/chat.adoc[]
+
+[[User-API]]
+== User API
+include::api/user/user.adoc[]

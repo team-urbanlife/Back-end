@@ -14,6 +14,7 @@ import com.wegotoo.application.schedule.DetailedPlanService;
 import com.wegotoo.application.schedule.MemoService;
 import com.wegotoo.application.schedule.ScheduleDetailsService;
 import com.wegotoo.application.schedule.ScheduleService;
+import com.wegotoo.application.user.UserService;
 import com.wegotoo.support.ControllerWebMvcTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -66,5 +67,8 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected PostLikeService postLikeService;
+
+    @MockBean
+    protected UserService userService;
 
 }

@@ -1,0 +1,8 @@
+[[User-FindOne]]
+=== 사용자 정보 조회
+==== HTTP Request
+include::{snippets}/users/findOne/http-request.adoc[]
+include::{snippets}/users/findOne/request-headers.adoc[]
+==== HTTP Response
+include::{snippets}/users/findOne/http-response.adoc[]
+include::{snippets}/users/findOne/response-fields.adoc[]
