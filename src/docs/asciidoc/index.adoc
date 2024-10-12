@@ -67,3 +67,6 @@ include::api/chat/chat.adoc[]
 [[User-API]]
 == User API
 include::api/user/user.adoc[]
+
+[[Like-API]]
+include::api/likepost/likepost.adoc[]
