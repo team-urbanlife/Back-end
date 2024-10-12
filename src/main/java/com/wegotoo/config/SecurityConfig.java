@@ -51,6 +51,7 @@ public class SecurityConfig {
                                 .requestMatchers("/ws/**").permitAll()
                                 .requestMatchers("/v1/notification/**").permitAll()
                                 .requestMatchers("/v1/s3/**").permitAll()
+                                .requestMatchers("/v1/cities").permitAll()
                                 .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer.authenticationEntryPoint(entryPoint))
