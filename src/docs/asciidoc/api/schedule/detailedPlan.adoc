@@ -4,6 +4,7 @@
 ==== HTTP Request
 
 include::{snippets}/detailedPlan/create/http-request.adoc[]
+include::{snippets}/detailedPlan/create/path-parameters.adoc[]
 include::{snippets}/detailedPlan/create/request-fields.adoc[]
 include::{snippets}/detailedPlan/create/request-headers.adoc[]
 
