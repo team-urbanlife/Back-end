@@ -16,20 +16,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TravelPlanResponse {
 
-    private Long id;
+    private Long scheduleDetailsId;
     private LocalDate travelDate;
     private List<DetailedPlanQueryEntity> detailedPlans = new ArrayList<>();
 
     @Builder
-    private TravelPlanResponse(Long id, LocalDate travelDate, List<DetailedPlanQueryEntity> detailedPlans) {
-        this.id = id;
+    private TravelPlanResponse(Long scheduleDetailsId, LocalDate travelDate, List<DetailedPlanQueryEntity> detailedPlans) {
+        this.scheduleDetailsId = scheduleDetailsId;
         this.travelDate = travelDate;
         this.detailedPlans = detailedPlans;
     }
 
     public static TravelPlanResponse of(ScheduleDetailsQueryEntity scheduleDetails, List<DetailedPlanQueryEntity> detailedPlan) {
         return TravelPlanResponse.builder()
-                .id(scheduleDetails.getId())
+                .scheduleDetailsId(scheduleDetails.getId())
                 .travelDate(scheduleDetails.getTravelDay())
                 .detailedPlans(detailedPlan)
                 .build();

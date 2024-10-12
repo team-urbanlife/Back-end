@@ -7,6 +7,7 @@ import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.schedule.request.ScheduleCreateServiceRequest;
 import com.wegotoo.application.schedule.request.ScheduleEditServiceRequest;
 import com.wegotoo.application.schedule.response.ScheduleFindAllResponse;
+import com.wegotoo.application.schedule.response.ScheduleResponse;
 import com.wegotoo.application.schedule.response.TravelPlanResponse;
 import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.Schedule;
@@ -43,7 +44,7 @@ public class ScheduleService {
     private final MemoRepository memoRepository;
 
     @Transactional
-    public List<TravelPlanResponse> createSchedule(Long userId, ScheduleCreateServiceRequest request) {
+    public ScheduleResponse createSchedule(Long userId, ScheduleCreateServiceRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
@@ -64,7 +65,7 @@ public class ScheduleService {
         List<Long> scheduleDetailsIds = scheduleDetails.stream().map(ScheduleDetailsQueryEntity::getId).toList();
         List<DetailedPlanQueryEntity> detailedPlans = detailPlanRepository.findDetailedPlans(scheduleDetailsIds);
 
-        return TravelPlanResponse.toList(scheduleDetails, detailedPlans);
+        return ScheduleResponse.of(schedule.getId(), TravelPlanResponse.toList(scheduleDetails, detailedPlans));
     }
 
     public SliceResponse<ScheduleFindAllResponse> findAllSchedules(Long userId, OffsetLimit offsetLimit) {

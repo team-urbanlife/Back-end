@@ -48,7 +48,7 @@ public class ScheduleDetailsControllerDocs extends RestDocsSupport {
                 .build();
 
         TravelPlanResponse response = TravelPlanResponse.builder()
-                .id(0L)
+                .scheduleDetailsId(0L)
                 .travelDate(LocalDate.of(2024, 9, 1))
                 .detailedPlans(List.of(queryResponse))
                 .build();
@@ -82,7 +82,7 @@ public class ScheduleDetailsControllerDocs extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(ARRAY)
                                         .description("응답 데이터"),
-                                fieldWithPath("data[].id").type(NUMBER)
+                                fieldWithPath("data[].scheduleDetailsId").type(NUMBER)
                                         .description("세부 일정 ID"),
                                 fieldWithPath("data[].travelDate").type(STRING)
                                         .description("여행 계획 일 (YYYY-MM-DD"),

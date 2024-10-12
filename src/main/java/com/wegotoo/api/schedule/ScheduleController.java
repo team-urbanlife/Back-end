@@ -7,6 +7,7 @@ import com.wegotoo.application.OffsetLimit;
 import com.wegotoo.application.SliceResponse;
 import com.wegotoo.application.schedule.ScheduleService;
 import com.wegotoo.application.schedule.response.ScheduleFindAllResponse;
+import com.wegotoo.application.schedule.response.ScheduleResponse;
 import com.wegotoo.application.schedule.response.TravelPlanResponse;
 import com.wegotoo.infra.resolver.auth.Auth;
 import jakarta.validation.Valid;
@@ -28,8 +29,8 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping("/v1/schedules")
-    public ApiResponse<List<TravelPlanResponse>> createSchedule(@RequestBody @Valid ScheduleCreateRequest request,
-                                                                @Auth Long userId) {
+    public ApiResponse<ScheduleResponse> createSchedule(@RequestBody @Valid ScheduleCreateRequest request,
+                                                        @Auth Long userId) {
         return ApiResponse.ok(scheduleService.createSchedule(userId, request.toService()));
     }
 
