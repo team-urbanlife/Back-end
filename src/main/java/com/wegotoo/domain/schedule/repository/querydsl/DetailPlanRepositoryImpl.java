@@ -33,6 +33,7 @@ public class DetailPlanRepositoryImpl implements DetailPlanRepositoryCustom {
     @Override
     public List<DetailedPlanQueryEntity> findDetailedPlans(List<Long> scheduleDetailsIds) {
         return queryFactory.select(new QDetailedPlanQueryEntity(
+                        detailedPlan.id,
                         detailedPlan.name,
                         detailedPlan.sequence,
                         detailedPlan.latitude,

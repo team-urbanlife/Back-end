@@ -40,6 +40,7 @@ public class ScheduleDetailsControllerDocs extends RestDocsSupport {
     void findTravelPlans() throws Exception {
         // given
         DetailedPlanQueryEntity queryResponse = DetailedPlanQueryEntity.builder()
+                .detailedPlanId(1L)
                 .region("장소 이름")
                 .sequence(1L)
                 .latitude(0.0)
@@ -88,6 +89,8 @@ public class ScheduleDetailsControllerDocs extends RestDocsSupport {
                                         .description("여행 계획 일 (YYYY-MM-DD"),
                                 fieldWithPath("data[].detailedPlans").type(ARRAY)
                                         .description("세부 계획 데이터"),
+                                fieldWithPath("data[].detailedPlans[].detailedPlanId").type(NUMBER)
+                                        .description("세부 계획 ID"),
                                 fieldWithPath("data[].detailedPlans[].region").type(STRING)
                                         .description("장소 이름"),
                                 fieldWithPath("data[].detailedPlans[].sequence").type(NUMBER)

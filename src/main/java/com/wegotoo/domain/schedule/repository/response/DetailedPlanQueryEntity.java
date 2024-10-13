@@ -7,6 +7,8 @@ import lombok.Getter;
 @Getter
 public class DetailedPlanQueryEntity {
 
+    private Long detailedPlanId;
+
     private String region;
 
     private Long sequence;
@@ -23,8 +25,9 @@ public class DetailedPlanQueryEntity {
 
     @Builder
     @QueryProjection
-    public DetailedPlanQueryEntity(String region, Long sequence, Double latitude, Double longitude,
+    public DetailedPlanQueryEntity(Long detailedPlanId, String region, Long sequence, Double latitude, Double longitude,
                                    Long ScheduleDetailsId, String memo, Long memoId) {
+        this.detailedPlanId = detailedPlanId;
         this.region = region;
         this.sequence = sequence;
         this.latitude = latitude;
