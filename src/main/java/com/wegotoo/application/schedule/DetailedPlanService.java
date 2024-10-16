@@ -1,6 +1,10 @@
 package com.wegotoo.application.schedule;
 
-import static com.wegotoo.exception.ErrorCode.*;
+import static com.wegotoo.exception.ErrorCode.CANNOT_MOVE_SEQUENCE;
+import static com.wegotoo.exception.ErrorCode.DETAILED_PLAN_NOT_FOUND;
+import static com.wegotoo.exception.ErrorCode.SCHEDULE_DETAIL_NOT_FOUND;
+import static com.wegotoo.exception.ErrorCode.UNAUTHORIZED_REQUEST;
+import static com.wegotoo.exception.ErrorCode.USER_NOT_FOUND;
 
 import com.wegotoo.api.schedule.request.DetailedPlanMoveRequest;
 import com.wegotoo.application.schedule.request.DetailedPlanCreateServiceRequest;
@@ -12,7 +16,6 @@ import com.wegotoo.domain.schedule.repository.DetailPlanRepository;
 import com.wegotoo.domain.schedule.repository.MemoRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleDetailsRepository;
 import com.wegotoo.domain.schedule.repository.ScheduleGroupRepository;
-import com.wegotoo.domain.schedule.repository.ScheduleRepository;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import com.wegotoo.exception.BusinessException;
@@ -31,7 +34,6 @@ public class DetailedPlanService {
     private final UserRepository userRepository;
     private final ScheduleGroupRepository scheduleGroupRepository;
     private final MemoRepository memoRepository;
-    private final ScheduleRepository scheduleRepository;
 
     @Transactional
     public void writeDetailedPlan(Long scheduleDetailsId, Long userId, DetailedPlanCreateServiceRequest request) {
@@ -96,17 +98,6 @@ public class DetailedPlanService {
 
         memoRepository.deleteByDetailedPlan(detailedPlan);
         detailPlanRepository.delete(detailedPlan);
-    }
-
-    private DetailedPlan isMoveUp(DetailedPlan detailedPlan, boolean isMoveUp) {
-        if (isMoveUp) {
-            return detailPlanRepository.findTopBySequenceGreaterThanOrderBySequenceAsc(
-                            detailedPlan.getSequence())
-                    .orElseThrow(() -> new BusinessException(CANNOT_MOVE_SEQUENCE));
-        }
-        return detailPlanRepository.findTopBySequenceLessThanOrderBySequenceDesc(
-                        detailedPlan.getSequence())
-                .orElseThrow(() -> new BusinessException(CANNOT_MOVE_SEQUENCE));
     }
 
     private void validateUserHasAccessToSchedule(Long userId, Long scheduleId) {
