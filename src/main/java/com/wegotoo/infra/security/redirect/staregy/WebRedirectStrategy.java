@@ -1,10 +1,10 @@
 package com.wegotoo.infra.security.redirect.staregy;
 
 import static com.wegotoo.infra.security.util.ServletUtils.addRefreshTokenCookieToResponse;
+import static com.wegotoo.infra.security.util.UriUtils.isStartWithApp;
+import static com.wegotoo.infra.security.util.UriUtils.isValid;
 import static io.micrometer.common.util.StringUtils.isBlank;
 
-import com.wegotoo.infra.security.util.UriUtils;
-import java.net.URI;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -13,7 +13,7 @@ public class WebRedirectStrategy implements RedirectStrategy {
 
     @Override
     public boolean supports(String uri) {
-        return !isBlank(uri) && UriUtils.isValid(uri) && !URI.create(uri).getPath().startsWith("/app");
+        return !isBlank(uri) && isValid(uri) && !isStartWithApp(uri);
     }
 
     @Override

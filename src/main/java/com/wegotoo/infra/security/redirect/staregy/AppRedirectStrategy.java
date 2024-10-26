@@ -1,5 +1,6 @@
 package com.wegotoo.infra.security.redirect.staregy;
 
+import static com.wegotoo.infra.security.util.UriUtils.isStartWithApp;
 import static io.micrometer.common.util.StringUtils.isBlank;
 
 import java.net.URI;
@@ -11,7 +12,7 @@ public class AppRedirectStrategy implements RedirectStrategy {
 
     @Override
     public boolean supports(String uri) {
-        return !isBlank(uri) && URI.create(uri).getPath().startsWith("/app");
+        return !isBlank(uri) && isStartWithApp(uri);
     }
 
     @Override

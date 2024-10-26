@@ -1,5 +1,6 @@
 package com.wegotoo.infra.security.util;
 
+import java.net.URI;
 import java.util.regex.Pattern;
 
 public class UriUtils {
@@ -9,6 +10,10 @@ public class UriUtils {
 
     public static boolean isValid(String uriString) {
         return URI_PATTERN.matcher(uriString).matches();
+    }
+
+    public static boolean isStartWithApp(String uriString) {
+        return URI.create(uriString).getPath().startsWith("/app");
     }
 
 }
