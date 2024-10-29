@@ -2,7 +2,7 @@ package com.wegotoo.domain.post.repository.querydsl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.wegotoo.config.QueryDslConfig;
+import com.wegotoo.domain.DataJpaTestSupport;
 import com.wegotoo.domain.post.Content;
 import com.wegotoo.domain.post.ContentType;
 import com.wegotoo.domain.post.Post;
@@ -16,12 +16,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 
-@DataJpaTest
-@Import(QueryDslConfig.class)
-class ContentRepositoryImplTest {
+class ContentRepositoryImplTest extends DataJpaTestSupport {
 
     @Autowired
     UserRepository userRepository;
@@ -77,4 +73,5 @@ class ContentRepositoryImplTest {
                 .text(text)
                 .build();
     }
+
 }

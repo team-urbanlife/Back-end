@@ -1,32 +1,25 @@
 package com.wegotoo.domain.schedule.repository;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import com.wegotoo.config.QueryDslConfig;
+import com.wegotoo.domain.DataJpaTestSupport;
 import com.wegotoo.domain.schedule.DetailedPlan;
 import com.wegotoo.domain.schedule.Memo;
 import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleDetails;
 import com.wegotoo.domain.schedule.ScheduleGroup;
-import com.wegotoo.domain.schedule.Type;
 import com.wegotoo.domain.schedule.repository.response.DetailedPlanQueryEntity;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.IntStream;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 
-@DataJpaTest
-@Import(QueryDslConfig.class)
-class DetailPlanRepositoryImplTest {
+class DetailPlanRepositoryImplTest extends DataJpaTestSupport {
 
     @Autowired
     UserRepository userRepository;
@@ -213,4 +206,5 @@ class DetailPlanRepositoryImplTest {
         assertThat(responses.get(0).getMemo()).isEqualTo("메모");
         assertThat(responses.get(0).getMemoId()).isEqualTo(memo.getId());
     }
+
 }

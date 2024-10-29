@@ -1,10 +1,8 @@
 package com.wegotoo.domain.schedule.repository.querydsl;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-import com.wegotoo.application.schedule.response.ScheduleFindAllResponse;
-import com.wegotoo.config.QueryDslConfig;
+import com.wegotoo.domain.DataJpaTestSupport;
 import com.wegotoo.domain.schedule.Schedule;
 import com.wegotoo.domain.schedule.ScheduleGroup;
 import com.wegotoo.domain.schedule.repository.ScheduleGroupRepository;
@@ -19,12 +17,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 
-@DataJpaTest
-@Import(QueryDslConfig.class)
-class ScheduleRepositoryImplTest {
+class ScheduleRepositoryImplTest extends DataJpaTestSupport {
 
     @Autowired
     ScheduleRepository scheduleRepository;
@@ -78,4 +72,5 @@ class ScheduleRepositoryImplTest {
         // then
         assertThat(findAllSchedules.size()).isEqualTo(4);
     }
+
 }

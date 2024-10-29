@@ -4,7 +4,7 @@ import static com.wegotoo.domain.accompany.Gender.NO_MATTER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
-import com.wegotoo.config.QueryDslConfig;
+import com.wegotoo.domain.DataJpaTestSupport;
 import com.wegotoo.domain.accompany.Accompany;
 import com.wegotoo.domain.accompany.repository.response.AccompanyFindAllQueryEntity;
 import com.wegotoo.domain.accompany.repository.response.AccompanyFindOneQueryEntity;
@@ -17,12 +17,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 
-@DataJpaTest
-@Import(QueryDslConfig.class)
-class AccompanyRepositoryImplTest {
+class AccompanyRepositoryImplTest extends DataJpaTestSupport {
 
     @Autowired
     UserRepository userRepository;
