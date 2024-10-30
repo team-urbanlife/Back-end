@@ -3,8 +3,7 @@ package com.wegotoo.domain.chat.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
-import com.wegotoo.config.EmbeddedMongoConfig;
-import com.wegotoo.config.MongoConfig;
+import com.wegotoo.domain.DataMongoTestSupport;
 import com.wegotoo.domain.chat.Chat;
 import java.util.List;
 import java.util.stream.LongStream;
@@ -12,12 +11,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.context.annotation.Import;
 
-@DataMongoTest
-@Import({MongoConfig.class, EmbeddedMongoConfig.class})
-public class ChatRepositoryImplTest {
+public class ChatRepositoryImplTest extends DataMongoTestSupport {
 
     @Autowired
     ChatRepository chatRepository;
