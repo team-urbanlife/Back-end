@@ -15,19 +15,16 @@ import com.wegotoo.application.post.response.PostFindAllResponse;
 import com.wegotoo.application.post.response.PostFindOneResponse;
 import com.wegotoo.domain.post.Content;
 import com.wegotoo.domain.post.Post;
+import com.wegotoo.domain.post.PostContents;
 import com.wegotoo.domain.post.repository.ContentRepository;
 import com.wegotoo.domain.post.repository.PostRepository;
-import com.wegotoo.domain.post.repository.response.ContentImageQueryEntity;
-import com.wegotoo.domain.post.repository.response.ContentTextQueryEntity;
 import com.wegotoo.domain.post.repository.response.PostQueryEntity;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import com.wegotoo.exception.BusinessException;
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,15 +58,10 @@ public class PostService {
         List<PostQueryEntity> posts = postRepository.findAllPost(offsetLimit.getOffset(), offsetLimit.getLimit());
 
         List<Long> postIds = posts.stream().map(PostQueryEntity::getId).toList();
+        PostContents postContents = PostContents.of(contentRepository.findAllByPostIds(postIds));
 
-        List<ContentTextQueryEntity> allContentTexts = contentRepository.findAllPostWithContentText(postIds);
-        List<ContentImageQueryEntity> allContentImages = contentRepository.findAllPostWithContentImage(postIds);
-
-        List<ContentTextQueryEntity> firstContentText = getFirstContentText(allContentTexts);
-        List<ContentImageQueryEntity> firstContentImage = getFirstContentImage(allContentImages);
-
-        return SliceResponse.of(PostFindAllResponse.toList(posts, firstContentText, firstContentImage),
-                offsetLimit.getOffset(), offsetLimit.getLimit());
+        return SliceResponse.of(PostFindAllResponse.toList(posts, postContents), offsetLimit.getOffset(),
+                offsetLimit.getLimit());
     }
 
     public SliceResponse<PostFindAllResponse> findAllLikePost(Long userId, OffsetLimit offsetLimit) {
@@ -80,15 +72,10 @@ public class PostService {
                 offsetLimit.getLimit());
 
         List<Long> postIds = posts.stream().map(PostQueryEntity::getId).toList();
+        PostContents postContents = PostContents.of(contentRepository.findAllByPostIds(postIds));
 
-        List<ContentTextQueryEntity> allContentTexts = contentRepository.findAllPostWithContentText(postIds);
-        List<ContentImageQueryEntity> allContentImages = contentRepository.findAllPostWithContentImage(postIds);
-
-        List<ContentTextQueryEntity> firstContentText = getFirstContentText(allContentTexts);
-        List<ContentImageQueryEntity> firstContentImage = getFirstContentImage(allContentImages);
-
-        return SliceResponse.of(PostFindAllResponse.toList(posts, firstContentText, firstContentImage),
-                offsetLimit.getOffset(), offsetLimit.getLimit());
+        return SliceResponse.of(PostFindAllResponse.toList(posts, postContents), offsetLimit.getOffset(),
+                offsetLimit.getLimit());
     }
 
     public PostFindOneResponse findOnePost(Long postId) {
@@ -141,28 +128,6 @@ public class PostService {
 
         contentRepository.deleteAllByPostId(post);
         postRepository.delete(post);
-    }
-
-    private List<ContentImageQueryEntity> getFirstContentImage(List<ContentImageQueryEntity> allContentImages) {
-        return allContentImages.stream()
-                .collect(Collectors.groupingBy(ContentImageQueryEntity::getPostId))
-                .values().stream()
-                .map(list -> list.stream()
-                        .min(Comparator.comparing(ContentImageQueryEntity::getContentId))
-                        .orElse(null))
-                .filter(Objects::nonNull)
-                .toList();
-    }
-
-    private List<ContentTextQueryEntity> getFirstContentText(List<ContentTextQueryEntity> allContentTexts) {
-        return allContentTexts.stream()
-                .collect(Collectors.groupingBy(ContentTextQueryEntity::getPostId))
-                .values().stream()
-                .map(list -> list.stream()
-                        .min(Comparator.comparing(ContentTextQueryEntity::getContentId))
-                        .orElse(null))
-                .filter(Objects::nonNull)
-                .toList();
     }
 
 }

@@ -1,11 +1,11 @@
 package com.wegotoo.domain.post.repository.querydsl;
 
-import com.wegotoo.domain.post.repository.response.ContentImageQueryEntity;
-import com.wegotoo.domain.post.repository.response.ContentTextQueryEntity;
+import com.wegotoo.domain.post.repository.response.ContentQueryEntity;
 import java.util.List;
+import java.util.Map;
 
 public interface ContentRepositoryCustom {
-    List<ContentTextQueryEntity> findAllPostWithContentText(List<Long> postIds);
 
-    List<ContentImageQueryEntity> findAllPostWithContentImage(List<Long> postIds);
+    Map<Long, List<ContentQueryEntity>> findAllByPostIds(List<Long> postIds);
+
 }
