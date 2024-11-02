@@ -8,10 +8,12 @@ import com.wegotoo.domain.post.ContentType;
 import com.wegotoo.domain.post.Post;
 import com.wegotoo.domain.post.repository.ContentRepository;
 import com.wegotoo.domain.post.repository.PostRepository;
-import com.wegotoo.domain.post.repository.response.ContentTextQueryEntity;
+import com.wegotoo.domain.post.repository.response.ContentQueryEntity;
+import com.wegotoo.domain.user.Role;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.repository.UserRepository;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,37 +38,43 @@ class ContentRepositoryImplTest extends DataJpaTestSupport {
     }
 
     @Test
-    @DisplayName("게시글 페이징 조회 테스트")
-    void findAllPost() throws Exception {
+    @DisplayName("게시글 ID로 내용 조회")
+    public void findAllByPostIds() {
         // given
-        User user = User.builder()
-                .name("user")
-                .email("user@email.com")
-                .build();
-        userRepository.save(user);
+        User user = userRepository.save(createUser("userA"));
+        Post post = postRepository.save(createPost(user));
 
-        Post post = Post.builder()
-                .title("제목 ")
-                .view(0)
-                .user(user)
-                .build();
-        postRepository.save(post);
-
-        Content content1 = getContent(post, ContentType.T, "글1");
-        Content content2 = getContent(post, ContentType.IMAGE, "이미지1");
-        Content content3 = getContent(post, ContentType.T, "글2");
-        Content content4 = getContent(post, ContentType.IMAGE, "이미지2");
-
-        contentRepository.saveAll(List.of(content1, content2, content3, content4));
+        List<Content> contents = contentRepository.saveAll(List.of(
+                createContent(post, ContentType.T, "글1"),
+                createContent(post, ContentType.IMAGE, "이미지1"),
+                createContent(post, ContentType.T, "글2"),
+                createContent(post, ContentType.IMAGE, "이미지2")
+        ));
 
         // when
-        List<ContentTextQueryEntity> response = contentRepository.findAllPostWithContentText(List.of(1L));
+        Map<Long, List<ContentQueryEntity>> result = contentRepository.findAllByPostIds(List.of(post.getId()));
 
         // then
-        assertThat(response.size()).isEqualTo(2);
+        assertThat(result.get(post.getId())).hasSize(4);
     }
 
-    private static Content getContent(Post post, ContentType type, String text) {
+
+    private static User createUser(String nickname) {
+        return User.builder()
+                .name(nickname)
+                .email(nickname + "@gmail.com")
+                .role(Role.USER)
+                .build();
+    }
+
+    private static Post createPost(User user) {
+        return Post.builder()
+                .title("게시글 제목")
+                .user(user)
+                .build();
+    }
+
+    private static Content createContent(Post post, ContentType type, String text) {
         return Content.builder()
                 .type(type)
                 .post(post)
