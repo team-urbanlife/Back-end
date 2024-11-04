@@ -29,6 +29,7 @@ dependencies {
     // Spring Data JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -77,6 +78,9 @@ dependencies {
 
     // Embedded Mongo
     implementation 'de.bwaldvogel:mongo-java-server:1.45.0'
+
+    // Embedded Redis
+    implementation 'com.github.codemonstur:embedded-redis:1.4.3'
 
     // S3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
