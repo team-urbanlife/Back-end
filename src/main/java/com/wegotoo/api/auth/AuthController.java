@@ -9,8 +9,8 @@ import com.wegotoo.api.ApiResponse;
 import com.wegotoo.application.auth.AuthService;
 import com.wegotoo.application.auth.response.TokenResponse;
 import com.wegotoo.infra.resolver.auth.Auth;
-import com.wegotoo.infra.resolver.refresh.AppRefreshToken;
-import com.wegotoo.infra.resolver.refresh.RefreshToken;
+import com.wegotoo.infra.resolver.refresh.AuthAppRefreshToken;
+import com.wegotoo.infra.resolver.refresh.AuthRefreshToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,8 +39,8 @@ public class AuthController {
 
 
     @PostMapping("/v1/reissue")
-    public ApiResponse<Void> reissueTokens(@RefreshToken String refreshToken) {
-        TokenResponse token = authService.validateAndReissueToken(refreshToken);
+    public ApiResponse<Void> reissueTokens(@AuthRefreshToken String refreshToken) {
+        TokenResponse token = authService.reissueToken(refreshToken);
 
         addAuthorizationHeaderToResponse(token.getAccessToken());
         addRefreshTokenCookieToResponse(token.getRefreshToken());
@@ -49,8 +49,8 @@ public class AuthController {
     }
 
     @PostMapping("/v1/app/reissue")
-    public ApiResponse<Void> reissueTokensForApp(@AppRefreshToken String refreshToken) {
-        TokenResponse token = authService.validateAndReissueToken(refreshToken);
+    public ApiResponse<Void> reissueTokensForApp(@AuthAppRefreshToken String refreshToken) {
+        TokenResponse token = authService.reissueToken(refreshToken);
 
         addAuthorizationHeaderToResponse(token.getAccessToken());
         addAuthorizationRefreshHeaderToResponse(token.getRefreshToken());

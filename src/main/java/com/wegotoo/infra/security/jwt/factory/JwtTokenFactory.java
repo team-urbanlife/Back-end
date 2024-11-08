@@ -34,9 +34,9 @@ public class JwtTokenFactory {
                 .compact();
     }
 
-    public String createRefreshToken() {
+    public String createRefreshToken(Long id) {
         return Jwts.builder()
-                .subject("refresh_token")
+                .subject(String.valueOf(id))
                 .expiration(generateCompletionTime(refreshTokenExpirationPeriod))
                 .signWith(secretKey)
                 .compact();

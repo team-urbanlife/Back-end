@@ -6,6 +6,7 @@ import com.wegotoo.infra.security.jwt.validator.JwtTokenValidator;
 import com.wegotoo.infra.security.user.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import java.util.Optional;
 import javax.crypto.SecretKey;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,12 +34,21 @@ public class JwtTokenProvider {
         return tokenFactory.createAccessToken(id, email, role.getKey());
     }
 
-    public String createRefreshToken() {
-        return tokenFactory.createRefreshToken();
+    public String createRefreshToken(Long id) {
+        return tokenFactory.createRefreshToken(id);
     }
 
     public boolean isValid(String token) {
         return tokenValidator.isValid(token);
+    }
+
+    public Optional<Long> extractSubId(String token) {
+        if (!tokenValidator.isValidToken(token)) {
+            return Optional.empty();
+        }
+
+        CustomUserDetails userDetails = CustomUserDetails.of(extractClaims(token));
+        return Optional.of(userDetails.getId());
     }
 
     public Authentication getAuthentication(String token) {

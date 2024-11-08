@@ -1,13 +1,11 @@
 package com.wegotoo.infra.security.oauth.handler;
 
-import com.wegotoo.domain.user.User;
-import com.wegotoo.domain.user.repository.UserRepository;
-import com.wegotoo.exception.BusinessException;
-import com.wegotoo.exception.ErrorCode;
+import com.wegotoo.domain.user.RefreshToken;
+import com.wegotoo.domain.user.repository.RefreshTokenRepository;
 import com.wegotoo.infra.security.jwt.provider.JwtTokenProvider;
 import com.wegotoo.infra.security.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
-import com.wegotoo.infra.security.user.CustomOAuth2User;
 import com.wegotoo.infra.security.redirect.RedirectResponseBuilder;
+import com.wegotoo.infra.security.user.CustomOAuth2User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +19,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider tokenProvider;
     private final RedirectResponseBuilder redirectResponseBuilder;
     private final HttpCookieOAuth2AuthorizationRequestRepository authorizationRequestRepository;
@@ -33,12 +31,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String accessToken = tokenProvider.createAccessToken(oAuth2User.getId(), oAuth2User.getEmail(),
                 oAuth2User.getRole());
-        String refreshToken = tokenProvider.createRefreshToken();
+        String refreshToken = tokenProvider.createRefreshToken(oAuth2User.getId());
 
-        User user = userRepository.findById(oAuth2User.getId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        userRepository.save(user.updateRefreshToken(refreshToken));
+        refreshTokenRepository.save(RefreshToken.create(oAuth2User.getId(), refreshToken));
 
         String targetUri = redirectResponseBuilder.buildRedirectUri(request, accessToken, refreshToken);
 
