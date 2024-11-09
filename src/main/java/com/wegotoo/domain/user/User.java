@@ -40,17 +40,13 @@ public class User {
     @Column(name = "user_profile_image")
     private String profileImage;
 
-    @Column(name = "user_refresh_token")
-    private String refreshToken;
-
     @Builder
-    private User(String email, String name, double latitude, Role role, String profileImage, String refreshToken) {
+    private User(String email, String name, double latitude, Role role, String profileImage) {
         this.email = email;
         this.name = name;
         this.latitude = latitude;
         this.role = role;
         this.profileImage = profileImage;
-        this.refreshToken = refreshToken;
     }
 
     public User updateNameAndProfileImage(String name, String profileImage) {
@@ -60,17 +56,8 @@ public class User {
         return this;
     }
 
-    public User updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-
-        return this;
-    }
-
-    public void deleteRefreshToken() {
-        this.refreshToken = null;
-    }
-
     public boolean isOwner(Long id) {
         return this.id.equals(id);
     }
+
 }

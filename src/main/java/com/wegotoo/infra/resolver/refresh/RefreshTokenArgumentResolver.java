@@ -18,7 +18,7 @@ public class RefreshTokenArgumentResolver implements HandlerMethodArgumentResolv
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(RefreshToken.class) && parameter.getParameterType()
+        return parameter.hasParameterAnnotation(AuthRefreshToken.class) && parameter.getParameterType()
                 .equals(String.class);
     }
 

@@ -64,7 +64,7 @@ public class AuthControllerTest extends ControllerTestSupport {
                 .refreshToken("${NEW_REFRESH_TOKEN}")
                 .build();
 
-        given(authService.validateAndReissueToken(anyString()))
+        given(authService.reissueToken(anyString()))
                 .willReturn(response);
 
         // when // then
@@ -89,7 +89,7 @@ public class AuthControllerTest extends ControllerTestSupport {
                 .refreshToken("${NEW_REFRESH_TOKEN}")
                 .build();
 
-        given(authService.validateAndReissueToken(anyString()))
+        given(authService.reissueToken(anyString()))
                 .willReturn(response);
 
         // when // then
