@@ -9,3 +9,14 @@ include::{snippets}/chat/findAll/query-parameters.adoc[]
 ==== HTTP Response
 include::{snippets}/chat/findAll/http-response.adoc[]
 include::{snippets}/chat/findAll/response-fields.adoc[]
+
+[[LastReadMessages-FindAll]]
+=== 마지막 읽은 채팅 메세지 조회
+==== HTTP Request
+include::{snippets}/chat/findLastReadMessage/http-request.adoc[]
+include::{snippets}/chat/findLastReadMessage/request-headers.adoc[]
+include::{snippets}/chat/findLastReadMessage/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/chat/findLastReadMessage/http-response.adoc[]
+include::{snippets}/chat/findLastReadMessage/response-fields.adoc[]
