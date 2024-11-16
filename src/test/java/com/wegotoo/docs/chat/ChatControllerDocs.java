@@ -29,6 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.wegotoo.application.CursorResponse;
 import com.wegotoo.application.chat.response.ChatResponse;
+import com.wegotoo.application.chat.response.LastReadMessageResponse;
+import com.wegotoo.application.chat.response.LastReadResponse;
 import com.wegotoo.docs.RestDocsSupport;
 import com.wegotoo.support.security.WithAuthUser;
 import java.time.LocalDateTime;
@@ -111,6 +113,57 @@ public class ChatControllerDocs extends RestDocsSupport {
                 ));
     }
 
+    @Test
+    @WithAuthUser
+    @DisplayName("마지막 채팅 조회")
+    public void findLastReadMessages() throws Exception {
+        // given
+        Long chatRoomId = 1L;
+
+        LastReadMessageResponse lastReadMessageResponse1 = createLastReadMessageResponse(1L, "XXXX1");
+        LastReadMessageResponse lastReadMessageResponse2 = createLastReadMessageResponse(2L, "-1");
+
+        given(chatService.findLastReadMessages(anyLong(), anyLong()))
+                .willReturn(LastReadResponse.builder()
+                        .chatRoomId(chatRoomId)
+                        .lastReadMessages(List.of(lastReadMessageResponse1, lastReadMessageResponse2))
+                        .build());
+
+        // when // then
+        mockMvc.perform(get("/v1/chat-rooms/{chatRoomId}/chats/last-read", chatRoomId)
+                        .header(authorizationHeaderName(), mockBearerToken()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("chat/findLastReadMessage",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Authorization").description("어세스 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("chatRoomId").description("채팅방 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(STRING)
+                                        .description("메세지"),
+                                fieldWithPath("data").type(OBJECT)
+                                        .description("응답 데이터"),
+                                fieldWithPath("data.chatRoomId").type(NUMBER)
+                                        .description("채팅방 아이디"),
+                                fieldWithPath("data.lastReadMessages[]").type(ARRAY)
+                                        .description("마지막 읽은 채팅"),
+                                fieldWithPath("data.lastReadMessages[].userId").type(NUMBER)
+                                        .description("사용자 ID"),
+                                fieldWithPath("data.lastReadMessages[].chatId").type(STRING)
+                                        .description("채팅 ID")
+                        )
+                ));
+    }
+
     private ChatResponse createChatResponse(Long userId, Long number) {
         return ChatResponse.builder()
                 .id("_000" + number)
@@ -128,6 +181,13 @@ public class ChatControllerDocs extends RestDocsSupport {
                 .mapToObj(i -> isOdd(i) ? createChatResponse(1L, i) : createChatResponse(2L, i))
                 .sorted(Comparator.comparing(ChatResponse::getCreateAt).reversed())
                 .toList();
+    }
+
+    private LastReadMessageResponse createLastReadMessageResponse(Long userId, String chatId) {
+        return LastReadMessageResponse.builder()
+                .userId(userId)
+                .chatId(chatId)
+                .build();
     }
 
     private boolean isOdd(Long number) {
