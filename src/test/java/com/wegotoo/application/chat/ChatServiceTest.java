@@ -8,9 +8,13 @@ import com.wegotoo.application.CursorResponse;
 import com.wegotoo.application.ServiceTestSupport;
 import com.wegotoo.application.chat.request.ChatSendServiceRequest;
 import com.wegotoo.application.chat.response.ChatResponse;
+import com.wegotoo.application.chat.response.LastReadResponse;
 import com.wegotoo.domain.chat.Chat;
+import com.wegotoo.domain.chat.ChatRoomStatus;
+import com.wegotoo.domain.chat.LastReadMessage;
+import com.wegotoo.domain.chat.LastReads;
 import com.wegotoo.domain.chat.repository.ChatRepository;
-import com.wegotoo.domain.chatroom.UserChatRoom;
+import com.wegotoo.domain.chat.repository.ChatRoomStatusRepository;
 import com.wegotoo.domain.chatroom.repository.UserChatRoomRepository;
 import com.wegotoo.domain.user.Role;
 import com.wegotoo.domain.user.User;
@@ -35,11 +39,15 @@ public class ChatServiceTest extends ServiceTestSupport {
     UserChatRoomRepository userChatRoomRepository;
 
     @Autowired
+    ChatRoomStatusRepository chatRoomStatusRepository;
+
+    @Autowired
     ChatService chatService;
 
     @AfterEach
     void tearDown() {
         chatRepository.deleteAll();
+        chatRoomStatusRepository.deleteAll();
         userChatRoomRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
     }
@@ -124,6 +132,34 @@ public class ChatServiceTest extends ServiceTestSupport {
                         tuple(userA.getId(), "userA", "message: 3"),
                         tuple(userB.getId(), "userB", "message: 2"),
                         tuple(userA.getId(), "userA", "message: 1")
+                );
+    }
+
+    @Test
+    @DisplayName("안읽은 채팅을 조회한다.")
+    public void findLastReadMessages() throws Exception {
+        // given
+        Long chatRoomId = 100L;
+
+        User userA = userRepository.save(createUser("userA"));
+        User userB = userRepository.save(createUser("userB"));
+
+        LastReadMessage lastReadMessageByA = LastReadMessage.of(userA.getId(), "XXX1");
+        LastReadMessage lastReadMessageByB = LastReadMessage.of(userB.getId(), "XXX2");
+
+        ChatRoomStatus chatRoomStatus = chatRoomStatusRepository.save(
+                ChatRoomStatus.create(chatRoomId, LastReads.of(List.of(lastReadMessageByA, lastReadMessageByB))));
+
+        // when
+        LastReadResponse result = chatService.findLastReadMessages(userA.getId(), chatRoomId);
+
+        // then
+        assertThat(result.getChatRoomId()).isEqualTo(chatRoomId);
+        assertThat(result.getLastReadMessages()).hasSize(2)
+                .extracting("userId", "chatId")
+                .containsExactly(
+                        tuple(userA.getId(), lastReadMessageByA.getChatId()),
+                        tuple(userB.getId(), lastReadMessageByB.getChatId())
                 );
     }
 

@@ -3,11 +3,9 @@ package com.wegotoo.api.chat;
 import com.wegotoo.api.ApiResponse;
 import com.wegotoo.api.chat.request.ChatSendRequest;
 import com.wegotoo.application.CursorResponse;
-import com.wegotoo.application.OffsetLimit;
-import com.wegotoo.application.SliceResponse;
-import com.wegotoo.application.chat.response.ChatResponse;
 import com.wegotoo.application.chat.ChatService;
-import com.wegotoo.application.chatroom.response.ChatRoomResponse;
+import com.wegotoo.application.chat.response.ChatResponse;
+import com.wegotoo.application.chat.response.LastReadResponse;
 import com.wegotoo.infra.resolver.auth.Auth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -33,6 +31,11 @@ public class ChatController {
             @RequestParam(value = "size", required = false, defaultValue = "50") Integer size
     ) {
         return ApiResponse.ok(chatService.findAllChats(userId, chatRoomId, cursorId, size));
+    }
+
+    @GetMapping("/v1/chat-rooms/{chatRoomId}/chats/last-read")
+    public ApiResponse<LastReadResponse> findLastReadMessages(@Auth Long userId, @PathVariable Long chatRoomId) {
+        return ApiResponse.ok(chatService.findLastReadMessages(userId, chatRoomId));
     }
 
     @MessageMapping("/chat-rooms/{chatRoomId}/send")

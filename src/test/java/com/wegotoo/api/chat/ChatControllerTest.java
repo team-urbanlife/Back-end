@@ -32,4 +32,21 @@ public class ChatControllerTest extends ControllerTestSupport {
                 .andDo(print());
     }
 
+    @Test
+    @WithAuthUser
+    @DisplayName("마지막 채팅 조회")
+    public void findLastReadMessages() throws Exception {
+        // given
+        Long chatRoomId = 1L;
+
+        // when // then
+        mockMvc.perform(get("/v1/chat-rooms/{chatRoomId}/chats/last-read", chatRoomId)
+                .header(authorizationHeaderName(), mockBearerToken()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andDo(print());
+    }
+
 }

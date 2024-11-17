@@ -110,4 +110,8 @@ public class Accompany {
         this.cost = request.getCost();
     }
 
+    public Long getAdminId() {
+        return user.getId();
+    }
+
 }

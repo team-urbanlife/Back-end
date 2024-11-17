@@ -1,16 +1,18 @@
 package com.wegotoo.application.chat;
 
+import static com.wegotoo.exception.ErrorCode.CHAT_ROOM_NOT_FOUND;
 import static com.wegotoo.exception.ErrorCode.NOT_VALID_USER;
 import static com.wegotoo.exception.ErrorCode.USER_NOT_FOUND;
 
 import com.wegotoo.application.CursorResponse;
 import com.wegotoo.application.chat.request.ChatSendServiceRequest;
 import com.wegotoo.application.chat.response.ChatResponse;
+import com.wegotoo.application.chat.response.LastReadResponse;
 import com.wegotoo.application.event.ChatMessageSentEvent;
 import com.wegotoo.domain.chat.Chat;
+import com.wegotoo.domain.chat.ChatRoomStatus;
 import com.wegotoo.domain.chat.repository.ChatRepository;
-import com.wegotoo.domain.chatroom.UserChatRoom;
-import com.wegotoo.domain.chatroom.repository.UserChatRoomRepository;
+import com.wegotoo.domain.chat.repository.ChatRoomStatusRepository;
 import com.wegotoo.domain.user.User;
 import com.wegotoo.domain.user.Users;
 import com.wegotoo.domain.user.repository.UserRepository;
@@ -30,8 +32,8 @@ public class ChatService {
 
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
+    private final ChatRoomStatusRepository chatRoomStatusRepository;
     private final ApplicationEventPublisher eventPublisher;
-    private final UserChatRoomRepository userChatRoomRepository;
 
     public CursorResponse<String, ChatResponse> findAllChats(Long userId, Long chatRoomId, String cursorId,
                                                              Integer limit) {
@@ -44,6 +46,16 @@ public class ChatService {
         Users users = Users.of(userRepository.findAllById(userIds));
 
         return CursorResponse.of(ChatResponse.toList(users, chats), limit);
+    }
+
+    public LastReadResponse findLastReadMessages(Long userId, Long chatRoomId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        ChatRoomStatus chatRoomStatus = chatRoomStatusRepository.findById(chatRoomId)
+                .orElseThrow(() -> new BusinessException(CHAT_ROOM_NOT_FOUND));
+
+        return LastReadResponse.of(chatRoomStatus);
     }
 
     @Transactional

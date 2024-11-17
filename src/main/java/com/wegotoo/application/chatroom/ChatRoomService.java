@@ -9,11 +9,12 @@ import com.wegotoo.application.chatroom.request.ChatRoomCreateServiceRequest;
 import com.wegotoo.application.chatroom.response.ChatRoomFindAllResponse;
 import com.wegotoo.application.chatroom.response.ChatRoomFindOneResponse;
 import com.wegotoo.application.chatroom.response.ChatRoomResponse;
-import com.wegotoo.application.chatroom.response.ChatRoomUserResponse;
 import com.wegotoo.domain.accompany.Accompany;
 import com.wegotoo.domain.accompany.repository.AccompanyRepository;
 import com.wegotoo.domain.chat.Chat;
+import com.wegotoo.domain.chat.ChatRoomStatus;
 import com.wegotoo.domain.chat.repository.ChatRepository;
+import com.wegotoo.domain.chat.repository.ChatRoomStatusRepository;
 import com.wegotoo.domain.chatroom.ChatRoom;
 import com.wegotoo.domain.chatroom.UserChatRoom;
 import com.wegotoo.domain.chatroom.UserChatRoomQueryEntity;
@@ -38,6 +39,7 @@ public class ChatRoomService {
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomStatusRepository chatRoomStatusRepository;
     private final UserChatRoomRepository userChatRoomRepository;
     private final AccompanyRepository accompanyRepository;
 
@@ -81,6 +83,10 @@ public class ChatRoomService {
 
                     userChatRoomRepository.save(UserChatRoom.ofAdmin(accompany.getUser(), newChatRoom, accompany));
                     userChatRoomRepository.save(UserChatRoom.ofGuest(user, newChatRoom, accompany));
+
+                    chatRoomStatusRepository.save(ChatRoomStatus.create(
+                            newChatRoom.getId(), user.getId(), accompany.getAdminId()
+                    ));
 
                     return ChatRoomResponse.of(newChatRoom.getId(), newChatRoom.getCode());
                 });
