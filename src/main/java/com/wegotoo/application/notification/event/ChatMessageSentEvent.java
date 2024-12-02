@@ -1,6 +1,5 @@
-package com.wegotoo.application.event;
+package com.wegotoo.application.notification.event;
 
-import com.wegotoo.application.chat.request.ChatSendServiceRequest;
 import lombok.Builder;
 import lombok.Getter;
 
