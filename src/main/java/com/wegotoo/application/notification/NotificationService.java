@@ -23,10 +23,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class NotificationService {
 
     private static final Long DEFAULT_TIMEOUT = 604800000L;
-    public static final int START = 0;
-    public static final int END = -1;
-    public static final int DAYS = 7;
-    public static final int PARALLEL_PROCESSING_THRESHOLD = 10;
+    private static final int START = 0;
+    private static final int END = -1;
+    private static final int DAYS = 7;
+    private static final int PARALLEL_PROCESSING_THRESHOLD = 10;
 
     private final SubscribeRepository subscribeRepository;
     private final SseEmitterRepository sseEmitterRepository;
