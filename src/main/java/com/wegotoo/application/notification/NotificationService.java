@@ -77,7 +77,7 @@ public class NotificationService {
         }
     }
 
-    private static boolean shouldUseParallelProcessing(List<Notification> notifications) {
+    private boolean shouldUseParallelProcessing(List<Notification> notifications) {
         return notifications.size() >= PARALLEL_PROCESSING_THRESHOLD;
     }
 
