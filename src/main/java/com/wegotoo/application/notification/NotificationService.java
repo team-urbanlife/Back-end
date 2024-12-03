@@ -14,10 +14,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class NotificationService {
@@ -65,6 +67,8 @@ public class NotificationService {
         List<Notification> notifications = redisTemplate.opsForList().range(key, START, END);
 
         sendLastMessages(sseEmitter, notifications);
+
+        redisTemplate.delete(key);
     }
 
     private void sendLastMessages(SseEmitter sseEmitter, List<Notification> notifications) {
@@ -105,14 +109,23 @@ public class NotificationService {
                     .name("ChatNotification")
                     .data(request));
         } catch (IOException e) {
-            throw new BusinessException(ErrorCode.FAILED_SEND_NOTIFICATION);
+            log.error("메시지 알림 전송 실패: {}", request, e);
         }
     }
 
     private void registerDisconnectionHandlers(Long userId, SseEmitter sseEmitter) {
-        sseEmitter.onCompletion(() -> handleDisconnection(userId));
-        sseEmitter.onError(ex -> handleDisconnection(userId));
-        sseEmitter.onTimeout(() -> handleDisconnection(userId));
+        sseEmitter.onCompletion(() -> {
+            log.info("SSE 연결 실패 {}", userId);
+            handleDisconnection(userId);
+        });
+        sseEmitter.onError(ex -> {
+            log.info("SSE 연결 에러: {}", userId);
+            handleDisconnection(userId);
+        });
+        sseEmitter.onTimeout(() -> {
+            log.info("SSE 연결 Time Out: {}", userId);
+            handleDisconnection(userId);
+        });
     }
 
     private void handleDisconnection(Long userId) {
