@@ -4,21 +4,21 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class SandRequest {
+public class SendRequest {
 
     private final Long recipientId;
     private final Long chatRoomId;
     private final String message;
 
     @Builder
-    private SandRequest(Long recipientId, Long chatRoomId, String message) {
+    private SendRequest(Long recipientId, Long chatRoomId, String message) {
         this.recipientId = recipientId;
         this.chatRoomId = chatRoomId;
         this.message = message;
     }
 
-    public static SandRequest of(Long recipientId, Long chatRoomId, String message) {
-        return SandRequest.builder()
+    public static SendRequest of(Long recipientId, Long chatRoomId, String message) {
+        return SendRequest.builder()
                 .recipientId(recipientId)
                 .chatRoomId(chatRoomId)
                 .message(message)

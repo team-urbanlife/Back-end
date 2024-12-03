@@ -22,8 +22,4 @@ public class SseEmitterRepository {
         return sseEmitterMap.get(userId);
     }
 
-    public boolean containsEmitter(Long userId) {
-        return sseEmitterMap.containsKey(userId);
-    }
-
 }

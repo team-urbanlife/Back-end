@@ -1,6 +1,6 @@
 package com.wegotoo.domain.notification.redis;
 
-import com.wegotoo.application.notification.request.SandRequest;
+import com.wegotoo.application.notification.request.SendRequest;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -34,7 +34,7 @@ public class Notification {
         this.type = type;
     }
 
-    public static Notification create(SandRequest request, LocalDateTime now, Type type) {
+    public static Notification create(SendRequest request, LocalDateTime now, Type type) {
         return Notification.builder()
                 .userId(request.getChatRoomId())
                 .chatRoomId(request.getChatRoomId())

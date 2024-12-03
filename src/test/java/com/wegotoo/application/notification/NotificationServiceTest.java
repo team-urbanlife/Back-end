@@ -1,6 +1,6 @@
 package com.wegotoo.application.notification;
 
-import com.wegotoo.application.notification.request.SandRequest;
+import com.wegotoo.application.notification.request.SendRequest;
 import java.io.IOException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ class NotificationServiceTest {
 
         notificationService.subscribe(receiverId);
 
-        SandRequest request = SandRequest.of(receiverId, null, null);
+        SendRequest request = SendRequest.of(receiverId, null, null);
         // when
         notificationService.notifyChatting(request);
 
