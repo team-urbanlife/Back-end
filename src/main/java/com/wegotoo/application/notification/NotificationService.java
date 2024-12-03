@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class NotificationService {
     public static final int START = 0;
     public static final int END = -1;
     public static final int DAYS = 7;
+    public static final int PARALLEL_PROCESSING_THRESHOLD = 10;
 
     private final SubscribeRepository subscribeRepository;
     private final SseEmitterRepository sseEmitterRepository;
@@ -57,7 +59,7 @@ public class NotificationService {
         sendMessage(sseEmitter, request);
     }
 
-    public void sendStoredNotifications(Long userId, SseEmitter sseEmitter) {
+    private void sendStoredNotifications(Long userId, SseEmitter sseEmitter) {
         String key = String.valueOf(userId);
 
         List<Notification> notifications = redisTemplate.opsForList().range(key, START, END);
@@ -67,16 +69,30 @@ public class NotificationService {
 
     private void sendLastMessages(SseEmitter sseEmitter, List<Notification> notifications) {
         if (isNotEmpty(notifications)) {
-            notifications.forEach(notification -> {
-                SendRequest request = SendRequest.of(
-                        notification.getUserId(),
-                        notification.getChatRoomId(),
-                        notification.getMessage()
-                );
-
-                sendMessage(sseEmitter, request);
-            });
+            if (shouldUseParallelProcessing(notifications)) {
+                handleStreamedMessages(notifications.parallelStream(), sseEmitter);
+                return;
+            }
+            handleStreamedMessages(notifications.stream(), sseEmitter);
         }
+    }
+
+    private static boolean shouldUseParallelProcessing(List<Notification> notifications) {
+        return notifications.size() >= PARALLEL_PROCESSING_THRESHOLD;
+    }
+
+    private void handleStreamedMessages(Stream<Notification> notifications, SseEmitter sseEmitter) {
+        notifications
+                .map(this::convertToSendRequest)
+                .forEach(request -> sendMessage(sseEmitter, request));
+    }
+
+    private SendRequest convertToSendRequest(Notification notification) {
+        return SendRequest.of(
+                notification.getUserId(),
+                notification.getChatRoomId(),
+                notification.getMessage()
+        );
     }
 
     private boolean isNotEmpty(List<Notification> notifications) {
