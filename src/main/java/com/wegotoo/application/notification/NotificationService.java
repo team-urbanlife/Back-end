@@ -6,8 +6,6 @@ import com.wegotoo.domain.notification.redis.Subscribe;
 import com.wegotoo.domain.notification.redis.Type;
 import com.wegotoo.domain.notification.redis.repository.SubscribeRepository;
 import com.wegotoo.domain.notification.repository.SseEmitterRepository;
-import com.wegotoo.exception.BusinessException;
-import com.wegotoo.exception.ErrorCode;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
