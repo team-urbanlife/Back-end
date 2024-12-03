@@ -115,6 +115,11 @@ public class NotificationService {
         sseEmitter.onTimeout(() -> handleDisconnection(userId));
     }
 
+    private void handleDisconnection(Long userId) {
+        sseEmitterRepository.deleteByUserId(userId);
+        subscribeRepository.deleteById(userId);
+    }
+
     private void saveOfflineUserMessage(SendRequest request) {
         LocalDateTime now = LocalDateTime.now();
         String key = String.valueOf(request.getRecipientId());
@@ -123,11 +128,6 @@ public class NotificationService {
         redisTemplate.opsForList().rightPush(key, notification);
 
         redisTemplate.expire(key, Duration.ofDays(DAYS));
-    }
-
-    public void handleDisconnection(Long userId) {
-        sseEmitterRepository.deleteByUserId(userId);
-        subscribeRepository.deleteById(userId);
     }
 
 }
