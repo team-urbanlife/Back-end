@@ -8,7 +8,7 @@ import com.wegotoo.application.CursorResponse;
 import com.wegotoo.application.chat.request.ChatSendServiceRequest;
 import com.wegotoo.application.chat.response.ChatResponse;
 import com.wegotoo.application.chat.response.LastReadResponse;
-import com.wegotoo.application.event.ChatMessageSentEvent;
+import com.wegotoo.application.notification.event.ChatMessageSentEvent;
 import com.wegotoo.domain.chat.Chat;
 import com.wegotoo.domain.chat.ChatRoomStatus;
 import com.wegotoo.domain.chat.repository.ChatRepository;

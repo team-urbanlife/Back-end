@@ -10,20 +10,16 @@ public class SseEmitterRepository {
 
     private final Map<Long, SseEmitter> sseEmitterMap = new HashMap<>();
 
-    public void addEmitter(Long userId, SseEmitter sseEmitter) {
+    public void save(Long userId, SseEmitter sseEmitter) {
         sseEmitterMap.put(userId, sseEmitter);
     }
 
-    public void removeEmitter(Long userId) {
+    public void deleteByUserId(Long userId) {
         sseEmitterMap.remove(userId);
     }
 
-    public SseEmitter getEmitter(Long userId) {
+    public SseEmitter findByUserId(Long userId) {
         return sseEmitterMap.get(userId);
-    }
-
-    public boolean containsEmitter(Long userId) {
-        return sseEmitterMap.containsKey(userId);
     }
 
 }
